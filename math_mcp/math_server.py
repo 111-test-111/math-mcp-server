@@ -22,6 +22,7 @@ try:
     from .optimization_calculator import OptimizationCalculator
     from .regression_calculator import RegressionCalculator
     from .plotting_calculator import PlottingCalculator
+    from .basic_calculator import BasicCalculator
 except ImportError:
     # 回退到绝对导入（直接运行时）
     from matrix_calculator import MatrixCalculator
@@ -30,6 +31,7 @@ except ImportError:
     from optimization_calculator import OptimizationCalculator
     from regression_calculator import RegressionCalculator
     from plotting_calculator import PlottingCalculator
+    from basic_calculator import BasicCalculator
 
 warnings.filterwarnings("ignore")
 
@@ -43,6 +45,167 @@ calculus_calc = CalculusCalculator()
 optimization_calc = OptimizationCalculator()
 regression_calc = RegressionCalculator()
 plotting_calc = PlottingCalculator()
+basic_calc = BasicCalculator()
+
+
+# === 基础数值计算工具 ===
+@mcp.tool()
+def basic_arithmetic(
+    operation: str,
+    numbers: List[float],
+    precision: Optional[int] = None,
+    use_decimal: bool = False,
+) -> Dict[str, Any]:
+    """
+    基础算术运算工具
+
+    Args:
+        operation: 运算类型 ('add', 'subtract', 'multiply', 'divide', 'power', 'modulo', 'factorial', 'gcd', 'lcm')
+        numbers: 数值列表
+        precision: 计算精度（小数位数）
+        use_decimal: 是否使用高精度小数计算
+
+    Returns:
+        计算结果
+    """
+    try:
+        return basic_calc.basic_arithmetic_tool(
+            operation, numbers, precision, use_decimal
+        )
+    except Exception as e:
+        return {"error": f"基础算术运算出错: {str(e)}"}
+
+
+@mcp.tool()
+def mathematical_functions(
+    function: str,
+    value: float,
+    base: Optional[float] = None,
+    precision: Optional[int] = None,
+    angle_unit: str = "radians",
+) -> Dict[str, Any]:
+    """
+    数学函数计算工具
+
+    Args:
+        function: 函数类型 ('sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
+                           'log', 'log10', 'ln', 'sqrt', 'cbrt', 'exp', 'abs', 'ceil', 'floor', 'round')
+        value: 输入值
+        base: 对数的底数（可选）
+        precision: 结果精度
+        angle_unit: 角度单位 ('radians', 'degrees')
+
+    Returns:
+        函数计算结果
+    """
+    try:
+        return basic_calc.mathematical_functions_tool(
+            function, value, base, precision, angle_unit
+        )
+    except Exception as e:
+        return {"error": f"数学函数计算出错: {str(e)}"}
+
+
+@mcp.tool()
+def number_converter(
+    number: str,
+    from_base: int = 10,
+    to_base: int = 10,
+    operation: str = "convert",
+    precision: Optional[int] = None,
+) -> Dict[str, Any]:
+    """
+    数值进制转换和格式化工具
+
+    Args:
+        number: 输入数值
+        from_base: 源进制 (2-36)
+        to_base: 目标进制 (2-36)
+        operation: 操作类型 ('convert', 'format', 'scientific', 'fraction')
+        precision: 精度控制
+
+    Returns:
+        转换结果
+    """
+    try:
+        return basic_calc.number_converter_tool(
+            number, from_base, to_base, operation, precision
+        )
+    except Exception as e:
+        return {"error": f"数值转换出错: {str(e)}"}
+
+
+@mcp.tool()
+def unit_converter(
+    value: float,
+    from_unit: str,
+    to_unit: str,
+    unit_type: str,
+) -> Dict[str, Any]:
+    """
+    单位转换工具
+
+    Args:
+        value: 输入值
+        from_unit: 源单位
+        to_unit: 目标单位
+        unit_type: 单位类型 ('length', 'weight', 'temperature', 'area', 'volume', 'time', 'speed', 'energy')
+
+    Returns:
+        转换结果
+    """
+    try:
+        return basic_calc.unit_converter_tool(value, from_unit, to_unit, unit_type)
+    except Exception as e:
+        return {"error": f"单位转换出错: {str(e)}"}
+
+
+@mcp.tool()
+def precision_calculator(
+    numbers: List[float],
+    operation: str,
+    precision_digits: int = 10,
+    rounding_mode: str = "round_half_up",
+) -> Dict[str, Any]:
+    """
+    高精度计算工具
+
+    Args:
+        numbers: 数值列表
+        operation: 运算类型 ('add', 'subtract', 'multiply', 'divide', 'power', 'sqrt')
+        precision_digits: 精度位数
+        rounding_mode: 舍入模式
+
+    Returns:
+        高精度计算结果
+    """
+    try:
+        return basic_calc.precision_calculator_tool(
+            numbers, operation, precision_digits, rounding_mode
+        )
+    except Exception as e:
+        return {"error": f"高精度计算出错: {str(e)}"}
+
+
+@mcp.tool()
+def number_properties(
+    number: float,
+    analysis_type: str = "comprehensive",
+) -> Dict[str, Any]:
+    """
+    数值属性分析工具
+
+    Args:
+        number: 输入数值
+        analysis_type: 分析类型 ('comprehensive', 'prime', 'divisors', 'properties')
+
+    Returns:
+        数值属性分析结果
+    """
+    try:
+        return basic_calc.number_properties_tool(number, analysis_type)
+    except Exception as e:
+        return {"error": f"数值属性分析出错: {str(e)}"}
 
 
 # === 矩阵计算工具 ===

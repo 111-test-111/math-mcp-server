@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "math-mcp"
-version = "0.1.2"
+version = "0.1.3"
 description = "Math calculation MCP server, providing matrix calculation, statistical analysis, calculus, linear algebra, etc."
 readme = "README.md"
 requires-python = ">=3.10"
