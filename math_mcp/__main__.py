@@ -4,15 +4,7 @@ Math MCP Server - 命令行入口点
 """
 
 import sys
-import os
 from pathlib import Path
-
-# 在导入任何其他模块之前抑制警告
-os.environ["PYTHONWARNINGS"] = "ignore"
-os.environ["NUMPY_EXPERIMENTAL"] = "0"
-import warnings
-
-warnings.filterwarnings("ignore")
 
 # 添加当前目录到Python路径，确保可以导入模块
 current_dir = Path(__file__).parent

@@ -26,6 +26,7 @@ class StatisticsCalculator:
         analysis_type: str,
         data2: Optional[List[float]] = None,
         test_type: Optional[str] = None,
+        hypothesis_test_type: Optional[str] = None,
         confidence: float = 0.95,
         distribution_type: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -37,6 +38,7 @@ class StatisticsCalculator:
             analysis_type: 分析类型 ('descriptive', 'tests', 'distribution', 'confidence_interval')
             data2: 第二组数据（某些分析需要）
             test_type: 检验类型（'normality', 'hypothesis', 'correlation'）或分布分析类型（'fitting', 'percentiles', 'outliers'）
+            hypothesis_test_type: 假设检验的具体类型 (e.g., 'one_sample_t', 'two_sample_t', 'paired_t')
             confidence: 置信水平
             distribution_type: 分布类型（用于分布拟合）
 
@@ -50,10 +52,10 @@ class StatisticsCalculator:
                 if test_type == "normality":
                     return self.normality_tests(data1)
                 elif test_type == "hypothesis":
-                    if data2 is not None:
-                        return self.hypothesis_testing(data1, data2, "two_sample_t")
-                    else:
-                        return self.hypothesis_testing(data1, test_type="one_sample_t")
+                    ht_type = hypothesis_test_type or (
+                        "two_sample_t" if data2 is not None else "one_sample_t"
+                    )
+                    return self.hypothesis_testing(data1, data2, ht_type)
                 elif test_type == "correlation":
                     if data2 is None:
                         return {"error": "相关性分析需要两组数据"}
@@ -87,6 +89,14 @@ class StatisticsCalculator:
             描述性统计结果
         """
         try:
+            # 检查数据是否为空
+            if not data or len(data) == 0:
+                return {"error": "数据列表不能为空"}
+
+            # 检查数据是否包含有效数值
+            if not all(isinstance(x, (int, float)) and not np.isnan(x) for x in data):
+                return {"error": "数据列表必须包含有效的数值"}
+
             arr = np.array(data)
             return {
                 "count": len(arr),
@@ -255,17 +265,23 @@ class StatisticsCalculator:
                 arr2 = np.array(data2)
                 stat, p_value = stats.ttest_rel(arr1, arr2)
 
-            elif test_type == "mann_whitney":
-                if data2 is None:
-                    return {"error": "Mann-Whitney检验需要两组数据"}
-                arr2 = np.array(data2)
-                stat, p_value = stats.mannwhitneyu(arr1, arr2, alternative="two-sided")
-
             elif test_type == "wilcoxon":
                 if data2 is None:
                     return {"error": "Wilcoxon检验需要两组数据"}
                 arr2 = np.array(data2)
                 stat, p_value = stats.wilcoxon(arr1, arr2)
+
+            elif test_type in ["mann_whitney_u", "mannwhitneyu", "ttest_ind"]:
+                if data2 is None:
+                    return {"error": "Mann-Whitney U 检验需要两组数据"}
+                arr2 = np.array(data2)
+                if test_type == "ttest_ind":
+                    # 独立样本t检验的别名
+                    stat, p_value = stats.ttest_ind(arr1, arr2)
+                else:
+                    stat, p_value = stats.mannwhitneyu(
+                        arr1, arr2, alternative="two-sided"
+                    )
 
             elif test_type == "levene":
                 if data2 is None:
@@ -340,28 +356,41 @@ class StatisticsCalculator:
         self, groups: List[List[float]], test_type: str = "one_way"
     ) -> Dict[str, Any]:
         """
-        方差分析
+        方差分析 (ANOVA)
 
         Args:
-            groups: 各组数据
-            test_type: 检验类型 ('one_way', 'two_way')
+            groups: 数据分组列表
+            test_type: 检验类型 ('one_way')
 
         Returns:
-            方差分析结果
+            ANOVA检验结果
         """
         try:
             if test_type == "one_way":
-                stat, p_value = stats.f_oneway(*groups)
+                if len(groups) < 2:
+                    return {"error": "单向ANOVA需要至少两组数据"}
+
+                f_stat, p_value = stats.f_oneway(*groups)
+
                 return {
                     "test_type": "one_way_anova",
-                    "f_statistic": float(stat),
+                    "f_statistic": float(f_stat),
                     "p_value": float(p_value),
                     "significant": p_value < 0.05,
+                    "conclusion": (
+                        "拒绝零假设，组间均值有显著差异"
+                        if p_value < 0.05
+                        else "不能拒绝零假设，组间均值无显著差异"
+                    ),
                 }
+            # two_way ANOVA has been removed due to complex data input requirements.
+            # It requires data in a pandas DataFrame format with columns for the value, factor1, and factor2.
+            # To re-enable, a more complex data input structure would be needed for this tool.
             else:
-                return {"error": f"暂不支持的方差分析类型: {test_type}"}
+                return {"error": f"不支持的ANOVA检验类型: {test_type}"}
+
         except Exception as e:
-            return {"error": f"方差分析出错: {str(e)}"}
+            return {"error": f"ANOVA分析出错: {str(e)}"}
 
     def percentiles(
         self, data: List[float], percentiles: List[float] = None

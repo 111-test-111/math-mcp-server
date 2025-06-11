@@ -44,7 +44,7 @@ math_mcp/
       "args": ["math-mcp"],
       "env": {
         "OUTPUT_PATH": "path/to/plot_output",
-        "FONT_PATH": "path/to/plot_font"
+        "FONT_PATH": "path/to/font"
       }
     }
   }

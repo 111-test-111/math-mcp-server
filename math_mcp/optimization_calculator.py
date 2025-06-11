@@ -25,10 +25,10 @@ class OptimizationCalculator:
         objective_function: str,
         variables: List[str],
         operation: str = "minimize",
-        method: str = "symbolic",
+        method: str = "auto",
         initial_guess: Optional[List[float]] = None,
         bounds: Optional[List[Tuple[float, float]]] = None,
-        constraints: Optional[List[str]] = None,
+        constraints: Optional[List[Dict[str, str]]] = None,
         equation: Optional[str] = None,
         root_method: str = "fsolve",
         lp_c: Optional[List[float]] = None,
@@ -60,6 +60,19 @@ class OptimizationCalculator:
             优化计算结果
         """
         try:
+            # 自动选择合适的方法
+            if method == "auto":
+                if operation == "constrained":
+                    method = "SLSQP"
+                elif operation == "global":
+                    method = "differential_evolution"
+                elif operation in ["minimize", "maximize"]:
+                    method = "symbolic" if not initial_guess else "BFGS"
+                elif operation == "linear_programming":
+                    method = "highs"
+                else:
+                    method = "BFGS"
+
             if operation in ["minimize", "maximize"]:
                 if method == "symbolic":
                     return self.symbolic_optimization(
@@ -71,7 +84,8 @@ class OptimizationCalculator:
                     )
                 else:
                     if not initial_guess:
-                        return {"error": "数值优化需要初始猜测值"}
+                        # 为数值优化提供默认初始猜测值
+                        initial_guess = [0.0] * len(variables)
                     return self.numerical_optimization(
                         objective_function, variables, initial_guess, method, bounds
                     )
@@ -93,16 +107,18 @@ class OptimizationCalculator:
                 )
             elif operation == "least_squares":
                 if not initial_guess:
-                    return {"error": "最小二乘需要初始猜测值"}
+                    initial_guess = [1.0] * len(variables)
                 return self.least_squares(objective_function, variables, initial_guess)
             elif operation == "constrained":
-                if not constraints or not initial_guess:
-                    return {"error": "约束优化需要约束条件和初始猜测值"}
-                constraint_dicts = [{"type": "eq", "fun": c} for c in constraints]
+                if not constraints:
+                    return {"error": "约束优化需要约束条件"}
+                if not initial_guess:
+                    # 提供默认初始猜测值
+                    initial_guess = [0.0] * len(variables)
                 return self.constrained_optimization(
                     objective_function,
                     variables,
-                    constraint_dicts,
+                    constraints,
                     initial_guess,
                     method,
                 )
@@ -176,52 +192,57 @@ class OptimizationCalculator:
 
                 point_analysis = []
                 for point in critical_points:
+                    substitutions = {}
+                    point_values = []
                     if isinstance(point, dict):
-                        point_values = [float(point[var]) for var in vars_symbols]
-
-                        # 计算该点的函数值
                         substitutions = point
-                        func_value = float(obj_expr.subs(substitutions))
+                        point_values = [float(point[var]) for var in vars_symbols]
+                    elif isinstance(point, (list, tuple)):
+                        substitutions = dict(zip(vars_symbols, point))
+                        point_values = [float(v) for v in point]
+                    else:
+                        # 单变量情况
+                        substitutions = {vars_symbols[0]: point}
+                        point_values = [float(point)]
 
-                        # 如果是最大化问题，恢复原始函数值
-                        if method == "maximize":
-                            func_value = -func_value
+                    # 计算该点的函数值
+                    func_value = float(obj_expr.subs(substitutions))
 
-                        # 计算Hessian矩阵的数值
-                        hessian_numerical = []
-                        for row in hessian:
-                            hessian_row = []
-                            for elem in row:
-                                hessian_row.append(float(elem.subs(substitutions)))
-                            hessian_numerical.append(hessian_row)
+                    # 如果是最大化问题，恢复原始函数值
+                    if method == "maximize":
+                        func_value = -func_value
 
-                        # 判断点的性质（通过Hessian矩阵的特征值）
-                        hessian_matrix = np.array(hessian_numerical)
-                        eigenvalues = np.linalg.eigvals(hessian_matrix)
+                    # 计算Hessian矩阵的数值
+                    hessian_numerical = []
+                    for row in hessian:
+                        hessian_row = []
+                        for elem in row:
+                            hessian_row.append(float(elem.subs(substitutions)))
+                        hessian_numerical.append(hessian_row)
 
-                        if all(eig > 0 for eig in eigenvalues):
-                            point_type = (
-                                "local_minimum"
-                                if method == "minimize"
-                                else "local_maximum"
-                            )
-                        elif all(eig < 0 for eig in eigenvalues):
-                            point_type = (
-                                "local_maximum"
-                                if method == "minimize"
-                                else "local_minimum"
-                            )
-                        else:
-                            point_type = "saddle_point"
+                    # 判断点的性质（通过Hessian矩阵的特征值）
+                    hessian_matrix = np.array(hessian_numerical)
+                    eigenvalues = np.linalg.eigvals(hessian_matrix)
 
-                        point_analysis.append(
-                            {
-                                "point": point_values,
-                                "function_value": func_value,
-                                "type": point_type,
-                                "eigenvalues": eigenvalues.tolist(),
-                            }
+                    if all(eig > 0 for eig in eigenvalues):
+                        point_type = (
+                            "local_minimum" if method == "minimize" else "local_maximum"
                         )
+                    elif all(eig < 0 for eig in eigenvalues):
+                        point_type = (
+                            "local_maximum" if method == "minimize" else "local_minimum"
+                        )
+                    else:
+                        point_type = "saddle_point"
+
+                    point_analysis.append(
+                        {
+                            "point": point_values,
+                            "function_value": func_value,
+                            "type": point_type,
+                            "eigenvalues": eigenvalues.tolist(),
+                        }
+                    )
 
                 result["critical_points"] = point_analysis
 
@@ -514,7 +535,7 @@ class OptimizationCalculator:
         method: str = "SLSQP",
     ) -> Dict[str, Any]:
         """
-        约束优化
+        带约束的数值优化
 
         Args:
             objective_function: 目标函数表达式
@@ -524,45 +545,42 @@ class OptimizationCalculator:
             method: 优化方法
 
         Returns:
-            约束优化结果
+            优化结果
         """
         try:
+            # 转换目标函数
             vars_symbols = [sp.Symbol(var) for var in variables]
             obj_expr = sp.sympify(objective_function)
-            obj_func = sp.lambdify(vars_symbols, obj_expr, "numpy")
 
             def objective(x):
-                return float(obj_func(*x))
+                substitutions = dict(zip(vars_symbols, x))
+                return float(obj_expr.subs(substitutions))
 
-            # 构建约束条件
+            # 转换约束
             constraint_funcs = []
-            for constraint in constraints:
-                constraint_expr = sp.sympify(constraint["fun"])
-                constraint_func = sp.lambdify(vars_symbols, constraint_expr, "numpy")
+            for constr in constraints:
+                constr_expr = sp.sympify(constr["fun"])
+
+                def constraint_func(x, expr=constr_expr):
+                    substitutions = dict(zip(vars_symbols, x))
+                    return float(expr.subs(substitutions))
 
                 constraint_funcs.append(
-                    {
-                        "type": constraint["type"],
-                        "fun": lambda x, cf=constraint_func: float(cf(*x)),
-                    }
+                    {"type": constr["type"], "fun": constraint_func}
                 )
 
-            # 执行约束优化
+            # 执行优化
             result = optimize.minimize(
-                objective, initial_guess, method=method, constraints=constraint_funcs
+                objective,
+                initial_guess,
+                method=method,
+                constraints=constraint_funcs,
             )
 
             return {
-                "objective_function": objective_function,
-                "variables": variables,
-                "constraints": constraints,
-                "method": method,
-                "success": result.success,
-                "optimal_point": result.x.tolist(),
-                "optimal_value": float(result.fun),
-                "constraint_violations": (
-                    result.maxcv if hasattr(result, "maxcv") else None
-                ),
+                "solution": result.x.tolist(),
+                "objective_value": float(result.fun),
+                "success": bool(result.success),
                 "message": result.message,
             }
 

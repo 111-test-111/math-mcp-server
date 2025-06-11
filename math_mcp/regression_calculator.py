@@ -5,7 +5,6 @@
 """
 
 import numpy as np
-import pandas as pd
 from sklearn.linear_model import (
     LinearRegression,
     Ridge,
@@ -18,9 +17,6 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import cross_val_score
 import scipy.stats as stats
 from typing import List, Dict, Any, Optional, Union, Tuple
-import warnings
-
-warnings.filterwarnings("ignore")
 
 
 class RegressionCalculator:
@@ -32,50 +28,78 @@ class RegressionCalculator:
 
     def regression_modeler_tool(
         self,
-        x_data: List[List[float]],
-        y_data: List[float],
+        operation: str = "fit",
+        x_data: Optional[List[List[float]]] = None,
+        y_data: Optional[List[float]] = None,
         model_type: str = "linear",
         degree: int = 2,
         alpha: float = 1.0,
         l1_ratio: float = 0.5,
         cv_folds: int = 5,
         test_size: float = 0.2,
+        y_true: Optional[List[float]] = None,
+        y_pred: Optional[List[float]] = None,
+        models_results: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
         """
         综合回归建模工具
 
         Args:
-            x_data: 自变量数据矩阵
-            y_data: 因变量数据
+            operation: 操作类型 ('fit', 'residual_analysis', 'model_comparison')
+            x_data: 自变量数据矩阵 (for 'fit')
+            y_data: 因变量数据 (for 'fit')
             model_type: 模型类型 ('linear', 'polynomial', 'ridge', 'lasso', 'elastic_net', 'logistic')
             degree: 多项式次数（用于多项式回归）
             alpha: 正则化参数（用于正则化回归）
             l1_ratio: L1正则化比例（用于ElasticNet）
             cv_folds: 交叉验证折数
             test_size: 测试集比例
+            y_true: 真实值 (for 'residual_analysis')
+            y_pred: 预测值 (for 'residual_analysis')
+            models_results: 模型结果列表 (for 'model_comparison')
 
         Returns:
-            回归建模结果
+            回归建模或分析结果
         """
         try:
-            if model_type == "linear":
-                return self.linear_regression(x_data, y_data)
-            elif model_type == "polynomial":
-                if len(x_data[0]) > 1:
-                    return {"error": "多项式回归只支持单变量输入"}
-                x_1d = [row[0] for row in x_data]
-                return self.polynomial_regression(x_1d, y_data, degree)
-            elif model_type == "ridge":
-                return self.ridge_regression(x_data, y_data, alpha)
-            elif model_type == "lasso":
-                return self.lasso_regression(x_data, y_data, alpha)
-            elif model_type == "elastic_net":
-                return self.elastic_net_regression(x_data, y_data, alpha, l1_ratio)
-            elif model_type == "logistic":
-                y_int = [int(y) for y in y_data]
-                return self.logistic_regression(x_data, y_int)
+            if operation == "fit":
+                if x_data is None or y_data is None:
+                    return {"error": "'fit' operation requires x_data and y_data"}
+                if model_type == "linear":
+                    return self.linear_regression(x_data, y_data)
+                elif model_type == "polynomial":
+                    if len(x_data[0]) > 1:
+                        return {"error": "多项式回归只支持单变量输入"}
+                    x_1d = [row[0] for row in x_data]
+                    return self.polynomial_regression(x_1d, y_data, degree)
+                elif model_type == "ridge":
+                    return self.ridge_regression(x_data, y_data, alpha)
+                elif model_type == "lasso":
+                    return self.lasso_regression(x_data, y_data, alpha)
+                elif model_type == "elastic_net":
+                    return self.elastic_net_regression(x_data, y_data, alpha, l1_ratio)
+                elif model_type == "logistic":
+                    y_int = [int(y) for y in y_data]
+                    return self.logistic_regression(x_data, y_int)
+                else:
+                    return {"error": f"不支持的模型类型: {model_type}"}
+
+            elif operation == "residual_analysis":
+                if y_true is None or y_pred is None:
+                    return {
+                        "error": "'residual_analysis' operation requires y_true and y_pred"
+                    }
+                return self.residual_analysis(y_true, y_pred)
+
+            elif operation == "model_comparison":
+                if models_results is None:
+                    return {
+                        "error": "'model_comparison' operation requires models_results"
+                    }
+                return self.model_comparison(models_results)
+
             else:
-                return {"error": f"不支持的模型类型: {model_type}"}
+                return {"error": f"不支持的操作类型: {operation}"}
         except Exception as e:
             return {"error": f"回归建模出错: {str(e)}"}
 

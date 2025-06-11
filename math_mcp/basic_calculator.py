@@ -9,13 +9,6 @@ import numpy as np
 from typing import List, Dict, Any, Optional, Union
 import decimal
 from decimal import Decimal, getcontext
-import warnings
-import os
-
-# 设置环境变量抑制NumPy警告
-os.environ['PYTHONWARNINGS'] = 'ignore'
-warnings.filterwarnings("ignore")
-np.seterr(all='ignore')
 
 
 class BasicCalculator:
@@ -147,11 +140,32 @@ class BasicCalculator:
                 if len(numbers) != 1:
                     return {"error": "阶乘运算需要恰好一个数值"}
                 n = numbers[0]
-                if not isinstance(n, (int, Decimal)) and not n.is_integer():
-                    return {"error": "阶乘运算需要非负整数"}
+
+                # 检查是否为数值类型
+                if not isinstance(n, (int, float, Decimal)):
+                    return {"error": "阶乘运算需要数值输入"}
+
+                is_integer = False
+                if isinstance(n, int):
+                    is_integer = True
+                elif isinstance(n, Decimal):
+                    if n == n.to_integral_value():
+                        is_integer = True
+                elif isinstance(n, float):
+                    if n.is_integer():
+                        is_integer = True
+
+                if not is_integer:
+                    return {"error": "阶乘运算需要整数"}
+
                 n_int = int(n)
                 if n_int < 0:
                     return {"error": "阶乘运算需要非负整数"}
+
+                # 检查数值是否过大，避免计算溢出
+                if n_int > 1000:
+                    return {"error": "数值过大，阶乘运算限制在1000以内"}
+
                 result = math.factorial(n_int)
                 return {
                     "result": result,

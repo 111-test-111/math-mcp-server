@@ -66,7 +66,9 @@ class MatrixCalculator:
                 elif prop_type == "condition_number":
                     return self.matrix_condition_number(matrix_a)
                 elif prop_type == "norm":
-                    return self.matrix_norm(matrix_a)
+                    # 如果property_type未提供，则默认为'frobenius'
+                    norm_selection = property_type or "frobenius"
+                    return self.matrix_norm(matrix_a, norm_type=norm_selection)
                 else:
                     return {"error": f"不支持的属性类型: {prop_type}"}
             elif operation == "power" and power is not None:
@@ -104,6 +106,14 @@ class MatrixCalculator:
             运算结果
         """
         try:
+            # 检查矩阵是否为空
+            if not matrix_a or len(matrix_a) == 0 or len(matrix_a[0]) == 0:
+                return {"error": "矩阵不能为空"}
+
+            # 检查矩阵形状是否一致
+            if not all(len(row) == len(matrix_a[0]) for row in matrix_a):
+                return {"error": "矩阵行长度必须一致"}
+
             A = np.array(matrix_a)
 
             if operation == "transpose":
@@ -250,30 +260,33 @@ class MatrixCalculator:
             return {"error": f"计算矩阵秩出错: {str(e)}"}
 
     def matrix_norm(
-        self, matrix: List[List[float]], norm_type: str = "frobenius"
+        self, matrix: List[List[float]], norm_type: Union[str, int] = "frobenius"
     ) -> Dict[str, Any]:
         """
-        计算矩阵范数
+        计算矩阵的范数
 
         Args:
             matrix: 输入矩阵
-            norm_type: 范数类型 ('frobenius', 'nuclear', '1', '2', 'inf')
+            norm_type: 范数类型 ('frobenius', 'nuc', 1, -1, 2, -2)
 
         Returns:
-            矩阵范数
+            矩阵的范数
         """
         try:
             A = np.array(matrix)
-            if norm_type == "frobenius":
-                norm_val = np.linalg.norm(A, "fro")
-            elif norm_type == "nuclear":
-                norm_val = np.linalg.norm(A, "nuc")
-            elif norm_type in ["1", "2", "inf"]:
-                norm_val = np.linalg.norm(A, ord=norm_type)
-            else:
-                return {"error": f"不支持的范数类型: {norm_type}"}
 
-            return {"norm": float(norm_val), "norm_type": norm_type}
+            # 映射用户友好名称到numpy参数
+            norm_map = {
+                "frobenius": "fro",
+                "nuc": "nuc",
+                "l1": 1,
+                "l2": 2,
+                "inf": np.inf,
+            }
+            ord_param = norm_map.get(str(norm_type).lower(), norm_type)
+
+            norm = np.linalg.norm(A, ord=ord_param)
+            return {"norm": float(norm), "norm_type": str(norm_type)}
         except Exception as e:
             return {"error": f"计算矩阵范数出错: {str(e)}"}
 

@@ -29,7 +29,7 @@ class CalculusCalculator:
         limits: Optional[List[float]] = None,
         point: Optional[float] = None,
         points: Optional[List[float]] = None,
-        order: int = 2,
+        order: int = 1,
         method: str = "quad",
         mode: str = "symbolic",
     ) -> Dict[str, Any]:
@@ -56,11 +56,13 @@ class CalculusCalculator:
                 if mode == "numerical" and point is not None:
                     return self.numerical_derivative(expression, point, variable)
                 else:
+                    # 检查是否明确要求高阶导数
                     if order > 1:
                         return self.higher_order_derivatives(
                             expression, variable, order, point
                         )
                     else:
+                        # 默认计算一阶导数
                         return self.symbolic_operations(
                             expression, "derivative", variable, limits, point
                         )
@@ -274,15 +276,20 @@ class CalculusCalculator:
             return {"error": f"数值积分出错: {str(e)}"}
 
     def higher_order_derivatives(
-        self, expression: str, variable: str = "x", order: int = 2
+        self,
+        expression: str,
+        variable: str = "x",
+        order: int = 2,
+        point: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
-        高阶导数
+        计算高阶导数
 
         Args:
-            expression: 数学表达式
+            expression: 数学表达式字符串
             variable: 变量名
             order: 导数阶数
+            point: 求导点（可选）
 
         Returns:
             高阶导数结果
@@ -291,18 +298,23 @@ class CalculusCalculator:
             var = sp.Symbol(variable)
             expr = sp.sympify(expression)
 
-            derivatives = {}
-            for i in range(1, order + 1):
-                derivative = sp.diff(expr, var, i)
-                derivatives[f"order_{i}"] = str(derivative)
+            # 递归计算高阶导数
+            derivative = expr
+            for _ in range(order):
+                derivative = sp.diff(derivative, var)
 
-            return {
-                "expression": expression,
-                "variable": variable,
-                "derivatives": derivatives,
-            }
+            if point is not None:
+                value_at_point = float(derivative.subs(var, point))
+                return {
+                    f"{order}_order_derivative": str(derivative),
+                    "value_at_point": value_at_point,
+                    "point": point,
+                }
+            else:
+                return {f"{order}_order_derivative": str(derivative)}
+
         except Exception as e:
-            return {"error": f"高阶导数计算出错: {str(e)}"}
+            return {"error": f"计算高阶导数出错: {str(e)}"}
 
     def partial_derivatives(
         self, expression: str, variables: List[str]
