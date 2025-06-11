@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "math-calculator": {
+            "command": "path/to/python_interpreter",
+            "args": [
+                "path/to/math_server.py"
+            ],
+            "env": {
+                "OUTPUT_PATH": "path/to/output",
+                "FONT_PATH": "path/to/font"
+            }
+        }
+    }
+}
