@@ -4,6 +4,16 @@
 用于为LLM提供强大的数学计算工具，采用模块化架构
 """
 
+import os
+import sys
+
+# 在任何其他导入之前设置环境变量和警告抑制
+os.environ["PYTHONWARNINGS"] = "ignore"
+os.environ["NUMPY_EXPERIMENTAL"] = "0"
+import warnings
+
+warnings.filterwarnings("ignore")
+
 from fastmcp import FastMCP
 from typing import List, Dict, Any, Optional, Tuple
 import warnings
@@ -12,6 +22,12 @@ import base64
 from datetime import datetime
 import pathlib
 import sympy as sp
+
+# 抑制所有警告，特别是NumPy在Windows上的实验性警告
+warnings.filterwarnings("ignore")
+import numpy as np
+
+np.seterr(all="ignore")  # 抑制NumPy的数值警告
 
 # 导入各个计算器模块
 try:

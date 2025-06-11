@@ -10,8 +10,12 @@ from typing import List, Dict, Any, Optional, Union
 import decimal
 from decimal import Decimal, getcontext
 import warnings
+import os
 
+# 设置环境变量抑制NumPy警告
+os.environ['PYTHONWARNINGS'] = 'ignore'
 warnings.filterwarnings("ignore")
+np.seterr(all='ignore')
 
 
 class BasicCalculator:
