@@ -23,7 +23,7 @@ uvx math-mcp
 math_mcp/
 ├── __init__.py                    # 包初始化文件
 ├── __main__.py                    # CLI入口点
-├── math_server.py                 # 主服务器文件（MCP工具注册）
+├── math_mcp_server.py             # 主服务器文件（MCP工具注册）
 ├── matrix_calculator.py           # 矩阵计算模块
 ├── statistics_calculator.py       # 统计分析模块
 ├── calculus_calculator.py         # 微积分计算模块

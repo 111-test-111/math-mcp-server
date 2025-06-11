@@ -44,7 +44,7 @@ Repository = "https://github.com/111-test-111/math-mcp-server.git"
 Issues = "https://github.com/111-test-111/math-mcp-server/issues"
 
 [project.scripts]
-math-mcp = "math_mcp.math_server:main"
+math-mcp = "math_mcp.math_mcp_server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["math_mcp"]

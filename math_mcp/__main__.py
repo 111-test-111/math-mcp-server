@@ -10,7 +10,7 @@ from pathlib import Path
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from .math_server import main
+from .math_mcp_server import main
 
 if __name__ == "__main__":
     main()

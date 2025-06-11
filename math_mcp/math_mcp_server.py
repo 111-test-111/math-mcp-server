@@ -13,14 +13,10 @@ from datetime import datetime
 import pathlib
 import sympy as sp
 
-# 导入描述加载器
-try:
-    from .description_loader import apply_description
-except ImportError:
-    from math_mcp.description_loader import apply_description
 
 # 导入各个计算器模块
 try:
+    from .description_loader import apply_description
     from .matrix_calculator import MatrixCalculator
     from .statistics_calculator import StatisticsCalculator
     from .calculus_calculator import CalculusCalculator
@@ -29,6 +25,7 @@ try:
     from .plotting_calculator import PlottingCalculator
     from .basic_calculator import BasicCalculator
 except ImportError:
+    from math_mcp.description_loader import apply_description
     from math_mcp.matrix_calculator import MatrixCalculator
     from math_mcp.statistics_calculator import StatisticsCalculator
     from math_mcp.calculus_calculator import CalculusCalculator
