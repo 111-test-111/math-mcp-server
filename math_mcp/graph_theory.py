@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-图论计算模块
-提供完整丰富的图论分析功能
+Graph Theory Computation Module
+Provides comprehensive graph theory analysis functionality.
 """
 
 import numpy as np
@@ -16,10 +16,10 @@ except ImportError:
 
 
 class GraphTheoryCalculator:
-    """图论计算器类，提供完整的图论分析功能"""
+    """Graph theory calculator class, provides comprehensive graph analysis functionality"""
 
     def __init__(self):
-        """初始化图论计算器"""
+        """Initialize the graph theory calculator"""
         pass
 
     def graph_theory_suite_tool(
@@ -45,34 +45,34 @@ class GraphTheoryCalculator:
         figsize: Tuple[float, float] = (10, 8),
     ) -> Dict[str, Any]:
         """
-        综合图论计算工具
+        Comprehensive graph theory analysis tool
 
         Args:
-            operation: 操作类型
-            graph_data: 图数据字典
-            adjacency_matrix: 邻接矩阵
-            edge_list: 边列表
-            node_list: 节点列表
-            source_node: 源节点
-            target_node: 目标节点
-            weight_attribute: 权重属性名
-            directed: 是否为有向图
-            algorithm: 算法选择
-            k_value: K值参数
-            threshold: 阈值参数
-            layout: 布局算法
-            filename: 保存文件名
-            node_colors: 节点颜色
-            edge_colors: 边颜色
-            node_sizes: 节点大小
-            show_labels: 是否显示标签
-            figsize: 图形大小
+            operation: Type of operation
+            graph_data: Graph data as dictionary
+            adjacency_matrix: Adjacency matrix
+            edge_list: List of edges
+            node_list: List of nodes
+            source_node: Source node
+            target_node: Target node
+            weight_attribute: Name of the weight attribute
+            directed: Whether the graph is directed
+            algorithm: Algorithm selection
+            k_value: Parameter K
+            threshold: Threshold parameter
+            layout: Layout algorithm
+            filename: File name for saving
+            node_colors: Node colors
+            edge_colors: Edge colors
+            node_sizes: Node sizes
+            show_labels: Whether to show labels
+            figsize: Figure size
 
         Returns:
-            图论计算结果
+            Graph theory analysis result
         """
         try:
-            # 构建图
+            # Build graph
             G = self._build_graph(
                 graph_data,
                 adjacency_matrix,
@@ -86,7 +86,9 @@ class GraphTheoryCalculator:
 
             if operation == "shortest_path":
                 if source_node is None or target_node is None:
-                    return {"error": "最短路径计算需要源节点和目标节点"}
+                    return {
+                        "error": "Shortest path calculation requires source and target nodes"
+                    }
                 return self._shortest_path_analysis(
                     G, source_node, target_node, algorithm, weight_attribute
                 )
@@ -96,7 +98,9 @@ class GraphTheoryCalculator:
 
             elif operation == "maximum_flow":
                 if source_node is None or target_node is None:
-                    return {"error": "最大流计算需要源节点和目标节点"}
+                    return {
+                        "error": "Maximum flow calculation requires source and target nodes"
+                    }
                 return self._maximum_flow_analysis(
                     G, source_node, target_node, algorithm, weight_attribute
                 )
@@ -139,7 +143,7 @@ class GraphTheoryCalculator:
 
             elif operation == "graph_comparison":
                 if not isinstance(graph_data, list) or len(graph_data) < 2:
-                    return {"error": "图比较需要至少两个图"}
+                    return {"error": "Graph comparison requires at least two graphs"}
                 return self.compare_graphs(graph_data, directed)
 
             elif operation == "graph_generation":
@@ -149,10 +153,10 @@ class GraphTheoryCalculator:
                 )
 
             else:
-                return {"error": f"不支持的操作类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
         except Exception as e:
-            return {"error": f"图论计算出错: {str(e)}"}
+            return {"error": f"Graph theory calculation error: {str(e)}"}
 
     def _build_graph(
         self,
@@ -163,20 +167,20 @@ class GraphTheoryCalculator:
         directed: bool = False,
         weight_attribute: str = "weight",
     ):
-        """构建NetworkX图对象"""
+        """Build NetworkX graph object"""
         try:
             if directed:
                 G = nx.DiGraph()
             else:
                 G = nx.Graph()
 
-            # 从图数据字典构建
+            # Build from graph data dict
             if graph_data:
                 if "nodes" in graph_data:
                     G.add_nodes_from(graph_data["nodes"])
                 if "edges" in graph_data:
                     if isinstance(graph_data["edges"][0], dict):
-                        # 边包含属性
+                        # Edges with attributes
                         for edge in graph_data["edges"]:
                             G.add_edge(
                                 edge["source"],
@@ -188,10 +192,10 @@ class GraphTheoryCalculator:
                                 },
                             )
                     else:
-                        # 简单边列表
+                        # Simple edge list
                         G.add_edges_from(graph_data["edges"])
 
-            # 从邻接矩阵构建
+            # Build from adjacency matrix
             elif adjacency_matrix:
                 matrix = np.array(adjacency_matrix)
                 if node_list:
@@ -201,29 +205,29 @@ class GraphTheoryCalculator:
                 else:
                     G = nx.from_numpy_array(matrix, create_using=type(G))
 
-            # 从边列表构建
+            # Build from edge list
             elif edge_list:
                 if len(edge_list[0]) == 2:
-                    # 无权边
+                    # Unweighted edges
                     G.add_edges_from(edge_list)
                 elif len(edge_list[0]) == 3:
-                    # 带权/容量边，按照用户指定的属性名保存，并同步保存到"capacity"属性，方便最大流算法
+                    # Weighted/capacity edges, save as user-defined attribute and as "capacity" for max flow
                     for u, v, w in edge_list:
                         G.add_edge(u, v, **{weight_attribute: w, "capacity": w})
                 else:
-                    return {"error": "边列表格式不正确"}
+                    return {"error": "Incorrect edge list format"}
 
-            # 仅从节点列表构建
+            # Build from node list only
             elif node_list:
                 G.add_nodes_from(node_list)
 
             else:
-                return {"error": "需要提供图数据"}
+                return {"error": "Graph data is required"}
 
             return G
 
         except Exception as e:
-            return {"error": f"构建图失败: {str(e)}"}
+            return {"error": f"Failed to build graph: {str(e)}"}
 
     def _shortest_path_analysis(
         self,
@@ -233,22 +237,22 @@ class GraphTheoryCalculator:
         algorithm: str = "auto",
         weight_attribute: str = "weight",
     ) -> Dict[str, Any]:
-        """最短路径分析"""
+        """Shortest path analysis"""
         try:
             results = {"source": source, "target": target, "algorithm": algorithm}
 
-            # 检查节点是否存在
+            # Check if nodes exist
             if source not in G.nodes() or target not in G.nodes():
-                return {"error": "源节点或目标节点不存在于图中"}
+                return {"error": "Source or target node does not exist in the graph"}
 
-            # 选择算法
+            # Select algorithm
             if algorithm == "auto":
                 if nx.is_weighted(G, weight=weight_attribute):
                     algorithm = "dijkstra"
                 else:
                     algorithm = "bfs"
 
-            # 计算最短路径
+            # Calculate shortest path
             try:
                 if algorithm == "dijkstra":
                     if nx.is_weighted(G, weight=weight_attribute):
@@ -275,9 +279,9 @@ class GraphTheoryCalculator:
                     length = nx.shortest_path_length(G, source, target)
 
                 elif algorithm == "astar":
-                    # A*需要启发式函数，这里使用简单的欧几里得距离
+                    # A* requires a heuristic function, using Euclidean distance as a simple example
                     def heuristic(u, v):
-                        return 0  # 简化版本
+                        return 0  # simplified version
 
                     path = nx.astar_path(
                         G, source, target, heuristic=heuristic, weight=weight_attribute
@@ -287,7 +291,7 @@ class GraphTheoryCalculator:
                     )
 
                 else:
-                    return {"error": f"不支持的算法: {algorithm}"}
+                    return {"error": f"Unsupported algorithm: {algorithm}"}
 
                 results.update(
                     {
@@ -301,11 +305,11 @@ class GraphTheoryCalculator:
                 )
 
             except nx.NetworkXNoPath:
-                results["error"] = "源节点和目标节点之间不存在路径"
+                results["error"] = "No path exists between source and target"
             except Exception as e:
-                results["error"] = f"路径计算失败: {str(e)}"
+                results["error"] = f"Path calculation failed: {str(e)}"
 
-            # 计算所有最短路径（如果存在多条）
+            # Calculate all shortest paths (if multiple exist)
             try:
                 all_paths = list(
                     nx.all_shortest_paths(
@@ -328,23 +332,23 @@ class GraphTheoryCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"最短路径分析出错: {str(e)}"}
+            return {"error": f"Shortest path analysis error: {str(e)}"}
 
     def _all_pairs_shortest_path(
         self, G, algorithm: str = "auto", weight_attribute: str = "weight"
     ) -> Dict[str, Any]:
-        """全对最短路径分析"""
+        """All pairs shortest path analysis"""
         try:
             results = {"algorithm": algorithm}
 
-            # 选择算法
+            # Select algorithm
             if algorithm == "auto":
                 if nx.is_weighted(G, weight=weight_attribute):
                     algorithm = "dijkstra"
                 else:
                     algorithm = "bfs"
 
-            # 计算全对最短路径
+            # Calculate all pairs shortest paths
             if algorithm == "floyd_warshall":
                 paths = dict(nx.floyd_warshall(G, weight=weight_attribute))
                 path_lengths = dict(nx.floyd_warshall(G, weight=weight_attribute))
@@ -357,7 +361,7 @@ class GraphTheoryCalculator:
                 paths = dict(nx.all_pairs_shortest_path(G))
                 path_lengths = dict(nx.all_pairs_shortest_path_length(G))
 
-            # 统计信息
+            # Statistical information
             all_lengths = []
             for source in path_lengths:
                 for target in path_lengths[source]:
@@ -383,7 +387,7 @@ class GraphTheoryCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"全对最短路径分析出错: {str(e)}"}
+            return {"error": f"All pairs shortest path analysis error: {str(e)}"}
 
     def _maximum_flow_analysis(
         self,
@@ -393,25 +397,25 @@ class GraphTheoryCalculator:
         algorithm: str = "auto",
         weight_attribute: str = "capacity",
     ) -> Dict[str, Any]:
-        """最大流分析"""
+        """Maximum flow analysis"""
         try:
             results = {"source": source, "target": target, "algorithm": algorithm}
 
-            # 检查是否为有向图
+            # Check if directed
             if not G.is_directed():
                 G = G.to_directed()
 
-            # 如果算法为auto，默认使用edmonds_karp
+            # If algorithm is auto, use edmonds_karp by default
             if algorithm == "auto":
                 algorithm = "edmonds_karp"
 
-            # 确保所有边具有 capacity 属性
+            # Ensure all edges have "capacity" attribute
             for u, v, data in G.edges(data=True):
                 if "capacity" not in data:
                     cap_val = data.get(weight_attribute, 1)
                     data["capacity"] = cap_val
 
-            # 计算最大流，根据算法选择
+            # Calculate max flow according to algorithm
             if algorithm == "edmonds_karp":
                 flow_value, flow_dict = nx.maximum_flow(
                     G,
@@ -437,12 +441,12 @@ class GraphTheoryCalculator:
                     flow_func=nx.algorithms.flow.shortest_augmenting_path,
                 )
             else:
-                return {"error": f"不支持的最大流算法: {algorithm}"}
+                return {"error": f"Unsupported maximum flow algorithm: {algorithm}"}
 
-            # 计算最小割
+            # Calculate minimum cut
             cut_value, partition = nx.minimum_cut(G, source, target)
 
-            # 分析流网络
+            # Flow network analysis
             flow_edges = []
             for u in flow_dict:
                 for v in flow_dict[u]:
@@ -483,20 +487,20 @@ class GraphTheoryCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"最大流分析出错: {str(e)}"}
+            return {"error": f"Maximum flow analysis error: {str(e)}"}
 
     def _connectivity_analysis(self, G, algorithm: str = "auto") -> Dict[str, Any]:
-        """连通性分析"""
+        """Connectivity analysis"""
         try:
             results = {"algorithm": algorithm}
 
-            # 基本连通性
+            # Basic connectivity
             if G.is_directed():
                 results["strongly_connected"] = nx.is_strongly_connected(G)
                 results["weakly_connected"] = nx.is_weakly_connected(G)
 
-                # 强连通分量
-                scc = list(nx.strongly_connected_components(G))
+                # Strongly connected components
+                scc = list(nx.strengthly_connected_components(G))
                 results["strongly_connected_components"] = {
                     "count": len(scc),
                     "components": [list(component) for component in scc],
@@ -505,7 +509,7 @@ class GraphTheoryCalculator:
                     ),
                 }
 
-                # 弱连通分量
+                # Weakly connected components
                 wcc = list(nx.weakly_connected_components(G))
                 results["weakly_connected_components"] = {
                     "count": len(wcc),
@@ -517,7 +521,7 @@ class GraphTheoryCalculator:
             else:
                 results["connected"] = nx.is_connected(G)
 
-                # 连通分量
+                # Connected components
                 cc = list(nx.connected_components(G))
                 results["connected_components"] = {
                     "count": len(cc),
@@ -527,10 +531,10 @@ class GraphTheoryCalculator:
                     ),
                 }
 
-            # 连通性度量
+            # Connectivity measures
             results["connectivity_measures"] = {}
 
-            # 节点连通性
+            # Node connectivity
             try:
                 if nx.is_connected(G) or (
                     G.is_directed() and nx.is_strongly_connected(G)
@@ -544,7 +548,7 @@ class GraphTheoryCalculator:
             except:
                 pass
 
-            # 割点和桥
+            # Articulation points and bridges
             if not G.is_directed():
                 articulation_points = list(nx.articulation_points(G))
                 bridges = list(nx.bridges(G))
@@ -559,15 +563,15 @@ class GraphTheoryCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"连通性分析出错: {str(e)}"}
+            return {"error": f"Connectivity analysis error: {str(e)}"}
 
     def _centrality_analysis(self, G, algorithm: str = "all") -> Dict[str, Any]:
-        """中心性分析"""
+        """Centrality analysis"""
         try:
             results = {"algorithm": algorithm}
             centralities = {}
 
-            # 度中心性
+            # Degree centrality
             if algorithm in ["all", "degree"]:
                 degree_centrality = nx.degree_centrality(G)
                 centralities["degree_centrality"] = degree_centrality
@@ -578,7 +582,7 @@ class GraphTheoryCalculator:
                     "average": np.mean(list(degree_centrality.values())),
                 }
 
-            # 接近中心性
+            # Closeness centrality
             if algorithm in ["all", "closeness"]:
                 try:
                     closeness_centrality = nx.closeness_centrality(G)
@@ -592,9 +596,11 @@ class GraphTheoryCalculator:
                         "average": np.mean(list(closeness_centrality.values())),
                     }
                 except:
-                    centralities["closeness_centrality"] = "无法计算（图不连通）"
+                    centralities["closeness_centrality"] = (
+                        "Unable to calculate (graph is disconnected)"
+                    )
 
-            # 介数中心性
+            # Betweenness centrality
             if algorithm in ["all", "betweenness"]:
                 betweenness_centrality = nx.betweenness_centrality(G)
                 centralities["betweenness_centrality"] = betweenness_centrality
@@ -607,7 +613,7 @@ class GraphTheoryCalculator:
                     "average": np.mean(list(betweenness_centrality.values())),
                 }
 
-            # 特征向量中心性
+            # Eigenvector centrality
             if algorithm in ["all", "eigenvector"]:
                 try:
                     eigenvector_centrality = nx.eigenvector_centrality(G, max_iter=1000)
@@ -621,7 +627,9 @@ class GraphTheoryCalculator:
                         "average": np.mean(list(eigenvector_centrality.values())),
                     }
                 except:
-                    centralities["eigenvector_centrality"] = "无法计算（可能不收敛）"
+                    centralities["eigenvector_centrality"] = (
+                        "Unable to calculate (possibly not converging)"
+                    )
 
             # PageRank
             if algorithm in ["all", "pagerank"]:
@@ -634,7 +642,7 @@ class GraphTheoryCalculator:
                     "average": np.mean(list(pagerank.values())),
                 }
 
-            # Katz中心性
+            # Katz centrality
             if algorithm in ["all", "katz"]:
                 try:
                     katz_centrality = nx.katz_centrality(G)
@@ -646,53 +654,53 @@ class GraphTheoryCalculator:
                         "average": np.mean(list(katz_centrality.values())),
                     }
                 except:
-                    centralities["katz_centrality"] = "无法计算"
+                    centralities["katz_centrality"] = "Unable to calculate"
 
             results["centralities"] = centralities
 
-            # 中心性排名
+            # Centrality rankings
             rankings = {}
             for centrality_type, centrality_dict in centralities.items():
                 if isinstance(centrality_dict, dict):
                     sorted_nodes = sorted(
                         centrality_dict.items(), key=lambda x: x[1], reverse=True
                     )
-                    rankings[centrality_type] = sorted_nodes[:10]  # 前10名
+                    rankings[centrality_type] = sorted_nodes[:10]  # Top 10
 
             results["rankings"] = rankings
 
             return results
 
         except Exception as e:
-            return {"error": f"中心性分析出错: {str(e)}"}
+            return {"error": f"Centrality analysis error: {str(e)}"}
 
     def _spectral_analysis(self, G, k_value: Optional[int] = None) -> Dict[str, Any]:
-        """图谱分析"""
+        """Spectral analysis"""
         try:
             results = {}
 
-            # 邻接矩阵
+            # Adjacency matrix
             adj_matrix = nx.adjacency_matrix(G).todense()
             results["adjacency_matrix"] = adj_matrix.tolist()
 
-            # 度矩阵
+            # Degree matrix
             degree_matrix = np.diag([G.degree(node) for node in G.nodes()])
             results["degree_matrix"] = degree_matrix.tolist()
 
-            # 拉普拉斯矩阵
+            # Laplacian matrix
             laplacian_matrix = nx.laplacian_matrix(G).todense()
             results["laplacian_matrix"] = laplacian_matrix.tolist()
 
-            # 归一化拉普拉斯矩阵
+            # Normalized Laplacian matrix
             normalized_laplacian = nx.normalized_laplacian_matrix(G).todense()
             results["normalized_laplacian_matrix"] = normalized_laplacian.tolist()
 
-            # 特征值和特征向量分析
+            # Eigenvalues and eigenvectors
             eigenvalues, eigenvectors = np.linalg.eigh(laplacian_matrix)
             results["eigenvalues"] = eigenvalues.tolist()
             results["eigenvectors"] = eigenvectors.tolist()
 
-            # 谱特性
+            # Spectral properties
             results["spectral_properties"] = {
                 "algebraic_connectivity": (
                     float(eigenvalues[1]) if len(eigenvalues) > 1 else 0
@@ -709,7 +717,7 @@ class GraphTheoryCalculator:
                 ),
             }
 
-            # 谱聚类
+            # Spectral clustering
             if k_value:
                 try:
                     from sklearn.cluster import SpectralClustering
@@ -719,7 +727,7 @@ class GraphTheoryCalculator:
                     )
                     cluster_labels = spectral_clustering.fit_predict(adj_matrix)
 
-                    # 组织聚类结果
+                    # Organize cluster results
                     clusters = {}
                     for i, label in enumerate(cluster_labels):
                         if label not in clusters:
@@ -734,21 +742,25 @@ class GraphTheoryCalculator:
                         ],
                     }
                 except ImportError:
-                    results["spectral_clustering"] = "需要安装sklearn进行谱聚类"
+                    results["spectral_clustering"] = (
+                        "scikit-learn is required for spectral clustering"
+                    )
                 except Exception as e:
-                    results["spectral_clustering"] = f"谱聚类失败: {str(e)}"
+                    results["spectral_clustering"] = (
+                        f"Spectral clustering failed: {str(e)}"
+                    )
 
             return results
 
         except Exception as e:
-            return {"error": f"图谱分析出错: {str(e)}"}
+            return {"error": f"Spectral analysis error: {str(e)}"}
 
     def _graph_properties_analysis(self, G) -> Dict[str, Any]:
-        """图属性分析"""
+        """Graph properties analysis"""
         try:
             results = {}
 
-            # 基本属性
+            # Basic properties
             results["basic_properties"] = {
                 "node_count": G.number_of_nodes(),
                 "edge_count": G.number_of_edges(),
@@ -762,7 +774,7 @@ class GraphTheoryCalculator:
                 ),
             }
 
-            # 度分布
+            # Degree distribution
             degrees = [G.degree(node) for node in G.nodes()]
             results["degree_distribution"] = {
                 "degrees": degrees,
@@ -773,7 +785,7 @@ class GraphTheoryCalculator:
                 "degree_histogram": np.histogram(degrees, bins=10)[0].tolist(),
             }
 
-            # 路径相关属性
+            # Path-related properties
             if nx.is_connected(G) or (G.is_directed() and nx.is_strongly_connected(G)):
                 try:
                     results["path_properties"] = {
@@ -786,24 +798,26 @@ class GraphTheoryCalculator:
                         "periphery": list(nx.periphery(G)),
                     }
                 except:
-                    results["path_properties"] = "无法计算（图不连通或计算失败）"
+                    results["path_properties"] = (
+                        "Unable to calculate (graph is disconnected or calculation failed)"
+                    )
 
-            # 聚类系数
+            # Clustering coefficient
             results["clustering"] = {
                 "average_clustering": nx.average_clustering(G),
                 "clustering_coefficients": nx.clustering(G),
                 "transitivity": nx.transitivity(G),
             }
 
-            # 同配性
+            # Assortativity
             try:
                 results["assortativity"] = {
                     "degree_assortativity": nx.degree_assortativity_coefficient(G)
                 }
             except:
-                results["assortativity"] = "无法计算同配性"
+                results["assortativity"] = "Unable to calculate assortativity"
 
-            # 图的其他特性
+            # Other graph characteristics
             results["graph_characteristics"] = {
                 "is_tree": nx.is_tree(G),
                 "is_forest": nx.is_forest(G),
@@ -811,18 +825,20 @@ class GraphTheoryCalculator:
                 "is_planar": (
                     nx.is_planar(G)
                     if G.number_of_nodes() <= 100
-                    else "图太大，跳过平面性检测"
+                    else "Graph too large, planar detection skipped"
                 ),
                 "is_eulerian": nx.is_eulerian(G),
                 "is_semiconnected": (
-                    nx.is_semiconnected(G) if G.is_directed() else "仅适用于有向图"
+                    nx.is_semiconnected(G)
+                    if G.is_directed()
+                    else "Applicable only for directed graphs"
                 ),
             }
 
             return results
 
         except Exception as e:
-            return {"error": f"图属性分析出错: {str(e)}"}
+            return {"error": f"Graph properties analysis error: {str(e)}"}
 
     def _visualize_graph(
         self,
@@ -835,11 +851,11 @@ class GraphTheoryCalculator:
         show_labels: bool = True,
         figsize: Tuple[float, float] = (10, 8),
     ) -> Dict[str, Any]:
-        """图可视化"""
+        """Graph visualization"""
         try:
             plt.figure(figsize=figsize)
 
-            # 选择布局
+            # Select layout
             if layout == "spring":
                 pos = nx.spring_layout(G, k=1, iterations=50)
             elif layout == "circular":
@@ -855,7 +871,7 @@ class GraphTheoryCalculator:
             else:
                 pos = nx.spring_layout(G)
 
-            # 设置默认颜色和大小
+            # Set default colors and size
             if node_colors is None:
                 node_colors = ["lightblue"] * G.number_of_nodes()
             if node_sizes is None:
@@ -863,7 +879,7 @@ class GraphTheoryCalculator:
             if edge_colors is None:
                 edge_colors = ["gray"] * G.number_of_edges()
 
-            # 绘制图
+            # Draw graph
             nx.draw_networkx_nodes(
                 G, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8
             )
@@ -872,16 +888,16 @@ class GraphTheoryCalculator:
             if show_labels:
                 nx.draw_networkx_labels(G, pos, font_size=10, font_weight="bold")
 
-            # 如果是加权图，显示边权重
+            # Show edge weights if weighted
             if nx.is_weighted(G):
                 edge_labels = nx.get_edge_attributes(G, "weight")
                 nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=8)
 
-            plt.title(f"图可视化 (布局: {layout})", fontsize=14)
+            plt.title(f"Graph Visualization (layout: {layout})", fontsize=14)
             plt.axis("off")
             plt.tight_layout()
 
-            # 保存图像
+            # Save image
             if filename is None:
                 filename = "graph_visualization"
 
@@ -906,20 +922,24 @@ class GraphTheoryCalculator:
             }
 
         except Exception as e:
-            return {"error": f"图可视化出错: {str(e)}"}
+            return {"error": f"Graph visualization error: {str(e)}"}
 
     def _minimum_spanning_tree(
         self, G, algorithm: str = "kruskal", weight_attribute: str = "weight"
     ) -> Dict[str, Any]:
-        """最小生成树"""
+        """Minimum spanning tree"""
         try:
             if G.is_directed():
-                return {"error": "最小生成树仅适用于无向图"}
+                return {
+                    "error": "Minimum spanning tree is only applicable to undirected graphs"
+                }
 
             if not nx.is_connected(G):
-                return {"error": "图不连通，无法构建生成树"}
+                return {
+                    "error": "Graph is not connected, cannot construct spanning tree"
+                }
 
-            # 计算最小生成树
+            # Calculate minimum spanning tree
             if algorithm == "kruskal":
                 mst = nx.minimum_spanning_tree(
                     G, weight=weight_attribute, algorithm="kruskal"
@@ -931,7 +951,7 @@ class GraphTheoryCalculator:
             else:
                 mst = nx.minimum_spanning_tree(G, weight=weight_attribute)
 
-            # 计算总权重
+            # Calculate total weight
             total_weight = sum(
                 mst[u][v].get(weight_attribute, 1) for u, v in mst.edges()
             )
@@ -947,10 +967,10 @@ class GraphTheoryCalculator:
             }
 
         except Exception as e:
-            return {"error": f"最小生成树计算出错: {str(e)}"}
+            return {"error": f"Minimum spanning tree calculation error: {str(e)}"}
 
     def _graph_coloring(self, G, algorithm: str = "greedy") -> Dict[str, Any]:
-        """图着色"""
+        """Graph coloring"""
         try:
             if algorithm == "greedy":
                 coloring = nx.greedy_color(G, strategy="largest_first")
@@ -961,7 +981,7 @@ class GraphTheoryCalculator:
             else:
                 coloring = nx.greedy_color(G)
 
-            # 分析着色结果
+            # Analyze coloring result
             num_colors = max(coloring.values()) + 1
             color_classes = {}
             for node, color in coloring.items():
@@ -978,26 +998,26 @@ class GraphTheoryCalculator:
             }
 
         except Exception as e:
-            return {"error": f"图着色出错: {str(e)}"}
+            return {"error": f"Graph coloring error: {str(e)}"}
 
     def _verify_proper_coloring(self, G, coloring) -> bool:
-        """验证是否为合法着色"""
+        """Verify whether coloring is proper"""
         for u, v in G.edges():
             if coloring[u] == coloring[v]:
                 return False
         return True
 
     def _clique_analysis(self, G, k_value: Optional[int] = None) -> Dict[str, Any]:
-        """团分析"""
+        """Clique analysis"""
         try:
             results = {}
 
-            # 寻找所有最大团
+            # Find all maximal cliques
             max_cliques = list(nx.find_cliques(G))
             results["max_cliques"] = [list(clique) for clique in max_cliques]
             results["max_clique_count"] = len(max_cliques)
 
-            # 最大团的大小
+            # Maximum clique size
             if max_cliques:
                 clique_sizes = [len(clique) for clique in max_cliques]
                 results["largest_clique_size"] = max(clique_sizes)
@@ -1008,10 +1028,10 @@ class GraphTheoryCalculator:
                     "min_size": min(clique_sizes),
                 }
 
-            # 团数（最大团的大小）
+            # Clique number (size of the largest clique)
             results["clique_number"] = nx.graph_clique_number(G)
 
-            # 如果指定了k值，寻找k-团
+            # If k is specified, find k-cliques
             if k_value:
                 k_cliques = [clique for clique in max_cliques if len(clique) >= k_value]
                 results[f"k_cliques_{k_value}"] = {
@@ -1022,12 +1042,12 @@ class GraphTheoryCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"团分析出错: {str(e)}"}
+            return {"error": f"Clique analysis error: {str(e)}"}
 
     def _community_detection(
         self, G, algorithm: str = "auto", threshold: Optional[float] = None
     ) -> Dict[str, Any]:
-        """社区检测"""
+        """Community detection"""
         try:
             results = {"algorithm": algorithm}
 
@@ -1042,7 +1062,7 @@ class GraphTheoryCalculator:
 
                     modularity = community_louvain.modularity(partition, G)
 
-                    # 组织社区结果
+                    # Organize communities
                     communities = {}
                     for node, comm_id in partition.items():
                         if comm_id not in communities:
@@ -1059,9 +1079,10 @@ class GraphTheoryCalculator:
                     )
 
                 except ImportError:
-                    results["error"] = "需要安装python-louvain包进行Louvain社区检测"
+                    results["error"] = (
+                        "python-louvain package is required for Louvain community detection"
+                    )
                 except AttributeError:
-                    # 模块存在但缺少函数，降级使用NetworkX的greedy_modularity_communities
                     comms = list(nx.community.greedy_modularity_communities(G))
                     communities = {i: list(c) for i, c in enumerate(comms)}
                     results.update(
@@ -1095,9 +1116,11 @@ class GraphTheoryCalculator:
                 )
 
             else:
-                return {"error": f"不支持的社区检测算法: {algorithm}"}
+                return {
+                    "error": f"Unsupported community detection algorithm: {algorithm}"
+                }
 
-            # 社区统计
+            # Community statistics
             if "communities" in results:
                 community_sizes = [
                     len(comm) for comm in results["communities"].values()
@@ -1112,7 +1135,7 @@ class GraphTheoryCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"社区检测出错: {str(e)}"}
+            return {"error": f"Community detection error: {str(e)}"}
 
     def _generate_special_graphs(
         self,
@@ -1121,52 +1144,48 @@ class GraphTheoryCalculator:
         p: Optional[float] = None,
         k_value: Optional[int] = None,
     ) -> Dict[str, Any]:
-        """生成特殊图"""
+        """Generate special graphs"""
         try:
             if n is None:
                 n = 10
 
             if graph_type == "complete":
                 G = nx.complete_graph(n)
-                description = f"完全图 K_{n}"
+                description = f"Complete graph K_{n}"
             elif graph_type == "cycle":
                 G = nx.cycle_graph(n)
-                description = f"环图 C_{n}"
+                description = f"Cycle graph C_{n}"
             elif graph_type == "path":
                 G = nx.path_graph(n)
-                description = f"路径图 P_{n}"
+                description = f"Path graph P_{n}"
             elif graph_type == "star":
                 G = nx.star_graph(n - 1)
-                description = f"星图 S_{n-1}"
+                description = f"Star graph S_{n-1}"
             elif graph_type == "wheel":
                 G = nx.wheel_graph(n)
-                description = f"轮图 W_{n}"
+                description = f"Wheel graph W_{n}"
             elif graph_type == "random":
                 if p is None:
                     p = 0.5
                 G = nx.erdos_renyi_graph(n, p)
-                description = f"随机图 G({n}, {p})"
+                description = f"Random graph G({n}, {p})"
             elif graph_type == "barabasi_albert":
-                # ``k_value`` is interpreted as the ``m`` parameter in the BA model: the number
-                # of edges a new node attaches to existing nodes. Fall back to a reasonable
-                # default when it is not provided.
                 if n is None:
-                    n = 10  # sensible default when user does not specify a node count
+                    n = 10
                 m = k_value if k_value is not None else (min(3, n - 1) if n > 3 else 1)
                 G = nx.barabasi_albert_graph(n, m)
-                description = f"BA无标度网络 ({n}个节点)"
+                description = f"BA scale-free network ({n} nodes)"
             elif graph_type == "watts_strogatz":
-                # For the WS model, ``k_value`` specifies the nearest-neighbor degree ``k``.
                 if n is None:
                     n = 10
                 k = k_value if k_value is not None else (min(4, n - 1) if n > 4 else 2)
                 p_ws = p if p else 0.3
                 G = nx.watts_strogatz_graph(n, k, p_ws)
-                description = f"WS小世界网络 ({n}个节点)"
+                description = f"WS small world network ({n} nodes)"
             else:
-                return {"error": f"不支持的图类型: {graph_type}"}
+                return {"error": f"Unsupported graph type: {graph_type}"}
 
-            # 分析生成的图
+            # Analyze generated graph
             properties = self._graph_properties_analysis(G)
 
             return {
@@ -1178,4 +1197,4 @@ class GraphTheoryCalculator:
             }
 
         except Exception as e:
-            return {"error": f"特殊图生成出错: {str(e)}"}
+            return {"error": f"Special graph generation error: {str(e)}"}

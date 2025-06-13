@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-矩阵计算模块
-提供完整丰富的矩阵运算功能
+Matrix calculation module
+Provides comprehensive and rich matrix operation functionality
 """
 
 import numpy as np
@@ -9,10 +9,10 @@ from typing import List, Dict, Any, Optional, Union, Tuple
 
 
 class MatrixCalculator:
-    """矩阵计算器类，提供完整的矩阵运算功能"""
+    """Matrix calculator class providing comprehensive matrix operation functionality"""
 
     def __init__(self):
-        """初始化矩阵计算器"""
+        """Initialize matrix calculator"""
         pass
 
     def matrix_calculator_tool(
@@ -25,20 +25,20 @@ class MatrixCalculator:
         property_type: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        综合矩阵计算工具 - 合并所有矩阵相关操作
+        Comprehensive matrix calculation tool - combines all matrix-related operations
 
         Args:
-            operation: 运算类型 ('basic', 'decomposition', 'eigenvalues', 'svd', 'properties', 'power', 'exponential', 'solve')
-            matrix_a: 第一个矩阵
-            matrix_b: 第二个矩阵（某些运算需要）
-            method: 方法类型（用于basic操作：'add', 'subtract', 'multiply', 'transpose', 'determinant', 'inverse'；
-                              用于decomposition：'qr', 'lu'；
-                              用于properties：'rank', 'trace', 'condition_number', 'norm'）
-            power: 矩阵幂次（用于power操作）
-            property_type: 属性类型（向后兼容）
+            operation: Operation type ('basic', 'decomposition', 'eigenvalues', 'svd', 'properties', 'power', 'exponential', 'solve')
+            matrix_a: First matrix
+            matrix_b: Second matrix (required for certain operations)
+            method: Method type (for basic operations: 'add', 'subtract', 'multiply', 'transpose', 'determinant', 'inverse';
+                              for decomposition: 'qr', 'lu';
+                              for properties: 'rank', 'trace', 'condition_number', 'norm')
+            power: Matrix power (for power operations)
+            property_type: Property type (for backward compatibility)
 
         Returns:
-            计算结果
+            Calculation result
         """
         try:
             if operation == "basic" and method:
@@ -53,7 +53,7 @@ class MatrixCalculator:
                 elif method == "lu":
                     return self._lu_decomposition(matrix_a)
                 else:
-                    return {"error": f"不支持的分解方法: {method}"}
+                    return {"error": f"Unsupported decomposition method: {method}"}
             elif operation == "properties":
                 prop_type = method or property_type or "rank"
                 if prop_type == "rank":
@@ -63,17 +63,17 @@ class MatrixCalculator:
                 elif prop_type == "condition_number":
                     return self._matrix_condition_number(matrix_a)
                 elif prop_type == "norm":
-                    # 如果property_type未提供，则默认为'frobenius'
+                    # If property_type is not provided, default to 'frobenius'
                     norm_selection = property_type or "frobenius"
                     return self._matrix_norm(matrix_a, norm_type=norm_selection)
                 else:
-                    return {"error": f"不支持的属性类型: {prop_type}"}
+                    return {"error": f"Unsupported property type: {prop_type}"}
             elif operation == "power" and power is not None:
                 return self._matrix_power(matrix_a, power)
             elif operation == "exponential":
                 return self._matrix_exponential(matrix_a)
             elif operation == "solve" and matrix_b:
-                # matrix_b在这里作为常数向量
+                # matrix_b here serves as the constant vector
                 constants = (
                     [row[0] for row in matrix_b]
                     if isinstance(matrix_b[0], list)
@@ -81,9 +81,11 @@ class MatrixCalculator:
                 )
                 return self._solve_linear_system(matrix_a, constants)
             else:
-                return {"error": f"不支持的操作或缺少必要参数: {operation}"}
+                return {
+                    "error": f"Unsupported operation or missing required parameters: {operation}"
+                }
         except Exception as e:
-            return {"error": f"矩阵计算出错: {str(e)}"}
+            return {"error": f"Matrix calculation error: {str(e)}"}
 
     def _basic_operations(
         self,
@@ -92,24 +94,24 @@ class MatrixCalculator:
         matrix_b: Optional[List[List[float]]] = None,
     ) -> Dict[str, Any]:
         """
-        基础矩阵运算
+        Basic matrix operations
 
         Args:
-            operation: 运算类型 ('add', 'subtract', 'multiply', 'transpose', 'determinant', 'inverse')
-            matrix_a: 第一个矩阵
-            matrix_b: 第二个矩阵（某些运算需要）
+            operation: Operation type ('add', 'subtract', 'multiply', 'transpose', 'determinant', 'inverse')
+            matrix_a: First matrix
+            matrix_b: Second matrix (required for certain operations)
 
         Returns:
-            运算结果
+            Operation result
         """
         try:
-            # 检查矩阵是否为空
+            # Check if matrix is empty
             if not matrix_a or len(matrix_a) == 0 or len(matrix_a[0]) == 0:
-                return {"error": "矩阵不能为空"}
+                return {"error": "Matrix cannot be empty"}
 
-            # 检查矩阵形状是否一致
+            # Check if matrix rows have consistent length
             if not all(len(row) == len(matrix_a[0]) for row in matrix_a):
-                return {"error": "矩阵行长度必须一致"}
+                return {"error": "Matrix row lengths must be consistent"}
 
             A = np.array(matrix_a)
 
@@ -119,64 +121,68 @@ class MatrixCalculator:
 
             elif operation == "determinant":
                 if A.shape[0] != A.shape[1]:
-                    return {"error": "矩阵必须是方阵才能计算行列式"}
+                    return {"error": "Matrix must be square to calculate determinant"}
                 det = np.linalg.det(A)
                 return {"determinant": float(det)}
 
             elif operation == "inverse":
                 if A.shape[0] != A.shape[1]:
-                    return {"error": "矩阵必须是方阵才能求逆"}
+                    return {"error": "Matrix must be square to calculate inverse"}
                 try:
                     inv_A = np.linalg.inv(A)
                     return {"result": inv_A.tolist(), "shape": inv_A.shape}
                 except np.linalg.LinAlgError:
-                    return {"error": "矩阵不可逆"}
+                    return {"error": "Matrix is not invertible"}
 
             elif operation in ["add", "subtract", "multiply"]:
                 if matrix_b is None:
-                    return {"error": f"{operation} 运算需要两个矩阵"}
+                    return {"error": f"{operation} operation requires two matrices"}
 
                 B = np.array(matrix_b)
 
                 if operation == "add":
                     if A.shape != B.shape:
-                        return {"error": "矩阵加法要求两矩阵形状相同"}
+                        return {
+                            "error": "Matrix addition requires matrices of the same shape"
+                        }
                     result = (A + B).tolist()
 
                 elif operation == "subtract":
                     if A.shape != B.shape:
-                        return {"error": "矩阵减法要求两矩阵形状相同"}
+                        return {
+                            "error": "Matrix subtraction requires matrices of the same shape"
+                        }
                     result = (A - B).tolist()
 
                 elif operation == "multiply":
                     if A.shape[1] != B.shape[0]:
                         return {
-                            "error": "矩阵乘法要求第一个矩阵的列数等于第二个矩阵的行数"
+                            "error": "Matrix multiplication requires the number of columns in the first matrix to equal the number of rows in the second matrix"
                         }
                     result = (A @ B).tolist()
 
                 return {"result": result, "shape": np.array(result).shape}
 
             else:
-                return {"error": f"不支持的运算类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
         except Exception as e:
-            return {"error": f"计算出错: {str(e)}"}
+            return {"error": f"Calculation error: {str(e)}"}
 
     def _eigenvalues_eigenvectors(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        计算矩阵的特征值和特征向量
+        Calculate eigenvalues and eigenvectors of a matrix
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            特征值和特征向量
+            Eigenvalues and eigenvectors
         """
         try:
             A = np.array(matrix)
             if A.shape[0] != A.shape[1]:
-                return {"error": "矩阵必须是方阵才能计算特征值"}
+                return {"error": "Matrix must be square to calculate eigenvalues"}
 
             eigenvals, eigenvecs = np.linalg.eig(A)
             return {
@@ -184,53 +190,53 @@ class MatrixCalculator:
                 "eigenvectors": eigenvecs.tolist(),
             }
         except Exception as e:
-            return {"error": f"特征值计算出错: {str(e)}"}
+            return {"error": f"Eigenvalue calculation error: {str(e)}"}
 
     def _singular_value_decomposition(
         self, matrix: List[List[float]]
     ) -> Dict[str, Any]:
         """
-        奇异值分解
+        Singular value decomposition
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            SVD分解结果
+            SVD decomposition result
         """
         try:
             A = np.array(matrix)
             U, s, Vt = np.linalg.svd(A)
             return {"U": U.tolist(), "singular_values": s.tolist(), "Vt": Vt.tolist()}
         except Exception as e:
-            return {"error": f"SVD分解出错: {str(e)}"}
+            return {"error": f"SVD decomposition error: {str(e)}"}
 
     def _qr_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        QR分解
+        QR decomposition
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            QR分解结果
+            QR decomposition result
         """
         try:
             A = np.array(matrix)
             Q, R = np.linalg.qr(A)
             return {"Q": Q.tolist(), "R": R.tolist()}
         except Exception as e:
-            return {"error": f"QR分解出错: {str(e)}"}
+            return {"error": f"QR decomposition error: {str(e)}"}
 
     def _lu_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        LU分解
+        LU decomposition
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            LU分解结果
+            LU decomposition result
         """
         try:
             from scipy.linalg import lu
@@ -239,42 +245,42 @@ class MatrixCalculator:
             P, L, U = lu(A)
             return {"P": P.tolist(), "L": L.tolist(), "U": U.tolist()}
         except Exception as e:
-            return {"error": f"LU分解出错: {str(e)}"}
+            return {"error": f"LU decomposition error: {str(e)}"}
 
     def _matrix_rank(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        计算矩阵的秩
+        Calculate matrix rank
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            矩阵的秩
+            Matrix rank
         """
         try:
             A = np.array(matrix)
             rank = np.linalg.matrix_rank(A)
             return {"rank": int(rank)}
         except Exception as e:
-            return {"error": f"计算矩阵秩出错: {str(e)}"}
+            return {"error": f"Matrix rank calculation error: {str(e)}"}
 
     def _matrix_norm(
         self, matrix: List[List[float]], norm_type: Union[str, int] = "frobenius"
     ) -> Dict[str, Any]:
         """
-        计算矩阵的范数
+        Calculate matrix norm
 
         Args:
-            matrix: 输入矩阵
-            norm_type: 范数类型 ('frobenius', 'nuc', 1, -1, 2, -2)
+            matrix: Input matrix
+            norm_type: Norm type ('frobenius', 'nuc', 1, -1, 2, -2)
 
         Returns:
-            矩阵的范数
+            Matrix norm
         """
         try:
             A = np.array(matrix)
 
-            # 映射用户友好名称到numpy参数
+            # Map user-friendly names to numpy parameters
             norm_map = {
                 "frobenius": "fro",
                 "nuc": "nuc",
@@ -287,111 +293,117 @@ class MatrixCalculator:
             norm = np.linalg.norm(A, ord=ord_param)
             return {"norm": float(norm), "norm_type": str(norm_type)}
         except Exception as e:
-            return {"error": f"计算矩阵范数出错: {str(e)}"}
+            return {"error": f"Matrix norm calculation error: {str(e)}"}
 
     def _matrix_trace(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        计算矩阵的迹
+        Calculate matrix trace
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            矩阵的迹
+            Matrix trace
         """
         try:
             A = np.array(matrix)
             if A.shape[0] != A.shape[1]:
-                return {"error": "矩阵必须是方阵才能计算迹"}
+                return {"error": "Matrix must be square to calculate trace"}
 
             trace_val = np.trace(A)
             return {"trace": float(trace_val)}
         except Exception as e:
-            return {"error": f"计算矩阵迹出错: {str(e)}"}
+            return {"error": f"Matrix trace calculation error: {str(e)}"}
 
     def _matrix_condition_number(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        计算矩阵的条件数
+        Calculate matrix condition number
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            矩阵的条件数
+            Matrix condition number
         """
         try:
             A = np.array(matrix)
             cond_num = np.linalg.cond(A)
             return {"condition_number": float(cond_num)}
         except Exception as e:
-            return {"error": f"计算条件数出错: {str(e)}"}
+            return {"error": f"Condition number calculation error: {str(e)}"}
 
     def _matrix_power(self, matrix: List[List[float]], power: int) -> Dict[str, Any]:
         """
-        计算矩阵的幂
+        Calculate matrix power
 
         Args:
-            matrix: 输入矩阵
-            power: 幂次
+            matrix: Input matrix
+            power: Power exponent
 
         Returns:
-            矩阵的幂
+            Matrix power
         """
         try:
             A = np.array(matrix)
             if A.shape[0] != A.shape[1]:
-                return {"error": "矩阵必须是方阵才能计算幂"}
+                return {"error": "Matrix must be square to calculate power"}
 
             result = np.linalg.matrix_power(A, power)
             return {"result": result.tolist(), "power": power}
         except Exception as e:
-            return {"error": f"计算矩阵幂出错: {str(e)}"}
+            return {"error": f"Matrix power calculation error: {str(e)}"}
 
     def _matrix_exponential(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
-        计算矩阵指数
+        Calculate matrix exponential
 
         Args:
-            matrix: 输入矩阵
+            matrix: Input matrix
 
         Returns:
-            矩阵指数
+            Matrix exponential
         """
         try:
             from scipy.linalg import expm
 
             A = np.array(matrix)
             if A.shape[0] != A.shape[1]:
-                return {"error": "矩阵必须是方阵才能计算矩阵指数"}
+                return {
+                    "error": "Matrix must be square to calculate matrix exponential"
+                }
 
             result = expm(A)
             return {"result": result.tolist()}
         except Exception as e:
-            return {"error": f"计算矩阵指数出错: {str(e)}"}
+            return {"error": f"Matrix exponential calculation error: {str(e)}"}
 
     def _solve_linear_system(
         self, coefficients: List[List[float]], constants: List[float]
     ) -> Dict[str, Any]:
         """
-        求解线性方程组 Ax = b
+        Solve linear system Ax = b
 
         Args:
-            coefficients: 系数矩阵A
-            constants: 常数向量b
+            coefficients: Coefficient matrix A
+            constants: Constant vector b
 
         Returns:
-            方程组的解
+            Solution to the system of equations
         """
         try:
             A = np.array(coefficients)
             b = np.array(constants)
 
             if A.shape[0] != len(constants):
-                return {"error": "系数矩阵的行数必须等于常数向量的长度"}
+                return {
+                    "error": "Number of rows in coefficient matrix must equal length of constant vector"
+                }
 
             solution = np.linalg.solve(A, b)
             return {"solution": solution.tolist()}
         except np.linalg.LinAlgError:
-            return {"error": "线性方程组无解或有无穷多解"}
+            return {
+                "error": "Linear system has no solution or has infinitely many solutions"
+            }
         except Exception as e:
-            return {"error": f"求解线性方程组出错: {str(e)}"}
+            return {"error": f"Linear system solving error: {str(e)}"}

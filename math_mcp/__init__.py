@@ -4,7 +4,7 @@ Math MCP Server Package
 Provides powerful math calculation tools, including basic numerical calculation, matrix calculation, statistical analysis, calculus, etc.
 """
 
-__version__ = "1.2.0"
+__version__ = "1.3.3"
 __author__ = "111-test-111"
 
 # Export main modules

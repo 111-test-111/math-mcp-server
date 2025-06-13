@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-统计绘图模块
-提供完整丰富的统计图表绘制功能，直接保存图片文件到指定路径
+Statistical Plotting Module
+Provides comprehensive statistical chart plotting functionality, saving images directly to a specified path
 """
 
 import matplotlib.pyplot as plt
@@ -18,33 +18,35 @@ except ImportError:
 
 
 def setup_font():
-    """设置语言性字体支持"""
+    """Set up language-specific font support"""
 
-    # 读取环境变量FONT_PATH
+    # Read environment variable FONT_PATH
     font_path = os.getenv("FONT_PATH")
     if font_path and os.path.exists(font_path):
-        # 添加字体到管理器，确保可用
+        # Add font to the manager to ensure availability
         fm.fontManager.addfont(font_path)
         prop = fm.FontProperties(fname=font_path)
         plt.rcParams["font.sans-serif"] = [prop.get_name()]
         plt.rcParams["axes.unicode_minus"] = False
     else:
-        # 使用系统默认中文字体
-        plt.rcParams["font.sans-serif"] = ["SimHei"]  # 用来正常显示中文标签
-        plt.rcParams["axes.unicode_minus"] = False  # 用来正常显示负号
+        # Use default system Chinese font
+        plt.rcParams["font.sans-serif"] = [
+            "SimHei"
+        ]  # For proper display of Chinese labels
+        plt.rcParams["axes.unicode_minus"] = False  # For correct display of minus sign
 
 
-# 初始化字体设置
+# Initialize font settings
 setup_font()
 
 
 class PlottingCalculator:
-    """统计绘图计算器类，提供完整的统计图表绘制功能"""
+    """Statistical plotting calculator providing complete chart plotting capability"""
 
     def __init__(self):
-        """初始化绘图计算器"""
+        """Initialize the plotting calculator"""
 
-        # 设置默认样式
+        # Set default style
         sns.set_style("whitegrid")
         setup_font()
         self.default_figsize = (10, 6)
@@ -61,9 +63,9 @@ class PlottingCalculator:
         series_labels: Optional[List[str]] = None,
         matrix_data: Optional[List[List[float]]] = None,
         labels: Optional[List[str]] = None,
-        title: str = "统计图表",
-        xlabel: str = "X轴",
-        ylabel: str = "Y轴",
+        title: str = "Statistical Chart",
+        xlabel: str = "X Axis",
+        ylabel: str = "Y Axis",
         filename: Optional[str] = None,
         format: str = "png",
         colors: Optional[List[str]] = None,
@@ -82,42 +84,42 @@ class PlottingCalculator:
         **kwargs,
     ) -> Dict[str, Any]:
         """
-        综合统计绘图工具 - 支持多种统计图表类型
+        Comprehensive statistical plotting tool - supports multiple chart types
 
         Args:
-            chart_type: 图表类型 ('bar', 'pie', 'line', 'scatter', 'histogram', 'box', 'heatmap', 'correlation_matrix', 'multi_series_line')
-            data: 单组数据（用于柱状图、饼图、直方图、箱线图）
-            x_data: X轴数据（用于线图、散点图、多系列线图）
-            y_data: Y轴数据（用于线图、散点图）
-            y_data_series: 多系列Y轴数据（用于多系列线图）
-            series_labels: 多系列图的标签
-            matrix_data: 矩阵数据（用于热力图、多组箱线图、相关性矩阵）
-            labels: 数据标签
-            title: 图表标题
-            xlabel: X轴标签
-            ylabel: Y轴标签
-            filename: 保存图表的文件名（可选）
-            format: 图表保存的格式（png, jpg, svg等）
-            colors: 颜色列表
-            figsize: 图片大小 (width, height)
-            dpi: 图片分辨率
-            style: 图表样式
-            show_values: 是否显示数值（柱状图）
-            horizontal: 是否为水平图表（柱状图）
-            trend_line: 是否显示趋势线（散点图）
-            trend_line_color: 趋势线颜色
-            trend_line_equation: 趋势线方程
-            bins: 直方图分箱数量
-            annotate: 是否显示标注（热力图）
-            colormap: 颜色映射（热力图）
-            grid: 是否显示网格
-            **kwargs: 其他图表参数
+            chart_type: Chart type ('bar', 'pie', 'line', 'scatter', 'histogram', 'box', 'heatmap', 'correlation_matrix', 'multi_series_line')
+            data: Single data group (used for bar, pie, histogram, box plot)
+            x_data: X-axis data (used for line, scatter, multi-series line)
+            y_data: Y-axis data (used for line, scatter)
+            y_data_series: Multi-series Y data (for multi-series lines)
+            series_labels: Labels for multi-series charts
+            matrix_data: Matrix data (for heatmap, grouped boxplot, correlation matrix)
+            labels: Data labels
+            title: Chart title
+            xlabel: X-axis label
+            ylabel: Y-axis label
+            filename: Output chart filename (optional)
+            format: Chart output format (png, jpg, svg etc.)
+            colors: Color list
+            figsize: Figure size (width, height)
+            dpi: Figure resolution
+            style: Chart style
+            show_values: Whether to display values (bar chart)
+            horizontal: Horizontal chart (bar chart)
+            trend_line: Show trend line (scatter)
+            trend_line_color: Trend line color
+            trend_line_equation: Trend line equation
+            bins: Bins for histogram
+            annotate: Show annotation (heatmap)
+            colormap: Colormap (heatmap)
+            grid: Show grid
+            **kwargs: Other chart parameters
 
         Returns:
-            包含图片保存信息的结果字典
+            Result dictionary containing image save information
         """
         try:
-            # 设置默认图片大小
+            # Set default figure size
             actual_figsize = figsize
             if actual_figsize is None:
                 if chart_type == "pie":
@@ -127,7 +129,7 @@ class PlottingCalculator:
                 else:
                     actual_figsize = (10, 6)
 
-            # 基础通用参数
+            # Basic universal parameters
             base_kwargs = {
                 "figsize": actual_figsize,
                 "dpi": dpi,
@@ -189,7 +191,7 @@ class PlottingCalculator:
                 elif matrix_data:
                     return self._box_plot(matrix_data, title, **base_kwargs)
                 else:
-                    return {"error": "箱线图需要提供data或matrix_data参数"}
+                    return {"error": "Box plot requires data or matrix_data parameter"}
 
             elif chart_type == "heatmap" and matrix_data:
                 heatmap_kwargs = {
@@ -231,15 +233,17 @@ class PlottingCalculator:
                 )
 
             else:
-                return {"error": f"不支持的图表类型: {chart_type} 或缺少必要的数据参数"}
+                return {
+                    "error": f"Unsupported chart type: {chart_type} or missing required data parameter"
+                }
 
         except Exception as e:
-            return {"error": f"统计绘图出错: {str(e)}"}
+            return {"error": f"Statistical plotting error: {str(e)}"}
 
     def _prepare_figure(
         self, figsize: Tuple[float, float], dpi: int, style: str
     ) -> plt.Figure:
-        """准备图形对象"""
+        """Prepare figure object"""
         if style:
             sns.set_style(style)
             setup_font()
@@ -252,30 +256,30 @@ class PlottingCalculator:
         format: str = "png",
         custom_filename: Optional[str] = None,
     ) -> Optional[str]:
-        """将图形保存到文件
+        """Save figure to file
 
         Args:
-            fig: Matplotlib图形对象
-            format: 图像格式（png, jpg, svg等）
-            custom_filename: 自定义文件名（可选，如不提供则生成默认文件名）
+            fig: Matplotlib figure object
+            format: Image format (png, jpg, svg etc.)
+            custom_filename: Custom filename (optional, if not provided use default)
 
         Returns:
-            str: 文件路径（保存成功时）或 None（保存失败时）
+            str: File path (on success) or None (on failure)
         """
         try:
-            # 如果没有提供自定义文件名，生成默认文件名
+            # If no custom filename is given, generate a default one
             if custom_filename is None:
                 from datetime import datetime
 
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 custom_filename = f"chart_{timestamp}"
 
-            # 使用工具函数生成唯一文件名
+            # Use utility function to generate a unique filename
             file_path, filename = generate_unique_filename(
                 "chart", format, custom_filename
             )
 
-            # 保存图像到文件
+            # Save image to file
             try:
                 fig.savefig(
                     file_path,
@@ -286,16 +290,16 @@ class PlottingCalculator:
                 )
                 return file_path
             except Exception as e:
-                logging.error(f"保存图像到文件时出错: {str(e)}")
+                logging.error(f"Error saving image to file: {str(e)}")
                 return None
 
         finally:
-            # 确保资源总是被清理
+            # Always clean up resources
             try:
                 plt.close(fig)
             except:
                 pass
-            # 强制垃圾回收
+            # Force garbage collection
             import gc
 
             gc.collect()
@@ -312,7 +316,7 @@ class PlottingCalculator:
         grid: bool,
         legend: bool,
     ):
-        """应用通用样式设置"""
+        """Apply common style settings"""
         if title:
             ax.set_title(title, fontsize=title_fontsize, pad=20)
         if xlabel:
@@ -332,10 +336,10 @@ class PlottingCalculator:
         self,
         data: List[float],
         labels: Optional[List[str]] = None,
-        title: str = "柱状图",
+        title: str = "Bar Chart",
         **kwargs,
     ) -> Dict[str, Any]:
-        """绘制柱状图"""
+        """Draw bar chart"""
         try:
             figsize = kwargs.get("figsize", (10, 6))
             dpi = kwargs.get("dpi", 300)
@@ -346,7 +350,7 @@ class PlottingCalculator:
             fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
             if labels is None:
-                labels = [f"类别{i+1}" for i in range(len(data))]
+                labels = [f"Category{i+1}" for i in range(len(data))]
 
             bars = ax.bar(labels, data, color=colors)
             ax.set_title(title, fontsize=16)
@@ -371,24 +375,26 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"柱状图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Bar chart saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"柱状图绘制出错: {str(e)}"}
+            return {"error": f"Bar chart plotting error: {str(e)}"}
 
     def _pie_chart(
         self,
         data: List[float],
         labels: Optional[List[str]] = None,
-        title: str = "饼图",
+        title: str = "Pie Chart",
         **kwargs,
     ) -> Dict[str, Any]:
-        """绘制饼图"""
+        """Draw pie chart"""
         try:
             figsize = kwargs.get("figsize", (8, 8))
             dpi = kwargs.get("dpi", 300)
@@ -399,7 +405,7 @@ class PlottingCalculator:
             fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
             if labels is None:
-                labels = [f"类别{i+1}" for i in range(len(data))]
+                labels = [f"Category{i+1}" for i in range(len(data))]
 
             ax.pie(data, labels=labels, colors=colors, autopct="%1.1f%%", startangle=90)
             ax.set_title(title, fontsize=16)
@@ -413,20 +419,26 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"饼图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Pie chart saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"饼图绘制出错: {str(e)}"}
+            return {"error": f"Pie chart plotting error: {str(e)}"}
 
     def _line_chart(
-        self, x_data: List[float], y_data: List[float], title: str = "线图", **kwargs
+        self,
+        x_data: List[float],
+        y_data: List[float],
+        title: str = "Line Chart",
+        **kwargs,
     ) -> Dict[str, Any]:
-        """绘制线图"""
+        """Draw line chart"""
         try:
             figsize = kwargs.get("figsize", (10, 6))
             dpi = kwargs.get("dpi", 300)
@@ -452,8 +464,8 @@ class PlottingCalculator:
                 alpha=alpha,
             )
             ax.set_title(title, fontsize=16)
-            ax.set_xlabel(kwargs.get("xlabel", "X轴"))
-            ax.set_ylabel(kwargs.get("ylabel", "Y轴"))
+            ax.set_xlabel(kwargs.get("xlabel", "X Axis"))
+            ax.set_ylabel(kwargs.get("ylabel", "Y Axis"))
 
             file_path = self._save_figure(fig, format, filename)
 
@@ -464,20 +476,26 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"线图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Line chart saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"线图绘制出错: {str(e)}"}
+            return {"error": f"Line chart plotting error: {str(e)}"}
 
     def _scatter_plot(
-        self, x_data: List[float], y_data: List[float], title: str = "散点图", **kwargs
+        self,
+        x_data: List[float],
+        y_data: List[float],
+        title: str = "Scatter Plot",
+        **kwargs,
     ) -> Dict[str, Any]:
-        """绘制散点图"""
+        """Draw scatter plot"""
         try:
             figsize = kwargs.get("figsize", (10, 6))
             dpi = kwargs.get("dpi", 300)
@@ -491,10 +509,10 @@ class PlottingCalculator:
 
             ax.scatter(x_data, y_data, color=color, s=marker_size * 10, alpha=alpha)
             ax.set_title(title, fontsize=16)
-            ax.set_xlabel(kwargs.get("xlabel", "X轴"))
-            ax.set_ylabel(kwargs.get("ylabel", "Y轴"))
+            ax.set_xlabel(kwargs.get("xlabel", "X Axis"))
+            ax.set_ylabel(kwargs.get("ylabel", "Y Axis"))
 
-            # 添加趋势线（如果指定）
+            # Add trend line if specified
             if kwargs.get("trend_line", False):
                 try:
                     import numpy as np
@@ -510,7 +528,7 @@ class PlottingCalculator:
                         x_data, trend_y, color=trend_color, linestyle="--", linewidth=2
                     )
 
-                    # 添加方程（如果提供）
+                    # Add equation if provided
                     if kwargs.get("trend_line_equation"):
                         ax.text(
                             0.05,
@@ -522,7 +540,7 @@ class PlottingCalculator:
                             bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
                         )
                 except Exception as e:
-                    print(f"趋势线绘制失败: {str(e)}")
+                    print(f"Trend line plotting failed: {str(e)}")
 
             file_path = self._save_figure(fig, format, filename)
 
@@ -533,20 +551,22 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"散点图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Scatter plot saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"散点图绘制出错: {str(e)}"}
+            return {"error": f"Scatter plot plotting error: {str(e)}"}
 
     def _histogram(
-        self, data: List[float], title: str = "直方图", **kwargs
+        self, data: List[float], title: str = "Histogram", **kwargs
     ) -> Dict[str, Any]:
-        """绘制直方图"""
+        """Draw histogram"""
         try:
             figsize = kwargs.get("figsize", (10, 6))
             dpi = kwargs.get("dpi", 300)
@@ -559,8 +579,8 @@ class PlottingCalculator:
 
             n, bins_edges, patches = ax.hist(data, bins=bins, color=color, alpha=0.7)
             ax.set_title(title, fontsize=16)
-            ax.set_xlabel(kwargs.get("xlabel", "数值"))
-            ax.set_ylabel(kwargs.get("ylabel", "频次"))
+            ax.set_xlabel(kwargs.get("xlabel", "Value"))
+            ax.set_ylabel(kwargs.get("ylabel", "Frequency"))
 
             file_path = self._save_figure(fig, format, filename)
 
@@ -571,23 +591,25 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"直方图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Histogram saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"直方图绘制出错: {str(e)}"}
+            return {"error": f"Histogram plotting error: {str(e)}"}
 
     def _box_plot(
         self,
         data: Union[List[float], List[List[float]]],
-        title: str = "箱线图",
+        title: str = "Box Plot",
         **kwargs,
     ) -> Dict[str, Any]:
-        """绘制箱线图"""
+        """Draw box plot"""
         try:
             figsize = kwargs.get("figsize", (10, 6))
             dpi = kwargs.get("dpi", 300)
@@ -597,17 +619,17 @@ class PlottingCalculator:
             fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
             if isinstance(data[0], list):
-                # 多组数据
+                # Multiple groups
                 ax.boxplot(data)
                 ax.set_title(title, fontsize=16)
-                ax.set_xlabel(kwargs.get("xlabel", "组别"))
-                ax.set_ylabel(kwargs.get("ylabel", "数值"))
+                ax.set_xlabel(kwargs.get("xlabel", "Group"))
+                ax.set_ylabel(kwargs.get("ylabel", "Value"))
                 data_summary = {"groups": len(data)}
             else:
-                # 单组数据
+                # Single group
                 ax.boxplot(data)
                 ax.set_title(title, fontsize=16)
-                ax.set_ylabel(kwargs.get("ylabel", "数值"))
+                ax.set_ylabel(kwargs.get("ylabel", "Value"))
                 data_summary = {"values": len(data)}
 
             file_path = self._save_figure(fig, format, filename)
@@ -619,20 +641,22 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"箱线图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Box plot saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"箱线图绘制出错: {str(e)}"}
+            return {"error": f"Box plot plotting error: {str(e)}"}
 
     def _heatmap(
-        self, data: List[List[float]], title: str = "热力图", **kwargs
+        self, data: List[List[float]], title: str = "Heatmap", **kwargs
     ) -> Dict[str, Any]:
-        """绘制热力图"""
+        """Draw heatmap"""
         try:
             figsize = kwargs.get("figsize", (10, 8))
             dpi = kwargs.get("dpi", 300)
@@ -648,10 +672,10 @@ class PlottingCalculator:
             data_array = np.array(data)
             im = ax.imshow(data_array, cmap=colormap, aspect="auto")
 
-            # 添加颜色条
+            # Add colorbar
             plt.colorbar(im, ax=ax)
 
-            # 添加数值标注
+            # Add value annotations
             if annotate:
                 for i in range(data_array.shape[0]):
                     for j in range(data_array.shape[1]):
@@ -679,26 +703,28 @@ class PlottingCalculator:
 
             if file_path:
                 result["file_path"] = file_path
-                result["message"] = f"热力图已保存到文件: {os.path.basename(file_path)}"
+                result["message"] = (
+                    f"Heatmap saved to file: {os.path.basename(file_path)}"
+                )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
         except Exception as e:
-            return {"error": f"热力图绘制出错: {str(e)}"}
+            return {"error": f"Heatmap plotting error: {str(e)}"}
 
     def _correlation_matrix(
         self,
         data: List[List[float]],
         labels: Optional[List[str]] = None,
-        title: str = "相关性矩阵",
+        title: str = "Correlation Matrix",
         **kwargs,
     ) -> Dict[str, Any]:
-        """绘制相关性矩阵热力图"""
+        """Draw correlation matrix heatmap"""
         try:
-            # 统一参数获取
+            # Unified parameter retrieval
             figsize = kwargs.get("figsize", (10, 8))
             dpi = kwargs.get("dpi", 300)
             title_fontsize = kwargs.get("title_fontsize", 16)
@@ -713,33 +739,33 @@ class PlottingCalculator:
             import pandas as pd
             import numpy as np
 
-            # 转换为DataFrame便于计算相关性
+            # Convert to DataFrame for easier correlation computation
             if labels is None:
-                labels = [f"变量{i+1}" for i in range(len(data[0]))]
+                labels = [f"Variable{i+1}" for i in range(len(data[0]))]
 
             df = pd.DataFrame(data, columns=labels)
             correlation_matrix = df.corr()
 
-            # 创建图形
+            # Create figure
             fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
-            # 绘制热力图
+            # Draw heatmap
             im = ax.imshow(
                 correlation_matrix.values, cmap=colormap, vmin=-1, vmax=1, aspect="auto"
             )
 
-            # 设置刻度和标签
+            # Set ticks and labels
             ax.set_xticks(range(len(labels)))
             ax.set_yticks(range(len(labels)))
             ax.set_xticklabels(labels, fontsize=tick_fontsize)
             ax.set_yticklabels(labels, fontsize=tick_fontsize)
 
-            # 旋转x轴标签
+            # Rotate x axis labels
             plt.setp(
                 ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor"
             )
 
-            # 添加数值标注
+            # Add value annotations
             if annotate:
                 for i in range(len(labels)):
                     for j in range(len(labels)):
@@ -755,17 +781,17 @@ class PlottingCalculator:
                             fontsize=10,
                         )
 
-            # 添加颜色条
+            # Add colorbar
             cbar = plt.colorbar(im, ax=ax)
-            cbar.set_label("相关系数", fontsize=label_fontsize)
+            cbar.set_label("Correlation Coefficient", fontsize=label_fontsize)
 
-            # 设置标题
+            # Set title
             ax.set_title(title, fontsize=title_fontsize, pad=20)
 
-            # 调整布局
+            # Adjust layout
             plt.tight_layout()
 
-            # 保存图像
+            # Save figure
             file_path = self._save_figure(fig, format, filename)
 
             result = {
@@ -783,17 +809,17 @@ class PlottingCalculator:
             if file_path:
                 result["file_path"] = file_path
                 result["message"] = (
-                    f"相关性矩阵已保存到文件: {os.path.basename(file_path)}"
+                    f"Correlation matrix saved to file: {os.path.basename(file_path)}"
                 )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
 
         except Exception as e:
-            return {"error": f"相关性矩阵绘制出错: {str(e)}"}
+            return {"error": f"Correlation matrix plotting error: {str(e)}"}
 
     def _multi_series_line_chart(
         self,
@@ -801,11 +827,11 @@ class PlottingCalculator:
         y_data_series: List[List[float]],
         **kwargs,
     ) -> Dict[str, Any]:
-        """绘制多系列线图"""
+        """Draw multi-series line chart"""
         try:
-            title = kwargs.get("title", "多系列线图")
-            xlabel = kwargs.get("xlabel", "X轴")
-            ylabel = kwargs.get("ylabel", "Y轴")
+            title = kwargs.get("title", "Multi-Series Line Chart")
+            xlabel = kwargs.get("xlabel", "X Axis")
+            ylabel = kwargs.get("ylabel", "Y Axis")
             colors = kwargs.get("colors")
             line_styles = kwargs.get("line_styles")
             markers = kwargs.get("markers")
@@ -821,18 +847,18 @@ class PlottingCalculator:
             filename = kwargs.get("filename")
             format = kwargs.get("format", "png")
 
-            # 设置样式
+            # Set style
             if style:
                 sns.set_style(style)
                 setup_font()
 
-            # 创建图形
+            # Create figure
             fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
-            # 设置默认参数
+            # Set default parameters
             num_series = len(y_data_series)
             if series_labels is None:
-                series_labels = [f"系列{i+1}" for i in range(num_series)]
+                series_labels = [f"Series{i+1}" for i in range(num_series)]
 
             if colors is None:
                 colors = self.default_colors[:num_series]
@@ -843,7 +869,7 @@ class PlottingCalculator:
             if markers is None:
                 markers = ["o", "s", "^", "D", "v"] * (num_series // 5 + 1)
 
-            # 绘制每个系列
+            # Plot each series
             for i, (y_data, label, color, line_style, marker) in enumerate(
                 zip(
                     y_data_series,
@@ -865,7 +891,7 @@ class PlottingCalculator:
                     alpha=0.8,
                 )
 
-            # 应用样式
+            # Apply styling
             self._apply_styling(
                 ax,
                 title,
@@ -878,7 +904,7 @@ class PlottingCalculator:
                 legend,
             )
 
-            # 保存图像
+            # Save figure
             file_path = self._save_figure(fig, format, filename)
 
             result = {
@@ -893,17 +919,17 @@ class PlottingCalculator:
             if file_path:
                 result["file_path"] = file_path
                 result["message"] = (
-                    f"多系列线图已保存到文件: {os.path.basename(file_path)}"
+                    f"Multi-series line chart saved to file: {os.path.basename(file_path)}"
                 )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
 
         except Exception as e:
-            return {"error": f"多系列线图绘制出错: {str(e)}"}
+            return {"error": f"Multi-series line chart plotting error: {str(e)}"}
 
     def plot_function_tool(
         self,
@@ -911,9 +937,9 @@ class PlottingCalculator:
         variable: str = "x",
         x_range: Tuple[float, float] = (-10, 10),
         num_points: int = 1000,
-        title: str = "函数图像",
-        xlabel: str = "X轴",
-        ylabel: str = "Y轴",
+        title: str = "Function Plot",
+        xlabel: str = "X Axis",
+        ylabel: str = "Y Axis",
         filename: Optional[str] = None,
         format: str = "png",
         figsize: Tuple[float, float] = (10, 6),
@@ -931,37 +957,37 @@ class PlottingCalculator:
         marker: str = "",
         marker_size: int = 6,
     ) -> Dict[str, Any]:
-        """绘制函数图像工具"""
+        """Function plotting tool"""
         try:
-            # 导入sympy用于符号计算
+            # Import sympy for symbolic computation
             import sympy as sp
             import numpy as np
             import matplotlib.pyplot as plt
 
-            # --- 改进解析：使用 sympify 支持任意变量与常量 pi/e ---
+            # --- Improved parsing: use sympify to support arbitrary variable and constants pi/e ---
             try:
                 expr_str = function_expression.replace("^", "**")
 
-                # 先用 sympify 解析表达式，提供常量 pi/e
+                # Parse expression using sympify, provide constants pi/e
                 expr = sp.sympify(expr_str, locals={"pi": sp.pi, "e": sp.E})
 
-                # 自动检测/选择变量
+                # Automatically detect/select variable
                 if variable is None:
                     variable = "x"
 
                 free_syms = list(expr.free_symbols)
 
                 if (variable == "x" and sp.Symbol("x") not in free_syms) and free_syms:
-                    # 用户未显式提供 variable 且表达式没有 x，则取第一个自由符号
+                    # User did not explicitly specify variable and expression does not have x, use first free symbol
                     sym_var = free_syms[0]
                     variable = str(sym_var)
                 else:
                     sym_var = sp.Symbol(variable)
 
-                # 转换为可计算函数
+                # Convert to numerical function
                 f = sp.lambdify(sym_var, expr, "numpy")
 
-                # 如果要计算导数
+                # If derivative is needed
                 if derivative_order is not None and derivative_order > 0:
                     derivative_expr = expr
                     for _ in range(derivative_order):
@@ -971,20 +997,20 @@ class PlottingCalculator:
                     df = None
 
             except Exception as e:
-                return {"error": f"函数表达式解析错误: {str(e)}"}
+                return {"error": f"Function expression parsing error: {str(e)}"}
 
-            # 绘制函数图像
+            # Plot function
             fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
-            # 生成x值和对应的y值
+            # Generate x values and corresponding y values
             x = np.linspace(x_range[0], x_range[1], num_points)
             try:
                 y = f(x)
 
-                # 处理无穷大和NaN值
+                # Handle Inf and NaN
                 y = np.where(np.isfinite(y), y, np.nan)
 
-                # 绘制主函数
+                # Plot main function
                 ax.plot(
                     x,
                     y,
@@ -997,10 +1023,10 @@ class PlottingCalculator:
                     label=function_expression,
                 )
 
-                # 如果要绘制导数
+                # If plotting derivative
                 if df is not None:
                     dy = df(x)
-                    # 处理无穷大和NaN值
+                    # Handle Inf and NaN
                     dy = np.where(np.isfinite(dy), dy, np.nan)
                     ax.plot(
                         x,
@@ -1009,14 +1035,14 @@ class PlottingCalculator:
                         linewidth=line_width * 0.8,
                         alpha=alpha * 0.8,
                         linestyle="--",
-                        label=f"{derivative_order}阶导数",
+                        label=f"{derivative_order} Order Derivative",
                     )
 
-                # 如果要显示临界点
+                # If showing critical points
                 if show_critical_points and df is not None:
-                    # 找出导数接近0的点（可能是极值点）
+                    # Find points where derivative is close to zero (potential extrema)
                     dy = df(x)
-                    # 寻找导数符号变化的点
+                    # Find sign changes in the derivative
                     critical_indices = np.where(np.diff(np.signbit(dy)))[0]
 
                     for idx in critical_indices:
@@ -1032,23 +1058,23 @@ class PlottingCalculator:
                         )
 
             except Exception as e:
-                return {"error": f"函数计算错误: {str(e)}"}
+                return {"error": f"Function computation error: {str(e)}"}
 
-            # 设置图表属性
+            # Set plot attributes
             ax.set_title(title, fontsize=16)
             ax.set_xlabel(xlabel, fontsize=12)
             ax.set_ylabel(ylabel, fontsize=12)
 
-            # 显示网格
+            # Show grid
             if grid:
                 ax.grid(alpha=grid_alpha)
 
-            # 在图表上显示方程
+            # Show equation on the plot
             if show_equation:
                 equation_text = f"$f({variable}) = {sp.latex(expr)}$"
                 props = dict(boxstyle="round", facecolor="wheat", alpha=0.4)
 
-                # 设置方程位置
+                # Set equation position
                 if equation_position == "upper right":
                     pos_x, pos_y = 0.95, 0.95
                     ha, va = "right", "top"
@@ -1076,14 +1102,14 @@ class PlottingCalculator:
                     bbox=props,
                 )
 
-            # 添加图例
+            # Add legend
             if df is not None:
                 ax.legend()
 
-            # 保存图像到文件
+            # Save figure to file
             file_path = self._save_figure(fig, format, filename)
 
-            # 准备返回结果
+            # Prepare result
             result = {
                 "function": function_expression,
                 "variable": variable,
@@ -1091,18 +1117,18 @@ class PlottingCalculator:
                 "points": num_points,
             }
 
-            # 添加文件路径信息
+            # Add file path info
             if file_path:
                 result["file_path"] = file_path
                 result["message"] = (
-                    f"函数图像已保存到文件: {os.path.basename(file_path)}"
+                    f"Function plot saved to file: {os.path.basename(file_path)}"
                 )
                 result["success"] = True
             else:
-                result["error"] = "图表保存失败"
+                result["error"] = "Chart saving failed"
                 result["success"] = False
 
             return result
 
         except Exception as e:
-            return {"error": f"函数绘图出错: {str(e)}"}
+            return {"error": f"Function plotting error: {str(e)}"}

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-回归分析模块
-提供完整丰富的回归分析功能
+Regression Analysis Module
+Provides comprehensive and rich regression analysis functionality
 """
 
 import numpy as np
@@ -20,10 +20,10 @@ from typing import List, Dict, Any, Optional, Union, Tuple
 
 
 class RegressionCalculator:
-    """回归分析计算器类，提供完整的回归分析功能"""
+    """Regression analysis calculator class, providing comprehensive regression analysis functionality"""
 
     def __init__(self):
-        """初始化回归分析计算器"""
+        """Initialize regression analysis calculator"""
         pass
 
     def regression_modeler_tool(
@@ -45,24 +45,24 @@ class RegressionCalculator:
         model_params: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        综合回归建模工具
+        Comprehensive regression modeling tool
 
         Args:
-            operation: 操作类型 ('fit', 'residual_analysis', 'model_comparison')
-            x_data: 自变量数据矩阵 (for 'fit')
-            y_data: 因变量数据 (for 'fit')
-            model_type: 模型类型 ('linear', 'polynomial', 'ridge', 'lasso', 'elastic_net', 'logistic')
-            degree: 多项式次数（用于多项式回归）
-            alpha: 正则化参数（用于正则化回归）
-            l1_ratio: L1正则化比例（用于ElasticNet）
-            cv_folds: 交叉验证折数
-            test_size: 测试集比例
-            y_true: 真实值 (for 'residual_analysis')
-            y_pred: 预测值 (for 'residual_analysis')
-            models_results: 模型结果列表 (for 'model_comparison')
+            operation: Operation type ('fit', 'residual_analysis', 'model_comparison')
+            x_data: Independent variable data matrix (for 'fit')
+            y_data: Dependent variable data (for 'fit')
+            model_type: Model type ('linear', 'polynomial', 'ridge', 'lasso', 'elastic_net', 'logistic')
+            degree: Polynomial degree (for polynomial regression)
+            alpha: Regularization parameter (for regularized regression)
+            l1_ratio: L1 regularization ratio (for ElasticNet)
+            cv_folds: Cross-validation folds
+            test_size: Test set ratio
+            y_true: True values (for 'residual_analysis')
+            y_pred: Predicted values (for 'residual_analysis')
+            models_results: Model results list (for 'model_comparison')
 
         Returns:
-            回归建模或分析结果
+            Regression modeling or analysis results
         """
         try:
             if operation == "fit":
@@ -72,7 +72,9 @@ class RegressionCalculator:
                     return self._linear_regression(x_data, y_data)
                 elif model_type == "polynomial":
                     if len(x_data[0]) > 1:
-                        return {"error": "多项式回归只支持单变量输入"}
+                        return {
+                            "error": "Polynomial regression only supports single variable input"
+                        }
                     x_1d = [row[0] for row in x_data]
                     return self._polynomial_regression(x_1d, y_data, degree)
                 elif model_type == "ridge":
@@ -85,7 +87,7 @@ class RegressionCalculator:
                     y_int = [int(y) for y in y_data]
                     return self._logistic_regression(x_data, y_int)
                 else:
-                    return {"error": f"不支持的模型类型: {model_type}"}
+                    return {"error": f"Unsupported model type: {model_type}"}
 
             elif operation == "predict":
                 if x_data is None:
@@ -116,41 +118,41 @@ class RegressionCalculator:
                 return self._model_comparison(models_results)
 
             else:
-                return {"error": f"不支持的操作类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
         except Exception as e:
-            return {"error": f"回归建模出错: {str(e)}"}
+            return {"error": f"Regression modeling error: {str(e)}"}
 
     def _linear_regression(
         self, x_data: List[List[float]], y_data: List[float]
     ) -> Dict[str, Any]:
         """
-        线性回归分析
+        Linear regression analysis
 
         Args:
-            x_data: 自变量数据矩阵
-            y_data: 因变量数据
+            x_data: Independent variable data matrix
+            y_data: Dependent variable data
 
         Returns:
-            线性回归结果
+            Linear regression results
         """
         try:
             X = np.array(x_data)
             y = np.array(y_data)
 
-            # 拟合线性回归模型
+            # Fit linear regression model
             model = LinearRegression()
             model.fit(X, y)
 
-            # 预测
+            # Prediction
             y_pred = model.predict(X)
 
-            # 计算评估指标
+            # Calculate evaluation metrics
             mse = mean_squared_error(y, y_pred)
             rmse = np.sqrt(mse)
             mae = mean_absolute_error(y, y_pred)
             r2 = r2_score(y, y_pred)
 
-            # 调整R²
+            # Adjusted R²
             n = len(y)
             p = X.shape[1]
             adjusted_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)
@@ -173,38 +175,38 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"线性回归分析出错: {str(e)}"}
+            return {"error": f"Linear regression analysis error: {str(e)}"}
 
     def _polynomial_regression(
         self, x_data: List[float], y_data: List[float], degree: int = 2
     ) -> Dict[str, Any]:
         """
-        多项式回归分析
+        Polynomial regression analysis
 
         Args:
-            x_data: 自变量数据（一维）
-            y_data: 因变量数据
-            degree: 多项式次数
+            x_data: Independent variable data (one-dimensional)
+            y_data: Dependent variable data
+            degree: Polynomial degree
 
         Returns:
-            多项式回归结果
+            Polynomial regression results
         """
         try:
             X = np.array(x_data).reshape(-1, 1)
             y = np.array(y_data)
 
-            # 生成多项式特征
+            # Generate polynomial features
             poly = PolynomialFeatures(degree=degree)
             X_poly = poly.fit_transform(X)
 
-            # 拟合多项式回归模型
+            # Fit polynomial regression model
             model = LinearRegression()
             model.fit(X_poly, y)
 
-            # 预测
+            # Prediction
             y_pred = model.predict(X_poly)
 
-            # 计算评估指标
+            # Calculate evaluation metrics
             mse = mean_squared_error(y, y_pred)
             rmse = np.sqrt(mse)
             mae = mean_absolute_error(y, y_pred)
@@ -228,44 +230,44 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"多项式回归分析出错: {str(e)}"}
+            return {"error": f"Polynomial regression analysis error: {str(e)}"}
 
     def _ridge_regression(
         self, x_data: List[List[float]], y_data: List[float], alpha: float = 1.0
     ) -> Dict[str, Any]:
         """
-        岭回归分析
+        Ridge regression analysis
 
         Args:
-            x_data: 自变量数据矩阵
-            y_data: 因变量数据
-            alpha: 正则化参数
+            x_data: Independent variable data matrix
+            y_data: Dependent variable data
+            alpha: Regularization parameter
 
         Returns:
-            岭回归结果
+            Ridge regression results
         """
         try:
             X = np.array(x_data)
             y = np.array(y_data)
 
-            # 标准化特征
+            # Standardize features
             scaler = StandardScaler()
             X_scaled = scaler.fit_transform(X)
 
-            # 拟合岭回归模型
+            # Fit ridge regression model
             model = Ridge(alpha=alpha)
             model.fit(X_scaled, y)
 
-            # 预测
+            # Prediction
             y_pred = model.predict(X_scaled)
 
-            # 计算评估指标
+            # Calculate evaluation metrics
             mse = mean_squared_error(y, y_pred)
             rmse = np.sqrt(mse)
             mae = mean_absolute_error(y, y_pred)
             r2 = r2_score(y, y_pred)
 
-            # 交叉验证评分
+            # Cross-validation score
             cv_scores = cross_val_score(model, X_scaled, y, cv=5, scoring="r2")
 
             return {
@@ -288,48 +290,48 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"岭回归分析出错: {str(e)}"}
+            return {"error": f"Ridge regression analysis error: {str(e)}"}
 
     def _lasso_regression(
         self, x_data: List[List[float]], y_data: List[float], alpha: float = 1.0
     ) -> Dict[str, Any]:
         """
-        Lasso回归分析
+        Lasso regression analysis
 
         Args:
-            x_data: 自变量数据矩阵
-            y_data: 因变量数据
-            alpha: 正则化参数
+            x_data: Independent variable data matrix
+            y_data: Dependent variable data
+            alpha: Regularization parameter
 
         Returns:
-            Lasso回归结果
+            Lasso regression results
         """
         try:
             X = np.array(x_data)
             y = np.array(y_data)
 
-            # 标准化特征
+            # Standardize features
             scaler = StandardScaler()
             X_scaled = scaler.fit_transform(X)
 
-            # 拟合Lasso回归模型
+            # Fit Lasso regression model
             model = Lasso(alpha=alpha, max_iter=2000)
             model.fit(X_scaled, y)
 
-            # 预测
+            # Prediction
             y_pred = model.predict(X_scaled)
 
-            # 计算评估指标
+            # Calculate evaluation metrics
             mse = mean_squared_error(y, y_pred)
             rmse = np.sqrt(mse)
             mae = mean_absolute_error(y, y_pred)
             r2 = r2_score(y, y_pred)
 
-            # 特征选择信息
+            # Feature selection information
             selected_features = np.where(model.coef_ != 0)[0].tolist()
             n_selected = len(selected_features)
 
-            # 交叉验证评分
+            # Cross-validation score
             cv_scores = cross_val_score(model, X_scaled, y, cv=5, scoring="r2")
 
             return {
@@ -357,7 +359,7 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"Lasso回归分析出错: {str(e)}"}
+            return {"error": f"Lasso regression analysis error: {str(e)}"}
 
     def _elastic_net_regression(
         self,
@@ -367,43 +369,43 @@ class RegressionCalculator:
         l1_ratio: float = 0.5,
     ) -> Dict[str, Any]:
         """
-        弹性网络回归分析
+        Elastic net regression analysis
 
         Args:
-            x_data: 自变量数据矩阵
-            y_data: 因变量数据
-            alpha: 正则化强度
-            l1_ratio: L1正则化比例
+            x_data: Independent variable data matrix
+            y_data: Dependent variable data
+            alpha: Regularization strength
+            l1_ratio: L1 regularization ratio
 
         Returns:
-            弹性网络回归结果
+            Elastic net regression results
         """
         try:
             X = np.array(x_data)
             y = np.array(y_data)
 
-            # 标准化特征
+            # Standardize features
             scaler = StandardScaler()
             X_scaled = scaler.fit_transform(X)
 
-            # 拟合弹性网络回归模型
+            # Fit elastic net regression model
             model = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, max_iter=2000)
             model.fit(X_scaled, y)
 
-            # 预测
+            # Prediction
             y_pred = model.predict(X_scaled)
 
-            # 计算评估指标
+            # Calculate evaluation metrics
             mse = mean_squared_error(y, y_pred)
             rmse = np.sqrt(mse)
             mae = mean_absolute_error(y, y_pred)
             r2 = r2_score(y, y_pred)
 
-            # 特征选择信息
+            # Feature selection information
             selected_features = np.where(model.coef_ != 0)[0].tolist()
             n_selected = len(selected_features)
 
-            # 交叉验证评分
+            # Cross-validation score
             cv_scores = cross_val_score(model, X_scaled, y, cv=5, scoring="r2")
 
             return {
@@ -432,46 +434,46 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"弹性网络回归分析出错: {str(e)}"}
+            return {"error": f"Elastic net regression analysis error: {str(e)}"}
 
     def _logistic_regression(
         self, x_data: List[List[float]], y_data: List[int]
     ) -> Dict[str, Any]:
         """
-        逻辑回归分析
+        Logistic regression analysis
 
         Args:
-            x_data: 自变量数据矩阵
-            y_data: 因变量数据（二分类：0或1）
+            x_data: Independent variable data matrix
+            y_data: Dependent variable data (binary classification: 0 or 1)
 
         Returns:
-            逻辑回归结果
+            Logistic regression results
         """
         try:
             X = np.array(x_data)
             y = np.array(y_data)
 
-            # 标准化特征
+            # Standardize features
             scaler = StandardScaler()
             X_scaled = scaler.fit_transform(X)
 
-            # 拟合逻辑回归模型
+            # Fit logistic regression model
             model = LogisticRegression(max_iter=2000)
             model.fit(X_scaled, y)
 
-            # 预测
+            # Prediction
             y_pred = model.predict(X_scaled)
             y_pred_proba = model.predict_proba(X_scaled)[:, 1]
 
-            # 计算评估指标
+            # Calculate evaluation metrics
             accuracy = model.score(X_scaled, y)
 
-            # 混淆矩阵
+            # Confusion matrix
             from sklearn.metrics import confusion_matrix
 
             cm = confusion_matrix(y, y_pred)
 
-            # 精确度、召回率、F1分数
+            # Precision, recall, F1 score
             from sklearn.metrics import precision_score, recall_score, f1_score
 
             precision = precision_score(y, y_pred)
@@ -504,27 +506,27 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"逻辑回归分析出错: {str(e)}"}
+            return {"error": f"Logistic regression analysis error: {str(e)}"}
 
     def _residual_analysis(
         self, y_true: List[float], y_pred: List[float]
     ) -> Dict[str, Any]:
         """
-        残差分析
+        Residual analysis
 
         Args:
-            y_true: 真实值
-            y_pred: 预测值
+            y_true: True values
+            y_pred: Predicted values
 
         Returns:
-            残差分析结果
+            Residual analysis results
         """
         try:
             y_true = np.array(y_true)
             y_pred = np.array(y_pred)
             residuals = y_true - y_pred
 
-            # 残差统计
+            # Residual statistics
             residual_stats = {
                 "mean": float(np.mean(residuals)),
                 "std": float(np.std(residuals)),
@@ -535,15 +537,15 @@ class RegressionCalculator:
                 "q75": float(np.percentile(residuals, 75)),
             }
 
-            # 正态性检验
+            # Normality test
             shapiro_stat, shapiro_p = stats.shapiro(residuals)
 
-            # 异方差性检验（Breusch-Pagan test的简化版本）
-            # 计算残差平方与预测值的相关性
+            # Heteroscedasticity test (simplified version of Breusch-Pagan test)
+            # Calculate correlation between squared residuals and predicted values
             squared_residuals = residuals**2
             correlation_coef = np.corrcoef(squared_residuals, y_pred)[0, 1]
 
-            # 杜宾-沃森统计量（检验自相关性）
+            # Durbin-Watson statistic (test for autocorrelation)
             durbin_watson = np.sum(np.diff(residuals) ** 2) / np.sum(residuals**2)
 
             return {
@@ -573,17 +575,17 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"残差分析出错: {str(e)}"}
+            return {"error": f"Residual analysis error: {str(e)}"}
 
     def _model_comparison(self, models_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        模型比较
+        Model comparison
 
         Args:
-            models_results: 多个模型的结果列表
+            models_results: List of multiple model results
 
         Returns:
-            模型比较结果
+            Model comparison results
         """
         try:
             comparison = []
@@ -604,7 +606,7 @@ class RegressionCalculator:
                         }
                     )
 
-            # 找到最佳模型
+            # Find best model
             best_r2_idx = max(
                 range(len(comparison)),
                 key=lambda i: comparison[i]["r_squared"] or -float("inf"),
@@ -631,7 +633,7 @@ class RegressionCalculator:
             }
 
         except Exception as e:
-            return {"error": f"模型比较出错: {str(e)}"}
+            return {"error": f"Model comparison error: {str(e)}"}
 
     def _predict_with_model(
         self,
@@ -645,33 +647,33 @@ class RegressionCalculator:
         model_params: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        使用已训练模型进行预测
+        Make predictions using trained model
 
         Args:
-            x_data: 需要预测的自变量数据
-            model_type: 模型类型
-            degree: 多项式次数
-            alpha: 正则化参数
-            l1_ratio: L1正则化比例
-            training_x: 训练数据X（如果未提供模型参数）
-            training_y: 训练数据y（如果未提供模型参数）
-            model_params: 预训练模型参数
+            x_data: Independent variable data for prediction
+            model_type: Model type
+            degree: Polynomial degree
+            alpha: Regularization parameter
+            l1_ratio: L1 regularization ratio
+            training_x: Training data X (if model parameters not provided)
+            training_y: Training data y (if model parameters not provided)
+            model_params: Pre-trained model parameters
 
         Returns:
-            预测结果
+            Prediction results
         """
         try:
             X_pred = np.array(x_data)
 
             if model_params is not None:
-                # 使用提供的模型参数进行预测
+                # Use provided model parameters for prediction
                 if model_type == "linear":
                     intercept = model_params.get("intercept", 0)
                     slopes = model_params.get("slopes", [])
 
                     if len(slopes) != X_pred.shape[1]:
                         return {
-                            "error": f"特征数量不匹配：期望{len(slopes)}个特征，得到{X_pred.shape[1]}个"
+                            "error": f"Feature count mismatch: expected {len(slopes)} features, got {X_pred.shape[1]}"
                         }
 
                     predictions = []
@@ -688,9 +690,11 @@ class RegressionCalculator:
                     }
 
                 elif model_type == "polynomial":
-                    # 对于多项式回归，需要重新构建特征
+                    # For polynomial regression, need to reconstruct features
                     if X_pred.shape[1] != 1:
-                        return {"error": "多项式回归只支持单变量输入"}
+                        return {
+                            "error": "Polynomial regression only supports single variable input"
+                        }
 
                     coefficients = model_params.get("coefficients", [])
                     predictions = []
@@ -710,11 +714,13 @@ class RegressionCalculator:
                     }
 
             else:
-                # 如果没有提供模型参数，需要训练数据来重新训练
+                # If no model parameters provided, need training data to retrain
                 if training_x is None or training_y is None:
-                    return {"error": "需要提供model_params或者training_x和training_y"}
+                    return {
+                        "error": "Need to provide model_params or training_x and training_y"
+                    }
 
-                # 重新训练模型并预测
+                # Retrain model and predict
                 if model_type == "linear":
                     X_train = np.array(training_x)
                     y_train = np.array(training_y)
@@ -735,12 +741,14 @@ class RegressionCalculator:
 
                 elif model_type == "polynomial":
                     if X_pred.shape[1] != 1:
-                        return {"error": "多项式回归只支持单变量输入"}
+                        return {
+                            "error": "Polynomial regression only supports single variable input"
+                        }
 
                     X_train = np.array(training_x)
                     y_train = np.array(training_y)
 
-                    # 生成多项式特征
+                    # Generate polynomial features
                     poly = PolynomialFeatures(degree=degree)
                     X_train_poly = poly.fit_transform(X_train)
                     X_pred_poly = poly.transform(X_pred)
@@ -779,7 +787,9 @@ class RegressionCalculator:
                     }
 
                 else:
-                    return {"error": f"预测功能暂不支持模型类型: {model_type}"}
+                    return {
+                        "error": f"Prediction functionality not yet supported for model type: {model_type}"
+                    }
 
         except Exception as e:
-            return {"error": f"预测出错: {str(e)}"}
+            return {"error": f"Prediction error: {str(e)}"}

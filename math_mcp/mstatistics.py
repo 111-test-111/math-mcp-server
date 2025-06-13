@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-统计分析模块
-提供完整丰富的统计分析功能
+Statistical Analysis Module
+Provides comprehensive and rich statistical analysis functionality
 """
 
 import numpy as np
@@ -11,10 +11,10 @@ from typing import List, Dict, Any, Optional, Union, Tuple
 
 
 class StatisticsCalculator:
-    """统计分析计算器类，提供完整的统计分析功能"""
+    """Statistical analysis calculator class, providing comprehensive statistical analysis functionality"""
 
     def __init__(self):
-        """初始化统计分析计算器"""
+        """Initialize statistical analysis calculator"""
         pass
 
     def statistics_analyzer_tool(
@@ -28,22 +28,22 @@ class StatisticsCalculator:
         distribution_type: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        综合统计分析工具 - 合并所有统计相关操作
+        Comprehensive statistical analysis tool - merges all statistics-related operations
 
         Args:
-            data1: 第一组数据
-            analysis_type: 分析类型 ('descriptive', 'tests', 'distribution', 'confidence_interval', 'distribution_fit', 'outlier_detection')
-            data2: 第二组数据（某些分析需要）
-            test_type: 检验类型（'normality', 'hypothesis', 'correlation'）或分布分析类型（'fitting', 'percentiles', 'outliers'）
-            hypothesis_test_type: 假设检验的具体类型 (e.g., 'one_sample_t', 'two_sample_t', 'paired_t')
-            confidence: 置信水平
-            distribution_type: 分布类型（用于分布拟合）
+            data1: First dataset
+            analysis_type: Analysis type ('descriptive', 'tests', 'distribution', 'confidence_interval', 'distribution_fit', 'outlier_detection')
+            data2: Second dataset (required for certain analyses)
+            test_type: Test type ('normality', 'hypothesis', 'correlation') or distribution analysis type ('fitting', 'percentiles', 'outliers')
+            hypothesis_test_type: Specific type of hypothesis test (e.g., 'one_sample_t', 'two_sample_t', 'paired_t')
+            confidence: Confidence level
+            distribution_type: Distribution type (used for distribution fitting)
 
         Returns:
-            统计分析结果
+            Statistical analysis results
         """
         try:
-            # # 向后兼容旧的调用方式
+            # # Backward compatibility for legacy calling methods
             # if analysis_type == "distribution_fit":
             #     return self.distribution_fitting(data1)
             # elif analysis_type == "outlier_detection":
@@ -61,10 +61,10 @@ class StatisticsCalculator:
                     return self._hypothesis_testing(data1, data2, ht_type)
                 elif test_type == "correlation":
                     if data2 is None:
-                        return {"error": "相关性分析需要两组数据"}
+                        return {"error": "Correlation analysis requires two datasets"}
                     return self._correlation_analysis(data1, data2)
                 else:
-                    return {"error": f"不支持的检验类型: {test_type}"}
+                    return {"error": f"Unsupported test type: {test_type}"}
             elif analysis_type == "distribution":
                 if test_type == "fitting":
                     dist_type = distribution_type or "all"
@@ -76,32 +76,34 @@ class StatisticsCalculator:
                 elif test_type == "outliers":
                     return self._outlier_detection(data1)
                 else:
-                    return {"error": f"不支持的分布分析类型: {test_type}"}
+                    return {
+                        "error": f"Unsupported distribution analysis type: {test_type}"
+                    }
             elif analysis_type == "confidence_interval":
                 return self._confidence_interval(data1, confidence)
             else:
-                return {"error": f"不支持的分析类型: {analysis_type}"}
+                return {"error": f"Unsupported analysis type: {analysis_type}"}
         except Exception as e:
-            return {"error": f"统计分析出错: {str(e)}"}
+            return {"error": f"Statistical analysis error: {str(e)}"}
 
     def _descriptive_statistics(self, data: List[float]) -> Dict[str, Any]:
         """
-        描述性统计分析
+        Descriptive statistical analysis
 
         Args:
-            data: 数据列表
+            data: Data list
 
         Returns:
-            描述性统计结果
+            Descriptive statistics results
         """
         try:
-            # 检查数据是否为空
+            # Check if data is empty
             if not data or len(data) == 0:
-                return {"error": "数据列表不能为空"}
+                return {"error": "Data list cannot be empty"}
 
-            # 检查数据是否包含有效数值
+            # Check if data contains valid numeric values
             if not all(isinstance(x, (int, float)) and not np.isnan(x) for x in data):
-                return {"error": "数据列表必须包含有效的数值"}
+                return {"error": "Data list must contain valid numeric values"}
 
             arr = np.array(data)
             return {
@@ -125,33 +127,33 @@ class StatisticsCalculator:
                 ),
             }
         except Exception as e:
-            return {"error": f"描述性统计计算出错: {str(e)}"}
+            return {"error": f"Descriptive statistics calculation error: {str(e)}"}
 
     def _normality_tests(self, data: List[float]) -> Dict[str, Any]:
         """
-        正态性检验
+        Normality tests
 
         Args:
-            data: 数据列表
+            data: Data list
 
         Returns:
-            正态性检验结果
+            Normality test results
         """
         try:
             arr = np.array(data)
 
-            # Shapiro-Wilk检验
+            # Shapiro-Wilk test
             shapiro_stat, shapiro_p = stats.shapiro(arr)
 
-            # Jarque-Bera检验
+            # Jarque-Bera test
             jarque_stat, jarque_p = stats.jarque_bera(arr)
 
-            # Kolmogorov-Smirnov检验
+            # Kolmogorov-Smirnov test
             ks_stat, ks_p = stats.kstest(
                 arr, "norm", args=(np.mean(arr), np.std(arr, ddof=1))
             )
 
-            # Anderson-Darling检验
+            # Anderson-Darling test
             ad_stat, ad_critical, ad_significance = stats.anderson(arr, dist="norm")
 
             return {
@@ -177,17 +179,17 @@ class StatisticsCalculator:
                 },
             }
         except Exception as e:
-            return {"error": f"正态性检验出错: {str(e)}"}
+            return {"error": f"Normality test error: {str(e)}"}
 
     def _distribution_fitting(self, data: List[float]) -> Dict[str, Any]:
         """
-        分布拟合
+        Distribution fitting
 
         Args:
-            data: 数据列表
+            data: Data list
 
         Returns:
-            分布拟合结果
+            Distribution fitting results
         """
         try:
             arr = np.array(data)
@@ -209,9 +211,9 @@ class StatisticsCalculator:
                     params = dist.fit(arr)
                     ks_stat, ks_p = stats.kstest(arr, lambda x: dist.cdf(x, *params))
 
-                    # 计算AIC和BIC
+                    # Calculate AIC and BIC
                     log_likelihood = np.sum(dist.logpdf(arr, *params))
-                    k = len(params)  # 参数个数
+                    k = len(params)  # Number of parameters
                     n = len(arr)
                     aic = 2 * k - 2 * log_likelihood
                     bic = k * np.log(n) - 2 * log_likelihood
@@ -230,7 +232,7 @@ class StatisticsCalculator:
 
             return results
         except Exception as e:
-            return {"error": f"分布拟合出错: {str(e)}"}
+            return {"error": f"Distribution fitting error: {str(e)}"}
 
     def _hypothesis_testing(
         self,
@@ -241,17 +243,17 @@ class StatisticsCalculator:
         alpha: float = 0.05,
     ) -> Dict[str, Any]:
         """
-        假设检验
+        Hypothesis testing
 
         Args:
-            data1: 第一组数据
-            data2: 第二组数据（双样本检验需要）
-            test_type: 检验类型
-            null_hypothesis: 零假设值
-            alpha: 显著性水平
+            data1: First dataset
+            data2: Second dataset (required for two-sample tests)
+            test_type: Test type
+            null_hypothesis: Null hypothesis value
+            alpha: Significance level
 
         Returns:
-            假设检验结果
+            Hypothesis test results
         """
         try:
             arr1 = np.array(data1)
@@ -261,28 +263,28 @@ class StatisticsCalculator:
 
             elif test_type == "two_sample_t":
                 if data2 is None:
-                    return {"error": "双样本t检验需要两组数据"}
+                    return {"error": "Two-sample t-test requires two datasets"}
                 arr2 = np.array(data2)
                 stat, p_value = stats.ttest_ind(arr1, arr2)
 
             elif test_type == "paired_t":
                 if data2 is None:
-                    return {"error": "配对t检验需要两组数据"}
+                    return {"error": "Paired t-test requires two datasets"}
                 arr2 = np.array(data2)
                 stat, p_value = stats.ttest_rel(arr1, arr2)
 
             elif test_type == "wilcoxon":
                 if data2 is None:
-                    return {"error": "Wilcoxon检验需要两组数据"}
+                    return {"error": "Wilcoxon test requires two datasets"}
                 arr2 = np.array(data2)
                 stat, p_value = stats.wilcoxon(arr1, arr2)
 
             elif test_type in ["mann_whitney_u", "mannwhitneyu", "ttest_ind"]:
                 if data2 is None:
-                    return {"error": "Mann-Whitney U 检验需要两组数据"}
+                    return {"error": "Mann-Whitney U test requires two datasets"}
                 arr2 = np.array(data2)
                 if test_type == "ttest_ind":
-                    # 独立样本t检验的别名
+                    # Alias for independent samples t-test
                     stat, p_value = stats.ttest_ind(arr1, arr2)
                 else:
                     stat, p_value = stats.mannwhitneyu(
@@ -291,13 +293,13 @@ class StatisticsCalculator:
 
             elif test_type == "levene":
                 if data2 is None:
-                    return {"error": "Levene检验需要两组数据"}
+                    return {"error": "Levene test requires two datasets"}
                 arr2 = np.array(data2)
                 stat, p_value = stats.levene(arr1, arr2)
 
             elif test_type == "f_test":
                 if data2 is None:
-                    return {"error": "F检验需要两组数据"}
+                    return {"error": "F-test requires two datasets"}
                 arr2 = np.array(data2)
                 stat = np.var(arr1, ddof=1) / np.var(arr2, ddof=1)
                 df1, df2 = len(arr1) - 1, len(arr2) - 1
@@ -306,7 +308,7 @@ class StatisticsCalculator:
                 )
 
             else:
-                return {"error": f"不支持的检验类型: {test_type}"}
+                return {"error": f"Unsupported test type: {test_type}"}
 
             return {
                 "test_type": test_type,
@@ -314,31 +316,35 @@ class StatisticsCalculator:
                 "p_value": float(p_value),
                 "significant": p_value < alpha,
                 "alpha": alpha,
-                "conclusion": "拒绝零假设" if p_value < alpha else "接受零假设",
+                "conclusion": (
+                    "Reject null hypothesis"
+                    if p_value < alpha
+                    else "Accept null hypothesis"
+                ),
             }
         except Exception as e:
-            return {"error": f"假设检验出错: {str(e)}"}
+            return {"error": f"Hypothesis testing error: {str(e)}"}
 
     def _correlation_analysis(
         self, data1: List[float], data2: List[float], method: str = "pearson"
     ) -> Dict[str, Any]:
         """
-        相关性分析
+        Correlation analysis
 
         Args:
-            data1: 第一组数据
-            data2: 第二组数据
-            method: 相关性方法 ('pearson', 'spearman', 'kendall')
+            data1: First dataset
+            data2: Second dataset
+            method: Correlation method ('pearson', 'spearman', 'kendall')
 
         Returns:
-            相关性分析结果
+            Correlation analysis results
         """
         try:
             arr1 = np.array(data1)
             arr2 = np.array(data2)
 
             if len(arr1) != len(arr2):
-                return {"error": "两组数据长度必须相同"}
+                return {"error": "Both datasets must have the same length"}
 
             if method == "pearson":
                 corr, p_value = stats.pearsonr(arr1, arr2)
@@ -347,7 +353,7 @@ class StatisticsCalculator:
             elif method == "kendall":
                 corr, p_value = stats.kendalltau(arr1, arr2)
             else:
-                return {"error": f"不支持的相关性方法: {method}"}
+                return {"error": f"Unsupported correlation method: {method}"}
 
             return {
                 "method": method,
@@ -356,25 +362,27 @@ class StatisticsCalculator:
                 "significant": p_value < 0.05,
             }
         except Exception as e:
-            return {"error": f"相关性分析出错: {str(e)}"}
+            return {"error": f"Correlation analysis error: {str(e)}"}
 
     def _anova_analysis(
         self, groups: List[List[float]], test_type: str = "one_way"
     ) -> Dict[str, Any]:
         """
-        方差分析 (ANOVA)
+        Analysis of Variance (ANOVA)
 
         Args:
-            groups: 数据分组列表
-            test_type: 检验类型 ('one_way')
+            groups: List of data groups
+            test_type: Test type ('one_way')
 
         Returns:
-            ANOVA检验结果
+            ANOVA test results
         """
         try:
             if test_type == "one_way":
                 if len(groups) < 2:
-                    return {"error": "单向ANOVA需要至少两组数据"}
+                    return {
+                        "error": "One-way ANOVA requires at least two groups of data"
+                    }
 
                 f_stat, p_value = stats.f_oneway(*groups)
 
@@ -384,32 +392,32 @@ class StatisticsCalculator:
                     "p_value": float(p_value),
                     "significant": p_value < 0.05,
                     "conclusion": (
-                        "拒绝零假设，组间均值有显著差异"
+                        "Reject null hypothesis, significant differences between group means"
                         if p_value < 0.05
-                        else "不能拒绝零假设，组间均值无显著差异"
+                        else "Cannot reject null hypothesis, no significant differences between group means"
                     ),
                 }
             # two_way ANOVA has been removed due to complex data input requirements.
             # It requires data in a pandas DataFrame format with columns for the value, factor1, and factor2.
             # To re-enable, a more complex data input structure would be needed for this tool.
             else:
-                return {"error": f"不支持的ANOVA检验类型: {test_type}"}
+                return {"error": f"Unsupported ANOVA test type: {test_type}"}
 
         except Exception as e:
-            return {"error": f"ANOVA分析出错: {str(e)}"}
+            return {"error": f"ANOVA analysis error: {str(e)}"}
 
     def _percentiles(
         self, data: List[float], percentiles: List[float] = None
     ) -> Dict[str, Any]:
         """
-        计算分位数
+        Calculate percentiles
 
         Args:
-            data: 数据列表
-            percentiles: 分位数列表（默认[25, 50, 75, 90, 95, 99]）
+            data: Data list
+            percentiles: List of percentiles (default [25, 50, 75, 90, 95, 99])
 
         Returns:
-            分位数结果
+            Percentile results
         """
         try:
             arr = np.array(data)
@@ -422,20 +430,20 @@ class StatisticsCalculator:
 
             return results
         except Exception as e:
-            return {"error": f"分位数计算出错: {str(e)}"}
+            return {"error": f"Percentile calculation error: {str(e)}"}
 
     def _outlier_detection(
         self, data: List[float], method: str = "iqr"
     ) -> Dict[str, Any]:
         """
-        异常值检测
+        Outlier detection
 
         Args:
-            data: 数据列表
-            method: 检测方法 ('iqr', 'z_score', 'modified_z_score')
+            data: Data list
+            method: Detection method ('iqr', 'z_score', 'modified_z_score')
 
         Returns:
-            异常值检测结果
+            Outlier detection results
         """
         try:
             arr = np.array(data)
@@ -481,23 +489,23 @@ class StatisticsCalculator:
                 }
 
             else:
-                return {"error": f"不支持的异常值检测方法: {method}"}
+                return {"error": f"Unsupported outlier detection method: {method}"}
 
         except Exception as e:
-            return {"error": f"异常值检测出错: {str(e)}"}
+            return {"error": f"Outlier detection error: {str(e)}"}
 
     def _confidence_interval(
         self, data: List[float], confidence: float = 0.95
     ) -> Dict[str, Any]:
         """
-        置信区间计算
+        Confidence interval calculation
 
         Args:
-            data: 数据列表
-            confidence: 置信水平
+            data: Data list
+            confidence: Confidence level
 
         Returns:
-            置信区间结果
+            Confidence interval results
         """
         try:
             arr = np.array(data)
@@ -505,7 +513,7 @@ class StatisticsCalculator:
             mean = np.mean(arr)
             std_err = stats.sem(arr)
 
-            # t分布置信区间
+            # t-distribution confidence interval
             t_ci = stats.t.interval(confidence, n - 1, loc=mean, scale=std_err)
 
             return {
@@ -516,4 +524,4 @@ class StatisticsCalculator:
                 "margin_of_error": float(t_ci[1] - mean),
             }
         except Exception as e:
-            return {"error": f"置信区间计算出错: {str(e)}"}
+            return {"error": f"Confidence interval calculation error: {str(e)}"}

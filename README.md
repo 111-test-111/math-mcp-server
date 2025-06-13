@@ -16,8 +16,6 @@ math_mcp/
 ├── __init__.py                      # Package initialization
 ├── __main__.py                      # CLI entry point
 ├── math_mcp_server.py               # Main server file (MCP tool registration)
-├── description_loader.py            # Tool description loader
-├── tool_descriptions.py             # Tool description configuration
 ├── file_utils.py                    # File path utilities
 # Core computation modules
 ├── basic.py                         # Basic math computation
@@ -47,7 +45,7 @@ Add the following configuration to your Claude Desktop config file:
             "command": "uvx",
             "args": ["math-mcp"],
             "env": {
-                "OUTPUT_PATH": "path/to/plot_output",
+                "OUTPUT_PATH": "path/to/output",
                 "FONT_PATH": "path/to/font"
             }
         }

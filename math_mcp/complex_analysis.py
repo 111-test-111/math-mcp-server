@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-复分析计算模块
-提供完整丰富的复变函数分析功能
+Complex Analysis Calculation Module
+Provides comprehensive and rich complex function analysis capabilities
 """
 
 import numpy as np
@@ -20,10 +20,10 @@ except ImportError:
 
 
 class ComplexAnalysisCalculator:
-    """复分析计算器类，提供完整的复变函数分析功能"""
+    """Complex Analysis Calculator class, providing comprehensive complex function analysis capabilities"""
 
     def __init__(self):
-        """初始化复分析计算器"""
+        """Initialize complex analysis calculator"""
         pass
 
     def complex_analysis_suite_tool(
@@ -49,81 +49,93 @@ class ComplexAnalysisCalculator:
         method: str = "auto",
     ) -> Dict[str, Any]:
         """
-        综合复分析计算工具
+        Comprehensive complex analysis calculation tool
 
         Args:
-            operation: 操作类型
-            complex_number: 单个复数
-            complex_numbers: 复数列表
-            function_expression: 复函数表达式
-            variable: 复变量名
-            contour_points: 积分路径点
-            singularities: 奇点列表
-            center: 展开中心
-            radius: 收敛半径
-            order: 极点阶数或级数项数
-            x_range: 实轴范围
-            y_range: 虚轴范围
-            resolution: 绘图分辨率
-            colormap: 颜色映射
-            filename: 保存文件名
-            plot_type: 绘图类型
-            series_terms: 级数项数
-            branch_cut: 分支切割
-            method: 计算方法
+            operation: Operation type
+            complex_number: Single complex number
+            complex_numbers: List of complex numbers
+            function_expression: Complex function expression
+            variable: Complex variable name
+            contour_points: Integration contour points
+            singularities: List of singularities
+            center: Expansion center
+            radius: Convergence radius
+            order: Pole order or number of series terms
+            x_range: Real axis range
+            y_range: Imaginary axis range
+            resolution: Plotting resolution
+            colormap: Color mapping
+            filename: Save filename
+            plot_type: Plot type
+            series_terms: Number of series terms
+            branch_cut: Branch cut
+            method: Calculation method
 
         Returns:
-            复分析计算结果
+            Complex analysis calculation results
         """
         try:
             if operation == "convert_form":
                 if complex_number is None:
-                    return {"error": "转换操作需要提供复数"}
+                    return {"error": "Conversion operation requires a complex number"}
                 return self._convert_complex_form(complex_number)
 
             elif operation == "arithmetic":
                 if complex_numbers is None or len(complex_numbers) < 2:
-                    return {"error": "复数运算需要至少两个复数"}
+                    return {
+                        "error": "Complex arithmetic requires at least two complex numbers"
+                    }
                 return self._complex_arithmetic(complex_numbers, method)
 
             elif operation == "function_evaluation":
                 if function_expression is None or complex_number is None:
-                    return {"error": "函数求值需要函数表达式和复数"}
+                    return {
+                        "error": "Function evaluation requires function expression and complex number"
+                    }
                 return self._evaluate_complex_function(
                     function_expression, complex_number, variable
                 )
 
             elif operation == "residue_calculation":
                 if function_expression is None or singularities is None:
-                    return {"error": "留数计算需要函数表达式和奇点"}
+                    return {
+                        "error": "Residue calculation requires function expression and singularities"
+                    }
                 return self._calculate_residues(
                     function_expression, singularities, variable, order
                 )
 
             elif operation == "contour_integration":
                 if function_expression is None or contour_points is None:
-                    return {"error": "围道积分需要函数表达式和积分路径"}
+                    return {
+                        "error": "Contour integration requires function expression and integration path"
+                    }
                 return self._contour_integration(
                     function_expression, contour_points, variable
                 )
 
             elif operation == "series_expansion":
                 if function_expression is None:
-                    return {"error": "级数展开需要函数表达式"}
+                    return {"error": "Series expansion requires function expression"}
                 return self._series_expansion(
                     function_expression, variable, center, series_terms
                 )
 
             elif operation == "analytic_continuation":
                 if function_expression is None:
-                    return {"error": "解析延拓需要函数表达式"}
+                    return {
+                        "error": "Analytic continuation requires function expression"
+                    }
                 return self._analytic_continuation(
                     function_expression, variable, center, radius, branch_cut
                 )
 
             elif operation == "complex_plot":
                 if function_expression is None:
-                    return {"error": "复函数绘图需要函数表达式"}
+                    return {
+                        "error": "Complex function plotting requires function expression"
+                    }
                 return self._plot_complex_function(
                     function_expression,
                     variable,
@@ -137,7 +149,7 @@ class ComplexAnalysisCalculator:
 
             elif operation == "conformal_mapping":
                 if function_expression is None:
-                    return {"error": "保形映射需要函数表达式"}
+                    return {"error": "Conformal mapping requires function expression"}
                 return self._conformal_mapping(
                     function_expression,
                     variable,
@@ -149,53 +161,55 @@ class ComplexAnalysisCalculator:
 
             elif operation == "singularity_analysis":
                 if function_expression is None:
-                    return {"error": "奇点分析需要函数表达式"}
+                    return {
+                        "error": "Singularity analysis requires function expression"
+                    }
                 return self._analyze_singularities(
                     function_expression, variable, x_range, y_range
                 )
 
             else:
-                return {"error": f"不支持的操作类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
         except Exception as e:
-            return {"error": f"复分析计算出错: {str(e)}"}
+            return {"error": f"Complex analysis calculation error: {str(e)}"}
 
     def _convert_complex_form(self, z: Union[str, complex]) -> Dict[str, Any]:
         """
-        复数形式转换
+        Complex number form conversion
 
         Args:
-            z: 复数
+            z: Complex number
 
         Returns:
-            各种形式的复数表示
+            Various forms of complex number representation
         """
         try:
-            # 解析复数
+            # Parse complex number
             if isinstance(z, str):
-                # 处理字符串形式的复数
+                # Handle string form of complex number
                 z_parsed = complex(z.replace("i", "j").replace("I", "j"))
             else:
                 z_parsed = complex(z)
 
-            # 提取实部和虚部
+            # Extract real and imaginary parts
             real_part = z_parsed.real
             imag_part = z_parsed.imag
 
-            # 计算模长和幅角
+            # Calculate modulus and argument
             modulus = abs(z_parsed)
             argument = cmath.phase(z_parsed)
             argument_degrees = np.degrees(argument)
 
-            # 指数形式
+            # Exponential form
             exponential_form = f"{modulus:.6f} * exp({argument:.6f}j)"
 
-            # 三角形式
+            # Trigonometric form
             trigonometric_form = (
                 f"{modulus:.6f} * (cos({argument:.6f}) + j*sin({argument:.6f}))"
             )
 
-            # 极坐标形式
+            # Polar form
             polar_form = f"({modulus:.6f}, {argument:.6f})"
             polar_degrees = f"({modulus:.6f}, {argument_degrees:.6f}°)"
 
@@ -225,23 +239,23 @@ class ComplexAnalysisCalculator:
             }
 
         except Exception as e:
-            return {"error": f"复数转换出错: {str(e)}"}
+            return {"error": f"Complex number conversion error: {str(e)}"}
 
     def _complex_arithmetic(
         self, numbers: List[Union[str, complex]], operation: str = "all"
     ) -> Dict[str, Any]:
         """
-        复数算术运算
+        Complex arithmetic operations
 
         Args:
-            numbers: 复数列表
-            operation: 运算类型
+            numbers: List of complex numbers
+            operation: Operation type
 
         Returns:
-            运算结果
+            Operation results
         """
         try:
-            # 解析复数
+            # Parse complex numbers
             parsed_numbers = []
             for num in numbers:
                 if isinstance(num, str):
@@ -252,7 +266,7 @@ class ComplexAnalysisCalculator:
                     parsed_numbers.append(complex(num))
 
             if len(parsed_numbers) < 2:
-                return {"error": "需要至少两个复数进行运算"}
+                return {"error": "At least two complex numbers required for operation"}
 
             z1, z2 = parsed_numbers[0], parsed_numbers[1]
 
@@ -271,12 +285,12 @@ class ComplexAnalysisCalculator:
                 if z2 != 0:
                     results["division"] = {"result": z1 / z2, "form": str(z1 / z2)}
                 else:
-                    results["division"] = {"error": "除零错误"}
+                    results["division"] = {"error": "Division by zero error"}
 
             if operation in ["all", "power"]:
                 results["power"] = {"z1^z2": z1**z2, "z2^z1": z2**z1}
 
-            # 如果有更多复数，进行链式运算
+            # If there are more complex numbers, perform chain operations
             if len(parsed_numbers) > 2:
                 sum_result = sum(parsed_numbers)
                 product_result = parsed_numbers[0]
@@ -291,37 +305,37 @@ class ComplexAnalysisCalculator:
             return results
 
         except Exception as e:
-            return {"error": f"复数运算出错: {str(e)}"}
+            return {"error": f"Complex arithmetic error: {str(e)}"}
 
     def _evaluate_complex_function(
         self, func_expr: str, z_value: Union[str, complex], variable: str = "z"
     ) -> Dict[str, Any]:
         """
-        复函数求值
+        Complex function evaluation
 
         Args:
-            func_expr: 函数表达式
-            z_value: 复数值
-            variable: 变量名
+            func_expr: Function expression
+            z_value: Complex value
+            variable: Variable name
 
         Returns:
-            函数值和相关信息
+            Function value and related information
         """
         try:
-            # 解析复数
+            # Parse complex number
             if isinstance(z_value, str):
                 z_parsed = complex(z_value.replace("i", "j").replace("I", "j"))
             else:
                 z_parsed = complex(z_value)
 
-            # 使用sympy进行符号计算
+            # Use sympy for symbolic computation
             z_sym = sp.Symbol(variable)
             expr = sp.sympify(func_expr)
 
-            # 计算函数值
+            # Calculate function value
             func_value = complex(expr.subs(z_sym, z_parsed))
 
-            # 计算导数
+            # Calculate derivative
             derivative = sp.diff(expr, z_sym)
             derivative_value = (
                 complex(derivative.subs(z_sym, z_parsed)) if derivative else None
@@ -352,7 +366,7 @@ class ComplexAnalysisCalculator:
             }
 
         except Exception as e:
-            return {"error": f"复函数求值出错: {str(e)}"}
+            return {"error": f"Complex function evaluation error: {str(e)}"}
 
     def _calculate_residues(
         self,
@@ -362,16 +376,16 @@ class ComplexAnalysisCalculator:
         order: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
-        计算留数
+        Calculate residues
 
         Args:
-            func_expr: 函数表达式
-            singularities: 奇点列表
-            variable: 变量名
-            order: 极点阶数
+            func_expr: Function expression
+            singularities: List of singularities
+            variable: Variable name
+            order: Pole order
 
         Returns:
-            留数计算结果
+            Residue calculation results
         """
         try:
             z_sym = sp.Symbol(variable)
@@ -381,7 +395,7 @@ class ComplexAnalysisCalculator:
             total_residue = 0
 
             for i, singularity in enumerate(singularities):
-                # 解析奇点
+                # Parse singularity
                 if isinstance(singularity, str):
                     sing_point = complex(
                         singularity.replace("i", "j").replace("I", "j")
@@ -390,13 +404,13 @@ class ComplexAnalysisCalculator:
                     sing_point = complex(singularity)
 
                 try:
-                    # 计算留数
+                    # Calculate residue
                     residue = sp.residue(expr, z_sym, sing_point)
                     residue_value = complex(residue)
                     total_residue += residue_value
 
-                    # 分析奇点类型
-                    # 计算Laurent级数展开
+                    # Analyze singularity type
+                    # Calculate Laurent series expansion
                     try:
                         laurent_series = sp.series(expr, z_sym, sing_point, n=6)
                         singularity_type = self._classify_singularity(
@@ -415,23 +429,23 @@ class ComplexAnalysisCalculator:
                 except Exception as e:
                     residues_results[f"singularity_{i+1}"] = {
                         "point": str(sing_point),
-                        "error": f"无法计算留数: {str(e)}",
+                        "error": f"Cannot calculate residue: {str(e)}",
                     }
 
             return {
                 "function": func_expr,
                 "singularities": residues_results,
                 "total_residue": total_residue,
-                "residue_theorem": f"围道积分值 = 2πi × {total_residue} = {2j * np.pi * total_residue}",
+                "residue_theorem": f"Contour integral value = 2πi × {total_residue} = {2j * np.pi * total_residue}",
             }
 
         except Exception as e:
-            return {"error": f"留数计算出错: {str(e)}"}
+            return {"error": f"Residue calculation error: {str(e)}"}
 
     def _classify_singularity(self, laurent_series, point) -> str:
-        """分类奇点类型"""
+        """Classify singularity type"""
         try:
-            # 简化的奇点分类
+            # Simplified singularity classification
             series_str = str(laurent_series)
             if f"1/({point})" in series_str:
                 return "simple_pole"
@@ -448,31 +462,31 @@ class ComplexAnalysisCalculator:
         self, func_expr: str, contour_points: List[List[float]], variable: str = "z"
     ) -> Dict[str, Any]:
         """
-        围道积分
+        Contour integration
 
         Args:
-            func_expr: 函数表达式
-            contour_points: 积分路径点
-            variable: 变量名
+            func_expr: Function expression
+            contour_points: Integration contour points
+            variable: Variable name
 
         Returns:
-            积分结果
+            Integration results
         """
         try:
             z_sym = sp.Symbol(variable)
             expr = sp.sympify(func_expr)
 
-            # 将路径点转换为复数
+            # Convert path points to complex numbers
             contour_complex = [complex(point[0], point[1]) for point in contour_points]
 
-            # 数值积分
+            # Numerical integration
             def integrand(t):
-                # 参数化路径
+                # Parameterize path
                 n = len(contour_complex)
                 if n < 2:
                     return 0
 
-                # 线性插值路径
+                # Linear interpolation path
                 t_scaled = t * (n - 1)
                 idx = int(t_scaled)
                 if idx >= n - 1:
@@ -485,14 +499,14 @@ class ComplexAnalysisCalculator:
                     ]
                     dz_dt = contour_complex[idx + 1] - contour_complex[idx]
 
-                # 计算被积函数值
+                # Calculate integrand value
                 try:
                     f_val = complex(expr.subs(z_sym, z_t))
-                    return f_val * dz_dt * (n - 1)  # 乘以路径长度因子
+                    return f_val * dz_dt * (n - 1)  # Multiply by path length factor
                 except:
                     return 0
 
-            # 数值积分
+            # Numerical integration
             real_part, _ = integrate.quad(lambda t: integrand(t).real, 0, 1)
             imag_part, _ = integrate.quad(lambda t: integrand(t).imag, 0, 1)
 
@@ -514,7 +528,7 @@ class ComplexAnalysisCalculator:
             }
 
         except Exception as e:
-            return {"error": f"围道积分计算出错: {str(e)}"}
+            return {"error": f"Contour integration calculation error: {str(e)}"}
 
     def _series_expansion(
         self,
@@ -524,22 +538,22 @@ class ComplexAnalysisCalculator:
         terms: int = 10,
     ) -> Dict[str, Any]:
         """
-        级数展开
+        Series expansion
 
         Args:
-            func_expr: 函数表达式
-            variable: 变量名
-            center: 展开中心
-            terms: 级数项数
+            func_expr: Function expression
+            variable: Variable name
+            center: Expansion center
+            terms: Number of series terms
 
         Returns:
-            级数展开结果
+            Series expansion results
         """
         try:
             z_sym = sp.Symbol(variable)
             expr = sp.sympify(func_expr)
 
-            # 解析展开中心
+            # Parse expansion center
             if center is None:
                 center_point = 0
             elif isinstance(center, str):
@@ -547,12 +561,12 @@ class ComplexAnalysisCalculator:
             else:
                 center_point = complex(center)
 
-            # Taylor级数展开
+            # Taylor series expansion
             try:
                 taylor_series = sp.series(expr, z_sym, center_point, n=terms)
                 taylor_coefficients = []
 
-                # 提取系数
+                # Extract coefficients
                 for i in range(terms):
                     try:
                         coeff = taylor_series.coeff(z_sym - center_point, i)
@@ -564,18 +578,18 @@ class ComplexAnalysisCalculator:
                         taylor_coefficients.append(0)
 
             except Exception as e:
-                taylor_series = f"无法展开: {str(e)}"
+                taylor_series = f"Cannot expand: {str(e)}"
                 taylor_coefficients = []
 
-            # Laurent级数展开（如果可能）
+            # Laurent series expansion (if possible)
             try:
                 laurent_series = sp.series(expr, z_sym, center_point, n=terms)
                 laurent_str = str(laurent_series)
             except:
-                laurent_series = "无法进行Laurent展开"
+                laurent_series = "Cannot perform Laurent expansion"
                 laurent_str = ""
 
-            # 收敛半径估计
+            # Convergence radius estimation
             convergence_radius = self._estimate_convergence_radius(taylor_coefficients)
 
             return {
@@ -592,23 +606,23 @@ class ComplexAnalysisCalculator:
                     "domain": (
                         f"|z - {center_point}| < {convergence_radius}"
                         if convergence_radius
-                        else "未知"
+                        else "unknown"
                     ),
                 },
             }
 
         except Exception as e:
-            return {"error": f"级数展开出错: {str(e)}"}
+            return {"error": f"Series expansion error: {str(e)}"}
 
     def _estimate_convergence_radius(
         self, coefficients: List[complex]
     ) -> Optional[float]:
-        """估计收敛半径"""
+        """Estimate convergence radius"""
         try:
             if len(coefficients) < 2:
                 return None
 
-            # 使用比值判别法
+            # Use ratio test
             ratios = []
             for i in range(1, len(coefficients)):
                 if coefficients[i] != 0 and coefficients[i - 1] != 0:
@@ -631,23 +645,23 @@ class ComplexAnalysisCalculator:
         branch_cut: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        解析延拓
+        Analytic continuation
 
         Args:
-            func_expr: 函数表达式
-            variable: 变量名
-            center: 延拓中心
-            radius: 延拓半径
-            branch_cut: 分支切割
+            func_expr: Function expression
+            variable: Variable name
+            center: Continuation center
+            radius: Continuation radius
+            branch_cut: Branch cut
 
         Returns:
-            解析延拓结果
+            Analytic continuation results
         """
         try:
             z_sym = sp.Symbol(variable)
             expr = sp.sympify(func_expr)
 
-            # 解析中心点
+            # Parse center point
             if center is None:
                 center_point = 0
             elif isinstance(center, str):
@@ -655,10 +669,10 @@ class ComplexAnalysisCalculator:
             else:
                 center_point = complex(center)
 
-            # 分析函数的奇点
+            # Analyze function singularities
             singularities = []
             try:
-                # 寻找分母为零的点
+                # Find points where denominator is zero
                 denominator = sp.denom(expr)
                 if denominator != 1:
                     sing_points = sp.solve(denominator, z_sym)
@@ -670,32 +684,37 @@ class ComplexAnalysisCalculator:
             except:
                 pass
 
-            # 计算延拓域
+            # Calculate continuation domain
             if radius is None:
                 if singularities:
-                    # 找到最近的奇点
+                    # Find nearest singularity
                     distances = [
                         abs(complex(s) - center_point)
                         for s in singularities
                         if isinstance(s, (int, float, complex))
                     ]
                     if distances:
-                        radius = min(distances) * 0.9  # 略小于最近奇点距离
+                        radius = (
+                            min(distances) * 0.9
+                        )  # Slightly less than nearest singularity distance
                     else:
                         radius = 1.0
                 else:
                     radius = float("inf")
 
-            # 分支切割分析
+            # Branch cut analysis
             branch_info = {}
             if "log" in func_expr or "sqrt" in func_expr or "**" in func_expr:
                 branch_info = {
                     "has_branch_cuts": True,
                     "suggested_cuts": self._analyze_branch_cuts(func_expr),
-                    "principal_branch": "使用主分支",
+                    "principal_branch": "Using principal branch",
                 }
             else:
-                branch_info = {"has_branch_cuts": False, "note": "函数在复平面上单值"}
+                branch_info = {
+                    "has_branch_cuts": False,
+                    "note": "Function is single-valued on complex plane",
+                }
 
             return {
                 "function": func_expr,
@@ -704,27 +723,29 @@ class ComplexAnalysisCalculator:
                 "domain_of_analyticity": (
                     f"|z - {center_point}| < {radius}"
                     if radius != float("inf")
-                    else "整个复平面"
+                    else "Entire complex plane"
                 ),
                 "singularities": [str(s) for s in singularities],
                 "branch_analysis": branch_info,
                 "continuation_method": (
-                    "幂级数展开" if radius < float("inf") else "整函数"
+                    "Power series expansion"
+                    if radius < float("inf")
+                    else "Entire function"
                 ),
             }
 
         except Exception as e:
-            return {"error": f"解析延拓分析出错: {str(e)}"}
+            return {"error": f"Analytic continuation analysis error: {str(e)}"}
 
     def _analyze_branch_cuts(self, func_expr: str) -> List[str]:
-        """分析分支切割"""
+        """Analyze branch cuts"""
         cuts = []
         if "log" in func_expr:
-            cuts.append("负实轴: arg(z) = π")
+            cuts.append("Negative real axis: arg(z) = π")
         if "sqrt" in func_expr:
-            cuts.append("负实轴: arg(z) = π")
+            cuts.append("Negative real axis: arg(z) = π")
         if "**" in func_expr and ("1/" in func_expr or "0.5" in func_expr):
-            cuts.append("可能的分支切割沿负实轴")
+            cuts.append("Possible branch cut along negative real axis")
         return cuts
 
     def _plot_complex_function(
@@ -739,29 +760,29 @@ class ComplexAnalysisCalculator:
         filename: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        复函数可视化
+        Complex function visualization
 
         Args:
-            func_expr: 函数表达式
-            variable: 变量名
-            x_range: 实轴范围
-            y_range: 虚轴范围
-            resolution: 分辨率
-            plot_type: 绘图类型
-            colormap: 颜色映射
-            filename: 文件名
+            func_expr: Function expression
+            variable: Variable name
+            x_range: Real axis range
+            y_range: Imaginary axis range
+            resolution: Resolution
+            plot_type: Plot type
+            colormap: Color mapping
+            filename: Filename
 
         Returns:
-            绘图结果
+            Plotting results
         """
         try:
-            # 创建复平面网格
+            # Create complex plane grid
             x = np.linspace(x_range[0], x_range[1], resolution)
             y = np.linspace(y_range[0], y_range[1], resolution)
             X, Y = np.meshgrid(x, y)
             Z = X + 1j * Y
 
-            # 计算函数值
+            # Calculate function values
             z_sym = sp.Symbol(variable)
             expr = sp.sympify(func_expr)
             func_lambdified = sp.lambdify(z_sym, expr, "numpy")
@@ -769,7 +790,7 @@ class ComplexAnalysisCalculator:
             try:
                 W = func_lambdified(Z)
             except:
-                # 逐点计算
+                # Point-wise calculation
                 W = np.zeros_like(Z, dtype=complex)
                 for i in range(Z.shape[0]):
                     for j in range(Z.shape[1]):
@@ -778,30 +799,30 @@ class ComplexAnalysisCalculator:
                         except:
                             W[i, j] = np.nan + 1j * np.nan
 
-            # 创建图形
+            # Create figure
             fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-            fig.suptitle(f"复函数分析: f(z) = {func_expr}", fontsize=14)
+            fig.suptitle(f"Complex Function Analysis: f(z) = {func_expr}", fontsize=14)
 
-            # 1. 域着色图
+            # 1. Domain coloring plot
             if plot_type in ["domain_coloring", "all"]:
                 ax1 = axes[0, 0]
 
-                # 计算颜色
+                # Calculate colors
                 magnitude = np.abs(W)
                 phase = np.angle(W)
 
-                # 归一化
+                # Normalization
                 magnitude_norm = np.log(1 + magnitude) / np.log(
                     1 + np.nanmax(magnitude)
                 )
                 phase_norm = (phase + np.pi) / (2 * np.pi)
 
-                # HSV颜色空间
+                # HSV color space
                 H = phase_norm
                 S = np.ones_like(magnitude_norm)
                 V = magnitude_norm
 
-                # 转换为RGB
+                # Convert to RGB
                 HSV = np.stack([H, S, V], axis=-1)
                 RGB = hsv_to_rgb(HSV)
 
@@ -811,28 +832,28 @@ class ComplexAnalysisCalculator:
                     origin="lower",
                     interpolation="bilinear",
                 )
-                ax1.set_title("域着色图")
+                ax1.set_title("Domain Coloring")
                 ax1.set_xlabel("Re(z)")
                 ax1.set_ylabel("Im(z)")
                 ax1.grid(True, alpha=0.3)
 
-            # 2. 模长图
+            # 2. Magnitude plot
             ax2 = axes[0, 1]
             magnitude_plot = ax2.contourf(X, Y, np.abs(W), levels=20, cmap="viridis")
-            ax2.set_title("模长 |f(z)|")
+            ax2.set_title("Magnitude |f(z)|")
             ax2.set_xlabel("Re(z)")
             ax2.set_ylabel("Im(z)")
             plt.colorbar(magnitude_plot, ax=ax2)
 
-            # 3. 相位图
+            # 3. Phase plot
             ax3 = axes[1, 0]
             phase_plot = ax3.contourf(X, Y, np.angle(W), levels=20, cmap="hsv")
-            ax3.set_title("相位 arg(f(z))")
+            ax3.set_title("Phase arg(f(z))")
             ax3.set_xlabel("Re(z)")
             ax3.set_ylabel("Im(z)")
             plt.colorbar(phase_plot, ax=ax3)
 
-            # 4. 实部和虚部
+            # 4. Real and imaginary parts
             ax4 = axes[1, 1]
             real_plot = ax4.contour(
                 X, Y, np.real(W), levels=10, colors="red", alpha=0.7
@@ -840,14 +861,14 @@ class ComplexAnalysisCalculator:
             imag_plot = ax4.contour(
                 X, Y, np.imag(W), levels=10, colors="blue", alpha=0.7
             )
-            ax4.set_title("实部(红)和虚部(蓝)")
+            ax4.set_title("Real Part (Red) and Imaginary Part (Blue)")
             ax4.set_xlabel("Re(z)")
             ax4.set_ylabel("Im(z)")
             ax4.legend(["Re(f(z))", "Im(f(z))"])
 
             plt.tight_layout()
 
-            # 保存图像
+            # Save image
             if filename is None:
                 filename = "complex_function"
 
@@ -879,10 +900,10 @@ class ComplexAnalysisCalculator:
             }
 
         except Exception as e:
-            return {"error": f"复函数绘图出错: {str(e)}"}
+            return {"error": f"Complex function plotting error: {str(e)}"}
 
     def _detect_symbolic_singularities(self, expr, variable, x_range, y_range):
-        """使用符号方法检测位于绘图区域内的奇点"""
+        """Use symbolic method to detect singularities within the plotting region"""
         try:
             z_sym = sp.Symbol(variable)
             denom = sp.denom(expr)
@@ -899,7 +920,7 @@ class ComplexAnalysisCalculator:
                     ):
                         singular_points.append(str(c))
                 except:
-                    # 非数值根
+                    # Non-numeric roots
                     pass
             return singular_points
         except Exception:
@@ -915,21 +936,21 @@ class ComplexAnalysisCalculator:
         filename: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        保形映射可视化
+        Conformal mapping visualization
 
         Args:
-            func_expr: 映射函数表达式
-            variable: 变量名
-            x_range: 实轴范围
-            y_range: 虚轴范围
-            resolution: 网格分辨率
-            filename: 文件名
+            func_expr: Mapping function expression
+            variable: Variable name
+            x_range: Real axis range
+            y_range: Imaginary axis range
+            resolution: Grid resolution
+            filename: Filename
 
         Returns:
-            保形映射结果
+            Conformal mapping results
         """
         try:
-            # 创建网格
+            # Create grid
             x = np.linspace(x_range[0], x_range[1], resolution)
             y = np.linspace(y_range[0], y_range[1], resolution)
 
@@ -939,31 +960,31 @@ class ComplexAnalysisCalculator:
 
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-            # 原始域
-            ax1.set_title("原始域 (z-平面)")
+            # Original domain
+            ax1.set_title("Original Domain (z-plane)")
             ax1.set_xlabel("Re(z)")
             ax1.set_ylabel("Im(z)")
             ax1.grid(True)
             ax1.set_aspect("equal")
 
-            # 绘制网格线
-            for xi in x[::2]:  # 垂直线
+            # Draw grid lines
+            for xi in x[::2]:  # Vertical lines
                 z_line = xi + 1j * y
                 ax1.plot([xi] * len(y), y, "b-", alpha=0.5)
 
-            for yi in y[::2]:  # 水平线
+            for yi in y[::2]:  # Horizontal lines
                 z_line = x + 1j * yi
                 ax1.plot(x, [yi] * len(x), "r-", alpha=0.5)
 
-            # 映射后的域
-            ax2.set_title(f"映射域 w = f(z) = {func_expr}")
+            # Mapped domain
+            ax2.set_title(f"Mapped Domain w = f(z) = {func_expr}")
             ax2.set_xlabel("Re(w)")
             ax2.set_ylabel("Im(w)")
             ax2.grid(True)
             ax2.set_aspect("equal")
 
-            # 映射网格线
-            for xi in x[::2]:  # 映射垂直线
+            # Map grid lines
+            for xi in x[::2]:  # Map vertical lines
                 z_line = xi + 1j * y
                 try:
                     w_line = func_lambdified(z_line)
@@ -971,7 +992,7 @@ class ComplexAnalysisCalculator:
                 except:
                     pass
 
-            for yi in y[::2]:  # 映射水平线
+            for yi in y[::2]:  # Map horizontal lines
                 z_line = x + 1j * yi
                 try:
                     w_line = func_lambdified(z_line)
@@ -981,7 +1002,7 @@ class ComplexAnalysisCalculator:
 
             plt.tight_layout()
 
-            # 保存图像
+            # Save image
             if filename is None:
                 filename = "conformal_mapping"
 
@@ -989,7 +1010,7 @@ class ComplexAnalysisCalculator:
             plt.savefig(filepath, dpi=300, bbox_inches="tight")
             plt.close()
 
-            # 分析保形性质
+            # Analyze conformal properties
             jacobian_analysis = self._analyze_jacobian(func_expr, variable)
 
             return {
@@ -1001,24 +1022,24 @@ class ComplexAnalysisCalculator:
             }
 
         except Exception as e:
-            return {"error": f"保形映射可视化出错: {str(e)}"}
+            return {"error": f"Conformal mapping visualization error: {str(e)}"}
 
     def _analyze_jacobian(self, func_expr: str, variable: str) -> Dict[str, Any]:
-        """分析雅可比矩阵和保形性质"""
+        """Analyze Jacobian matrix and conformal properties"""
         try:
             z_sym = sp.Symbol(variable)
             expr = sp.sympify(func_expr)
 
-            # 计算导数
+            # Calculate derivative
             derivative = sp.diff(expr, z_sym)
 
             return {
                 "derivative": str(derivative),
                 "conformal_condition": "f'(z) ≠ 0",
-                "note": "在f'(z) ≠ 0的点处映射是保形的",
+                "note": "The mapping is conformal at points where f'(z) ≠ 0",
             }
         except:
-            return {"note": "无法分析保形性质"}
+            return {"note": "Cannot analyze conformal properties"}
 
     def _analyze_singularities(
         self,
@@ -1028,16 +1049,16 @@ class ComplexAnalysisCalculator:
         y_range: Tuple[float, float] = (-5, 5),
     ) -> Dict[str, Any]:
         """
-        奇点分析
+        Singularity analysis
 
         Args:
-            func_expr: 函数表达式
-            variable: 变量名
-            x_range: 实轴范围
-            y_range: 虚轴范围
+            func_expr: Function expression
+            variable: Variable name
+            x_range: Real axis range
+            y_range: Imaginary axis range
 
         Returns:
-            奇点分析结果
+            Singularity analysis results
         """
         try:
             z_sym = sp.Symbol(variable)
@@ -1045,7 +1066,7 @@ class ComplexAnalysisCalculator:
 
             singularities = []
 
-            # 寻找极点（分母为零的点）
+            # Find poles (points where denominator is zero)
             try:
                 denominator = sp.denom(expr)
                 if denominator != 1:
@@ -1058,7 +1079,7 @@ class ComplexAnalysisCalculator:
                                 and y_range[0] <= pole_complex.imag <= y_range[1]
                             ):
 
-                                # 分析极点阶数
+                                # Analyze pole order
                                 order = self._find_pole_order(expr, z_sym, pole)
                                 singularities.append(
                                     {
@@ -1077,18 +1098,18 @@ class ComplexAnalysisCalculator:
                                     "point": str(pole),
                                     "type": "pole",
                                     "order": "unknown",
-                                    "note": "符号形式的极点",
+                                    "note": "Symbolic form pole",
                                 }
                             )
             except:
                 pass
 
-            # 寻找支点
+            # Find branch points
             if any(func in func_expr for func in ["sqrt", "log", "**"]):
                 branch_points = self._find_branch_points(expr, z_sym)
                 singularities.extend(branch_points)
 
-            # 寻找本质奇点
+            # Find essential singularities
             essential_singularities = self._find_essential_singularities(expr, z_sym)
             singularities.extend(essential_singularities)
 
@@ -1101,16 +1122,16 @@ class ComplexAnalysisCalculator:
             }
 
         except Exception as e:
-            return {"error": f"奇点分析出错: {str(e)}"}
+            return {"error": f"Singularity analysis error: {str(e)}"}
 
     def _find_pole_order(self, expr, variable, pole_point) -> int:
-        """确定极点阶数"""
+        """Determine pole order"""
         try:
-            # 计算Laurent级数
+            # Calculate Laurent series
             series = sp.series(expr, variable, pole_point, n=10)
             series_str = str(series)
 
-            # 寻找最高负幂次
+            # Find highest negative power
             import re
 
             negative_powers = re.findall(r"\*\*\(-(\d+)\)", series_str)
@@ -1121,10 +1142,10 @@ class ComplexAnalysisCalculator:
             return 1
 
     def _find_branch_points(self, expr, variable) -> List[Dict[str, Any]]:
-        """寻找支点"""
+        """Find branch points"""
         branch_points = []
         try:
-            # 简化的支点检测
+            # Simplified branch point detection
             expr_str = str(expr)
             if "log" in expr_str:
                 branch_points.append(
@@ -1132,7 +1153,7 @@ class ComplexAnalysisCalculator:
                         "point": "0",
                         "type": "branch_point",
                         "function": "logarithm",
-                        "note": "对数函数的支点",
+                        "note": "Branch point of logarithm function",
                     }
                 )
             if "sqrt" in expr_str:
@@ -1141,7 +1162,7 @@ class ComplexAnalysisCalculator:
                         "point": "0",
                         "type": "branch_point",
                         "function": "square_root",
-                        "note": "平方根函数的支点",
+                        "note": "Branch point of square root function",
                     }
                 )
         except:
@@ -1149,7 +1170,7 @@ class ComplexAnalysisCalculator:
         return branch_points
 
     def _find_essential_singularities(self, expr, variable) -> List[Dict[str, Any]]:
-        """寻找本质奇点"""
+        """Find essential singularities"""
         essential = []
         try:
             expr_str = str(expr)
@@ -1157,7 +1178,7 @@ class ComplexAnalysisCalculator:
                 essential.append(
                     {
                         "type": "essential_singularity",
-                        "note": "可能包含本质奇点，需要进一步分析",
+                        "note": "May contain essential singularities, requires further analysis",
                     }
                 )
         except:
@@ -1167,7 +1188,7 @@ class ComplexAnalysisCalculator:
     def _classify_singularities(
         self, singularities: List[Dict[str, Any]]
     ) -> Dict[str, int]:
-        """分类奇点统计"""
+        """Classify singularity statistics"""
         classification = {
             "poles": 0,
             "branch_points": 0,

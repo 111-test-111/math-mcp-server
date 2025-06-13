@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-金融数学计算模块
-提供金融计算和分析工具
+Financial Mathematics Calculation Module
+Provides financial calculation and analysis tools
 """
 
 import math
@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 
 
 class FinancialCalculator:
-    """金融计算器类"""
+    """Financial Calculator Class"""
 
     def __init__(self):
         pass
@@ -34,27 +34,27 @@ class FinancialCalculator:
         prices: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         """
-        金融计算工具
+        Financial Calculation Tool
 
         Args:
-            operation: 操作类型
-            principal: 本金
-            rate: 利率
-            time: 时间
-            cash_flows: 现金流
-            initial_investment: 初始投资
-            payment: 支付金额
-            periods: 期数
-            future_value: 终值
-            present_value: 现值
-            annual_rate: 年利率
-            payments_per_year: 每年支付次数
-            risk_free_rate: 无风险利率
-            returns: 收益率序列
-            prices: 价格序列
+            operation: Operation type
+            principal: Principal amount
+            rate: Interest rate
+            time: Time period
+            cash_flows: Cash flows
+            initial_investment: Initial investment
+            payment: Payment amount
+            periods: Number of periods
+            future_value: Future value
+            present_value: Present value
+            annual_rate: Annual interest rate
+            payments_per_year: Number of payments per year
+            risk_free_rate: Risk-free rate
+            returns: Returns sequence
+            prices: Price sequence
         """
         try:
-            # === 参数基本校验，无自动隐式映射，保持语义清晰 ===
+            # === Basic parameter validation, no automatic implicit mapping, maintaining semantic clarity ===
             if operation == "compound_interest":
                 return self._compound_interest(principal, rate, time)
             elif operation == "simple_interest":
@@ -62,20 +62,22 @@ class FinancialCalculator:
             elif operation == "present_value":
                 return self._present_value_calculation(future_value, rate, time)
             elif operation == "future_value":
-                # 若提供 present_value（单笔现值）
+                # If present_value is provided (single present value)
                 if present_value is not None:
                     return self._future_value_calculation(present_value, rate, time)
 
-                # 兼容性优化:
-                # 若未提供 present_value 但提供 payment -> 计算年金未来价值 (期末支付)
+                # Compatibility optimization:
+                # If present_value is not provided but payment is provided -> calculate annuity future value (end-of-period payment)
                 if payment is not None:
-                    # 优先使用 rate；若未提供则尝试 annual_rate / payments_per_year
+                    # Prioritize rate; if not provided, try annual_rate / payments_per_year
                     periodic_rate = rate
                     if periodic_rate is None and annual_rate is not None:
                         periodic_rate = annual_rate / payments_per_year
 
                     if periodic_rate is None:
-                        return {"error": "计算年金未来价值需要提供 rate 或 annual_rate"}
+                        return {
+                            "error": "Calculating annuity future value requires providing rate or annual_rate"
+                        }
 
                     fv = (
                         payment * ((1 + periodic_rate) ** periods - 1) / periodic_rate
@@ -92,7 +94,7 @@ class FinancialCalculator:
                     }
 
                 return {
-                    "error": "future_value 需要 present_value，或使用 annuity 操作来计算分期缴款的终值"
+                    "error": "future_value requires present_value, or use annuity operation to calculate installment payment future value"
                 }
             elif operation == "annuity":
                 return self._annuity_calculation(payment, rate, periods)
@@ -113,28 +115,28 @@ class FinancialCalculator:
             elif operation == "sharpe_ratio":
                 return self._sharpe_ratio(returns, risk_free_rate)
             else:
-                return {"error": f"不支持的操作: {operation}"}
+                return {"error": f"Unsupported operation: {operation}"}
 
         except Exception as e:
-            return {"error": f"金融计算错误: {str(e)}"}
+            return {"error": f"Financial calculation error: {str(e)}"}
 
     def _compound_interest(
         self, principal: float, rate: float, time: int
     ) -> Dict[str, Any]:
-        """复利计算"""
+        """Compound interest calculation"""
         if principal <= 0 or rate < 0 or time < 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
-        # 年复利
+        # Annual compounding
         amount = principal * (1 + rate) ** time
         interest = amount - principal
 
-        # 月复利
+        # Monthly compounding
         monthly_rate = rate / 12
         monthly_amount = principal * (1 + monthly_rate) ** (time * 12)
         monthly_interest = monthly_amount - principal
 
-        # 连续复利
+        # Continuous compounding
         continuous_amount = principal * math.exp(rate * time)
         continuous_interest = continuous_amount - principal
 
@@ -163,9 +165,9 @@ class FinancialCalculator:
     def _simple_interest(
         self, principal: float, rate: float, time: int
     ) -> Dict[str, Any]:
-        """单利计算"""
+        """Simple interest calculation"""
         if principal <= 0 or rate < 0 or time < 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
         interest = principal * rate * time
         amount = principal + interest
@@ -182,9 +184,9 @@ class FinancialCalculator:
     def _present_value_calculation(
         self, future_value: float, rate: float, time: int
     ) -> Dict[str, Any]:
-        """现值计算"""
+        """Present value calculation"""
         if future_value <= 0 or rate < 0 or time < 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
         present_value = future_value / (1 + rate) ** time
         discount = future_value - present_value
@@ -201,9 +203,9 @@ class FinancialCalculator:
     def _future_value_calculation(
         self, present_value: float, rate: float, time: int
     ) -> Dict[str, Any]:
-        """终值计算"""
+        """Future value calculation"""
         if present_value <= 0 or rate < 0 or time < 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
         future_value = present_value * (1 + rate) ** time
         growth = future_value - present_value
@@ -220,26 +222,26 @@ class FinancialCalculator:
     def _annuity_calculation(
         self, payment: float, rate: float, periods: int
     ) -> Dict[str, Any]:
-        """年金计算"""
+        """Annuity calculation"""
         if payment <= 0 or rate < 0 or periods <= 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
-        # 普通年金现值
+        # Ordinary annuity present value
         if rate == 0:
             pv_ordinary = payment * periods
         else:
             pv_ordinary = payment * (1 - (1 + rate) ** (-periods)) / rate
 
-        # 预付年金现值
+        # Annuity due present value
         pv_due = pv_ordinary * (1 + rate)
 
-        # 普通年金终值
+        # Ordinary annuity future value
         if rate == 0:
             fv_ordinary = payment * periods
         else:
             fv_ordinary = payment * ((1 + rate) ** periods - 1) / rate
 
-        # 预付年金终值
+        # Annuity due future value
         fv_due = fv_ordinary * (1 + rate)
 
         return {
@@ -260,9 +262,9 @@ class FinancialCalculator:
     def _net_present_value(
         self, cash_flows: List[float], rate: float
     ) -> Dict[str, Any]:
-        """净现值计算"""
+        """Net present value calculation"""
         if not cash_flows or rate < 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
         npv = 0
         present_values = []
@@ -278,13 +280,13 @@ class FinancialCalculator:
             "discount_rate": rate,
             "present_values": present_values,
             "net_present_value": round(npv, 2),
-            "decision": "接受项目" if npv > 0 else "拒绝项目",
+            "decision": "Accept project" if npv > 0 else "Reject project",
         }
 
     def _internal_rate_of_return(self, cash_flows: List[float]) -> Dict[str, Any]:
-        """内部收益率计算（牛顿法）"""
+        """Internal rate of return calculation (Newton's method)"""
         if not cash_flows or len(cash_flows) < 2:
-            return {"error": "需要至少两个现金流"}
+            return {"error": "At least two cash flows are required"}
 
         def npv_function(rate):
             return sum(cf / (1 + rate) ** i for i, cf in enumerate(cash_flows))
@@ -296,8 +298,8 @@ class FinancialCalculator:
                 if i > 0
             )
 
-        # 牛顿法求解
-        rate = 0.1  # 初始猜测
+        # Newton's method solution
+        rate = 0.1  # Initial guess
         tolerance = 1e-6
         max_iterations = 100
 
@@ -308,12 +310,12 @@ class FinancialCalculator:
 
             derivative = npv_derivative(rate)
             if abs(derivative) < tolerance:
-                return {"error": "无法收敛到解"}
+                return {"error": "Unable to converge to solution"}
 
             rate = rate - npv / derivative
 
         if iteration == max_iterations - 1:
-            return {"error": "达到最大迭代次数"}
+            return {"error": "Maximum iterations reached"}
 
         return {
             "operation": "irr",
@@ -332,21 +334,21 @@ class FinancialCalculator:
         periods: Optional[int],
         payments_per_year: int = 12,
     ) -> Dict[str, Any]:
-        """贷款还款计算"""
-        # 参数验证
+        """Loan payment calculation"""
+        # Parameter validation
         if principal is None or principal <= 0:
-            return {"error": "principal 必须为正数"}
+            return {"error": "principal must be a positive number"}
         if periods is None or periods <= 0:
-            return {"error": "periods 必须为正整数"}
+            return {"error": "periods must be a positive integer"}
         if periodic_rate is None and annual_rate is None:
-            return {"error": "请提供 periodic_rate 或 annual_rate"}
+            return {"error": "Please provide periodic_rate or annual_rate"}
 
-        # 处理利率
+        # Handle interest rate
         if periodic_rate is None:
             periodic_rate = annual_rate / payments_per_year
 
         if periodic_rate < 0:
-            return {"error": "利率不能为负"}
+            return {"error": "Interest rate cannot be negative"}
 
         if periodic_rate == 0:
             payment = principal / periods
@@ -361,7 +363,7 @@ class FinancialCalculator:
         total_payment = payment * periods
         total_interest = total_payment - principal
 
-        # 摊销表（前5期）
+        # Amortization schedule (first 5 periods)
         amortization = []
         remaining_balance = principal
 
@@ -395,13 +397,13 @@ class FinancialCalculator:
     def _bond_pricing(
         self, face_value: float, coupon_rate: float, yield_rate: float, periods: int
     ) -> Dict[str, Any]:
-        """债券定价"""
+        """Bond pricing"""
         if face_value <= 0 or coupon_rate < 0 or yield_rate < 0 or periods <= 0:
-            return {"error": "参数值无效"}
+            return {"error": "Invalid parameter values"}
 
         coupon_payment = face_value * coupon_rate
 
-        # 现值计算
+        # Present value calculation
         coupon_pv = 0
         if yield_rate == 0:
             coupon_pv = coupon_payment * periods
@@ -413,7 +415,7 @@ class FinancialCalculator:
         face_value_pv = face_value / (1 + yield_rate) ** periods
         bond_price = coupon_pv + face_value_pv
 
-        # 其他指标
+        # Other indicators
         current_yield = coupon_payment / bond_price if bond_price > 0 else 0
 
         return {
@@ -431,21 +433,21 @@ class FinancialCalculator:
     def _portfolio_metrics(
         self, returns: List[float], risk_free_rate: float = 0.0
     ) -> Dict[str, Any]:
-        """投资组合指标"""
+        """Portfolio metrics"""
         if not returns:
-            return {"error": "收益率数据不能为空"}
+            return {"error": "Returns data cannot be empty"}
 
         returns_array = np.array(returns)
 
-        # 基本统计
+        # Basic statistics
         mean_return = np.mean(returns_array)
         std_dev = np.std(returns_array, ddof=1)
         variance = np.var(returns_array, ddof=1)
 
-        # 夏普比率
+        # Sharpe ratio
         sharpe_ratio = (mean_return - risk_free_rate) / std_dev if std_dev > 0 else 0
 
-        # 最大回撤
+        # Maximum drawdown
         cumulative_returns = np.cumprod(1 + returns_array)
         running_max = np.maximum.accumulate(cumulative_returns)
         drawdown = (cumulative_returns - running_max) / running_max
@@ -463,27 +465,29 @@ class FinancialCalculator:
             "sharpe_ratio": round(sharpe_ratio, 4),
             "max_drawdown": round(max_drawdown, 6),
             "var_5_percent": round(var_5, 6),
-            "annualized_return": round(mean_return * 252, 4),  # 假设252个交易日
+            "annualized_return": round(
+                mean_return * 252, 4
+            ),  # Assuming 252 trading days
             "annualized_volatility": round(std_dev * math.sqrt(252), 4),
         }
 
     def _volatility_calculation(self, data: List[float]) -> Dict[str, Any]:
-        """波动率计算"""
+        """Volatility calculation"""
         if not data or len(data) < 2:
-            return {"error": "数据不足"}
+            return {"error": "Insufficient data"}
 
         data_array = np.array(data)
 
-        # 如果是价格数据，计算收益率
+        # If price data, calculate returns
         if all(x > 0 for x in data):
             returns = np.diff(np.log(data_array))
         else:
             returns = data_array
 
-        # 历史波动率
+        # Historical volatility
         volatility = np.std(returns, ddof=1)
 
-        # 年化波动率
+        # Annualized volatility
         annualized_volatility = volatility * math.sqrt(252)
 
         return {
@@ -498,9 +502,9 @@ class FinancialCalculator:
     def _sharpe_ratio(
         self, returns: List[float], risk_free_rate: float
     ) -> Dict[str, Any]:
-        """夏普比率计算"""
+        """Sharpe ratio calculation"""
         if not returns:
-            return {"error": "收益率数据不能为空"}
+            return {"error": "Returns data cannot be empty"}
 
         returns_array = np.array(returns)
         excess_returns = returns_array - risk_free_rate

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-微积分计算模块
-提供完整丰富的微积分运算功能
+Calculus Computation Module
+Provides comprehensive calculus computation functionalities
 """
 
 import sympy as sp
@@ -11,10 +11,10 @@ from typing import List, Dict, Any, Optional, Union, Tuple
 
 
 class CalculusCalculator:
-    """微积分计算器类，提供完整的微积分运算功能"""
+    """Calculus calculator class providing comprehensive calculus computation functionalities"""
 
     def __init__(self):
-        """初始化微积分计算器"""
+        """Initialize the calculus calculator"""
         pass
 
     def calculus_engine_tool(
@@ -31,35 +31,33 @@ class CalculusCalculator:
         mode: str = "symbolic",
     ) -> Dict[str, Any]:
         """
-        综合微积分计算工具
+        Comprehensive calculus computation tool
 
         Args:
-            expression: 数学表达式字符串
-            operation: 运算类型 ('derivative', 'integral', 'limit', 'series', 'critical_points', 'partial', 'gradient', 'taylor', 'arc_length')
-            variable: 主变量名
-            variables: 多变量列表（用于偏导数、梯度等）
-            limits: 积分限或其他范围
-            point: 计算点
-            points: 多个计算点
-            order: 导数阶数或泰勒级数项数
-            method: 计算方法
-            mode: 计算模式 ('symbolic', 'numerical')
+            expression: Mathematical expression string
+            operation: Operation type ('derivative', 'integral', 'limit', 'series', 'critical_points', 'partial', 'gradient', 'taylor', 'arc_length')
+            variable: Main variable name
+            variables: List of variables (for partial derivatives, gradient, etc.)
+            limits: Integration bounds or other ranges
+            point: Point at which to compute
+            points: Multiple points for computation
+            order: Derivative order or Taylor series number of terms
+            method: Computation method
+            mode: Computation mode ('symbolic', 'numerical')
 
         Returns:
-            微积分计算结果
+            Calculus computation result
         """
         try:
             if operation == "derivative":
                 if mode == "numerical" and point is not None:
                     return self._numerical_derivative(expression, point, variable)
                 else:
-                    # 检查是否明确要求高阶导数
                     if order > 1:
                         return self._higher_order_derivatives(
                             expression, variable, order, point
                         )
                     else:
-                        # 默认计算一阶导数
                         return self._symbolic_operations(
                             expression, "derivative", variable, limits, point
                         )
@@ -91,9 +89,11 @@ class CalculusCalculator:
             elif operation == "arc_length" and limits:
                 return self._arc_length(expression, variable, limits)
             else:
-                return {"error": f"不支持的运算类型或缺少必要参数: {operation}"}
+                return {
+                    "error": f"Unsupported operation type or missing necessary parameters: {operation}"
+                }
         except Exception as e:
-            return {"error": f"微积分计算出错: {str(e)}"}
+            return {"error": f"Calculus computation error: {str(e)}"}
 
     def _symbolic_operations(
         self,
@@ -104,17 +104,17 @@ class CalculusCalculator:
         point: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
-        符号微积分运算
+        Symbolic calculus operations
 
         Args:
-            expression: 数学表达式字符串
-            operation: 运算类型 ('derivative', 'integral', 'limit', 'series')
-            variable: 变量名
-            limits: 积分限或级数展开点
-            point: 求导点或极限点
+            expression: Mathematical expression string
+            operation: Operation type ('derivative', 'integral', 'limit', 'series')
+            variable: Variable name
+            limits: Integration bounds or series expansion point
+            point: Point for differentiation or limit
 
         Returns:
-            运算结果
+            Operation result
         """
         try:
             var = sp.Symbol(variable)
@@ -122,7 +122,6 @@ class CalculusCalculator:
 
             if operation == "derivative":
                 if point is not None:
-                    # 在指定点的导数值
                     derivative = sp.diff(expr, var)
                     result_value = float(derivative.subs(var, point))
                     return {
@@ -131,13 +130,11 @@ class CalculusCalculator:
                         "point": point,
                     }
                 else:
-                    # 符号导数
                     derivative = sp.diff(expr, var)
                     return {"derivative": str(derivative)}
 
             elif operation == "integral":
                 if limits is not None and len(limits) == 2:
-                    # 定积分
                     definite_integral = sp.integrate(expr, (var, limits[0], limits[1]))
                     result_value = float(definite_integral.evalf())
                     return {
@@ -146,13 +143,12 @@ class CalculusCalculator:
                         "limits": limits,
                     }
                 else:
-                    # 不定积分
                     indefinite_integral = sp.integrate(expr, var)
                     return {"indefinite_integral": str(indefinite_integral)}
 
             elif operation == "limit":
                 if point is None:
-                    return {"error": "极限运算需要指定点"}
+                    return {"error": "A point must be specified for limit calculation"}
                 limit_result = sp.limit(expr, var, point)
                 return {"limit": str(limit_result), "point": point}
 
@@ -168,32 +164,32 @@ class CalculusCalculator:
                 }
 
             else:
-                return {"error": f"不支持的运算类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
         except Exception as e:
-            return {"error": f"符号计算出错: {str(e)}"}
+            return {"error": f"Symbolic calculation error: {str(e)}"}
 
     def _numerical_derivative(
         self, function_expr: str, point: float, variable: str = "x", h: float = 1e-5
     ) -> Dict[str, Any]:
         """
-        数值求导
+        Numerical differentiation
 
         Args:
-            function_expr: 函数表达式
-            point: 求导点
-            variable: 变量名
-            h: 步长
+            function_expr: Function expression
+            point: Point of differentiation
+            variable: Variable name
+            h: Step size
 
         Returns:
-            数值导数结果
+            Numerical derivative result
         """
         try:
             var = sp.Symbol(variable)
             expr = sp.sympify(function_expr)
             func = sp.lambdify(var, expr, "numpy")
 
-            # 使用中心差分法
+            # Central difference method
             derivative = (func(point + h) - func(point - h)) / (2 * h)
 
             return {
@@ -203,7 +199,7 @@ class CalculusCalculator:
                 "method": "central_difference",
             }
         except Exception as e:
-            return {"error": f"数值求导出错: {str(e)}"}
+            return {"error": f"Numerical differentiation error: {str(e)}"}
 
     def _numerical_integration(
         self,
@@ -213,16 +209,16 @@ class CalculusCalculator:
         method: str = "quad",
     ) -> Dict[str, Any]:
         """
-        数值积分
+        Numerical integration
 
         Args:
-            function_expr: 函数表达式
-            limits: 积分区间 [a, b]
-            variable: 变量名
-            method: 积分方法 ('quad', 'simpson', 'trapz')
+            function_expr: Function expression
+            limits: Integration interval [a, b]
+            variable: Variable name
+            method: Integration method ('quad', 'simpson', 'trapz')
 
         Returns:
-            数值积分结果
+            Numerical integration result
         """
         try:
             var = sp.Symbol(variable)
@@ -241,8 +237,7 @@ class CalculusCalculator:
                 }
 
             elif method == "simpson":
-                # 使用辛普森法则
-                n = 1000  # 分割数
+                n = 1000  # Number of divisions
                 x = np.linspace(a, b, n + 1)
                 y = func(x)
                 result = integrate.simpson(y, x)
@@ -254,8 +249,7 @@ class CalculusCalculator:
                 }
 
             elif method == "trapz":
-                # 使用梯形法则
-                n = 1000  # 分割数
+                n = 1000
                 x = np.linspace(a, b, n + 1)
                 y = func(x)
                 result = integrate.trapz(y, x)
@@ -267,10 +261,10 @@ class CalculusCalculator:
                 }
 
             else:
-                return {"error": f"不支持的积分方法: {method}"}
+                return {"error": f"Unsupported integration method: {method}"}
 
         except Exception as e:
-            return {"error": f"数值积分出错: {str(e)}"}
+            return {"error": f"Numerical integration error: {str(e)}"}
 
     def _higher_order_derivatives(
         self,
@@ -280,22 +274,21 @@ class CalculusCalculator:
         point: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
-        计算高阶导数
+        Compute higher order derivatives
 
         Args:
-            expression: 数学表达式字符串
-            variable: 变量名
-            order: 导数阶数
-            point: 求导点（可选）
+            expression: Mathematical expression string
+            variable: Variable name
+            order: Derivative order
+            point: Point for differentiation (optional)
 
         Returns:
-            高阶导数结果
+            Higher order derivative result
         """
         try:
             var = sp.Symbol(variable)
             expr = sp.sympify(expression)
 
-            # 递归计算高阶导数
             derivative = expr
             for _ in range(order):
                 derivative = sp.diff(derivative, var)
@@ -311,20 +304,20 @@ class CalculusCalculator:
                 return {f"{order}_order_derivative": str(derivative)}
 
         except Exception as e:
-            return {"error": f"计算高阶导数出错: {str(e)}"}
+            return {"error": f"Higher order derivative computation error: {str(e)}"}
 
     def _partial_derivatives(
         self, expression: str, variables: List[str]
     ) -> Dict[str, Any]:
         """
-        偏导数
+        Partial derivatives
 
         Args:
-            expression: 多变量表达式
-            variables: 变量列表
+            expression: Multivariable expression
+            variables: List of variable names
 
         Returns:
-            偏导数结果
+            Partial derivatives result
         """
         try:
             vars_symbols = [sp.Symbol(var) for var in variables]
@@ -341,27 +334,26 @@ class CalculusCalculator:
                 "partial_derivatives": partial_derivatives,
             }
         except Exception as e:
-            return {"error": f"偏导数计算出错: {str(e)}"}
+            return {"error": f"Partial derivatives computation error: {str(e)}"}
 
     def _gradient(
         self, expression: str, variables: List[str], point: Optional[List[float]] = None
     ) -> Dict[str, Any]:
         """
-        梯度计算
+        Gradient computation
 
         Args:
-            expression: 多变量函数表达式
-            variables: 变量列表
-            point: 计算梯度的点（可选）
+            expression: Multivariable function expression
+            variables: List of variable names
+            point: Point at which to compute the gradient (optional)
 
         Returns:
-            梯度结果
+            Gradient result
         """
         try:
             vars_symbols = [sp.Symbol(var) for var in variables]
             expr = sp.sympify(expression)
 
-            # 计算梯度（偏导数向量）
             gradient_components = []
             for var_symbol in vars_symbols:
                 partial_deriv = sp.diff(expr, var_symbol)
@@ -375,7 +367,6 @@ class CalculusCalculator:
                 "gradient": gradient_expr,
             }
 
-            # 如果提供了点，计算该点的梯度值
             if point is not None and len(point) == len(variables):
                 substitutions = dict(zip(vars_symbols, point))
                 gradient_values = []
@@ -388,22 +379,22 @@ class CalculusCalculator:
 
             return result
         except Exception as e:
-            return {"error": f"梯度计算出错: {str(e)}"}
+            return {"error": f"Gradient computation error: {str(e)}"}
 
     def _taylor_series(
         self, expression: str, variable: str = "x", point: float = 0, order: int = 5
     ) -> Dict[str, Any]:
         """
-        泰勒级数展开
+        Taylor series expansion
 
         Args:
-            expression: 函数表达式
-            variable: 变量名
-            point: 展开点
-            order: 展开阶数
+            expression: Function expression
+            variable: Variable name
+            point: Expansion point
+            order: Expansion order
 
         Returns:
-            泰勒级数结果
+            Taylor series result
         """
         try:
             var = sp.Symbol(variable)
@@ -419,30 +410,25 @@ class CalculusCalculator:
                 "taylor_series": str(taylor_expansion),
             }
         except Exception as e:
-            return {"error": f"泰勒级数展开出错: {str(e)}"}
+            return {"error": f"Taylor series expansion error: {str(e)}"}
 
     def _critical_points(self, expression: str, variable: str = "x") -> Dict[str, Any]:
         """
-        求临界点
+        Find critical points
 
         Args:
-            expression: 函数表达式
-            variable: 变量名
+            expression: Function expression
+            variable: Variable name
 
         Returns:
-            临界点结果
+            Critical points result
         """
         try:
             var = sp.Symbol(variable)
             expr = sp.sympify(expression)
 
-            # 一阶导数
             first_derivative = sp.diff(expr, var)
-
-            # 求解一阶导数为0的点
             critical_points = sp.solve(first_derivative, var)
-
-            # 二阶导数测试
             second_derivative = sp.diff(expr, var, 2)
 
             point_analysis = []
@@ -483,34 +469,31 @@ class CalculusCalculator:
                 "critical_points": point_analysis,
             }
         except Exception as e:
-            return {"error": f"临界点分析出错: {str(e)}"}
+            return {"error": f"Critical point analysis error: {str(e)}"}
 
     def _arc_length(
         self, expression: str, variable: str = "x", limits: List[float] = None
     ) -> Dict[str, Any]:
         """
-        弧长计算
+        Arc length calculation
 
         Args:
-            expression: 函数表达式 y = f(x)
-            variable: 变量名
-            limits: 积分区间 [a, b]
+            expression: Function expression y = f(x)
+            variable: Variable name
+            limits: Integration interval [a, b]
 
         Returns:
-            弧长结果
+            Arc length result
         """
         try:
             var = sp.Symbol(variable)
             expr = sp.sympify(expression)
 
-            # 计算导数
             derivative = sp.diff(expr, var)
 
-            # 弧长积分表达式: sqrt(1 + (dy/dx)^2)
             arc_length_integrand = sp.sqrt(1 + derivative**2)
 
             if limits is not None and len(limits) == 2:
-                # 计算定积分（弧长）
                 try:
                     arc_length_value = sp.integrate(
                         arc_length_integrand, (var, limits[0], limits[1])
@@ -529,14 +512,14 @@ class CalculusCalculator:
                         "expression": expression,
                         "derivative": str(derivative),
                         "arc_length_integrand": str(arc_length_integrand),
-                        "note": "无法计算精确值，需要数值积分",
+                        "note": "Unable to calculate the exact value, numerical integration is required",
                     }
             else:
                 return {
                     "expression": expression,
                     "derivative": str(derivative),
                     "arc_length_integrand": str(arc_length_integrand),
-                    "note": "需要提供积分区间以计算弧长值",
+                    "note": "Integration interval required to compute arc length value",
                 }
         except Exception as e:
-            return {"error": f"弧长计算出错: {str(e)}"}
+            return {"error": f"Arc length calculation error: {str(e)}"}

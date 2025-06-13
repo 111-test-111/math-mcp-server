@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-基础数值计算模块
-提供基础的数值计算和数学运算功能
+Basic Numerical Computation Module
+Provides basic numerical computation and mathematical operations functionality
 """
 
 import math
@@ -11,12 +11,11 @@ from decimal import Decimal, getcontext
 
 
 class BasicCalculator:
-    """基础计算器类，提供基础的数值计算和数学运算功能"""
+    """Basic calculator class providing basic numerical computation and mathematical functions"""
 
     def __init__(self):
-        """初始化基础计算器"""
-        # 设置默认精度
-        getcontext().prec = 50
+        """Initialize the basic calculator"""
+        getcontext().prec = 50  # Set default precision
 
     def basic_arithmetic_tool(
         self,
@@ -26,31 +25,33 @@ class BasicCalculator:
         use_decimal: bool = False,
     ) -> Dict[str, Any]:
         """
-        基础算术运算工具
+        Basic arithmetic operation tool
 
         Args:
-            operation: 运算类型 ('add', 'subtract', 'multiply', 'divide', 'power', 'modulo', 'modulus', 'factorial', 'gcd', 'lcm', 'sum', 'product', 'average')
-            numbers: 数值列表
-            precision: 计算精度（小数位数）
-            use_decimal: 是否使用高精度小数计算
+            operation: Operation type ('add', 'subtract', 'multiply', 'divide', 'power', 'modulo', 'modulus', 'factorial', 'gcd', 'lcm', 'sum', 'product', 'average')
+            numbers: List of values
+            precision: Calculation precision (number of decimal places)
+            use_decimal: Whether to use high-precision Decimal calculation
 
         Returns:
-            计算结果
+            Calculation result
         """
         try:
             if not numbers:
-                return {"error": "需要至少一个数值"}
+                return {"error": "At least one number is required"}
 
             if use_decimal:
                 if precision:
-                    getcontext().prec = precision + 10  # 额外精度避免舍入误差
+                    getcontext().prec = (
+                        precision + 10
+                    )  # Extra digits to avoid rounding errors
                 numbers = [Decimal(str(n)) for n in numbers]
 
             if operation in ["add", "sum"]:
                 result = sum(numbers)
                 return {
                     "result": float(result) if not use_decimal else str(result),
-                    "operation": "加法",
+                    "operation": "Addition",
                     "inputs": (
                         [float(n) for n in numbers]
                         if not use_decimal
@@ -64,7 +65,7 @@ class BasicCalculator:
                     result *= n
                 return {
                     "result": float(result) if not use_decimal else str(result),
-                    "operation": "乘法",
+                    "operation": "Multiplication",
                     "inputs": (
                         [float(n) for n in numbers]
                         if not use_decimal
@@ -74,14 +75,14 @@ class BasicCalculator:
 
             elif operation in ["modulo", "modulus"]:
                 if len(numbers) != 2:
-                    return {"error": "取模运算需要恰好两个数值"}
+                    return {"error": "Modulo operation requires exactly two numbers"}
                 dividend, divisor = numbers
                 if divisor == 0:
-                    return {"error": "除数不能为零"}
+                    return {"error": "Divisor cannot be zero"}
                 result = dividend % divisor
                 return {
                     "result": float(result) if not use_decimal else str(result),
-                    "operation": "取模",
+                    "operation": "Modulo",
                     "dividend": float(dividend) if not use_decimal else str(dividend),
                     "divisor": float(divisor) if not use_decimal else str(divisor),
                 }
@@ -90,7 +91,7 @@ class BasicCalculator:
                 result = sum(numbers) / len(numbers)
                 return {
                     "result": float(result) if not use_decimal else str(result),
-                    "operation": "平均值",
+                    "operation": "Average",
                     "inputs": (
                         [float(n) for n in numbers]
                         if not use_decimal
@@ -100,12 +101,11 @@ class BasicCalculator:
 
             elif operation == "factorial":
                 if len(numbers) != 1:
-                    return {"error": "阶乘运算需要恰好一个数值"}
+                    return {"error": "Factorial operation requires exactly one number"}
                 n = numbers[0]
 
-                # 检查是否为数值类型
                 if not isinstance(n, (int, float, Decimal)):
-                    return {"error": "阶乘运算需要数值输入"}
+                    return {"error": "Factorial requires a numeric input"}
 
                 is_integer = False
                 if isinstance(n, int):
@@ -118,66 +118,68 @@ class BasicCalculator:
                         is_integer = True
 
                 if not is_integer:
-                    return {"error": "阶乘运算需要整数"}
+                    return {"error": "Factorial requires integer input"}
 
                 n_int = int(n)
                 if n_int < 0:
-                    return {"error": "阶乘运算需要非负整数"}
+                    return {"error": "Factorial requires a non-negative integer"}
 
-                # 检查数值是否过大，避免计算溢出
+                # Limit to avoid overflow
                 if n_int > 1000:
-                    return {"error": "数值过大，阶乘运算限制在1000以内"}
+                    return {
+                        "error": "Number too large, factorial is limited to 1000 or below"
+                    }
 
                 result = math.factorial(n_int)
                 return {
                     "result": result,
-                    "operation": "阶乘",
+                    "operation": "Factorial",
                     "input": n_int,
                 }
 
             elif operation == "gcd":
                 if len(numbers) < 2:
-                    return {"error": "最大公约数需要至少两个数值"}
+                    return {"error": "GCD requires at least two numbers"}
                 integers = [
                     int(n)
                     for n in numbers
                     if isinstance(n, (int, float, Decimal)) and n == int(n)
                 ]
                 if len(integers) != len(numbers):
-                    return {"error": "最大公约数需要整数"}
+                    return {"error": "GCD requires integer inputs"}
                 result = integers[0]
                 for n in integers[1:]:
                     result = math.gcd(result, n)
                 return {
                     "result": result,
-                    "operation": "最大公约数",
+                    "operation": "GCD",
                     "inputs": integers,
                 }
 
             elif operation == "lcm":
                 if len(numbers) < 2:
-                    return {"error": "最小公倍数需要至少两个数值"}
+                    return {"error": "LCM requires at least two numbers"}
                 integers = [
                     int(n)
                     for n in numbers
                     if isinstance(n, (int, float, Decimal)) and n == int(n)
                 ]
                 if len(integers) != len(numbers):
-                    return {"error": "最小公倍数需要整数"}
+                    return {"error": "LCM requires integer inputs"}
                 result = integers[0]
                 for n in integers[1:]:
                     result = abs(result * n) // math.gcd(result, n)
                 return {
                     "result": result,
-                    "operation": "最小公倍数",
+                    "operation": "LCM",
                     "inputs": integers,
                 }
 
             else:
-                return {"error": f"不支持的运算类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
         except Exception as e:
-            return {"error": f"算术运算出错: {str(e)}"}
+            return {"error": f"Arithmetic error: {str(e)}"}
 
     def mathematical_functions_tool(
         self,
@@ -188,63 +190,69 @@ class BasicCalculator:
         angle_unit: str = "radians",
     ) -> Dict[str, Any]:
         """
-        数学函数计算工具
+        Mathematical function calculation tool
 
         Args:
-            function: 函数类型 ('sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
-                               'log', 'log10', 'ln', 'sqrt', 'cbrt', 'exp', 'abs', 'ceil', 'floor', 'round', 'factorial', 'gamma')
-            value: 输入值
-            base: 对数的底数（可选）
-            precision: 结果精度
-            angle_unit: 角度单位 ('radians', 'degrees')
+            function: Function type ('sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
+                                    'log', 'log10', 'ln', 'sqrt', 'cbrt', 'exp', 'abs', 'ceil', 'floor', 'round', 'factorial', 'gamma')
+            value: Input value
+            base: Base for logarithm (optional)
+            precision: Result precision
+            angle_unit: Angle unit ('radians', 'degrees')
 
         Returns:
-            函数计算结果
+            Function computation result
         """
         try:
-            # 角度转换
+            # Angle conversion
             if function in ["sin", "cos", "tan"] and angle_unit == "degrees":
                 value = math.radians(value)
 
-            # 基本三角函数
+            # Basic trigonometric functions
             if function == "sin":
                 result = math.sin(value)
                 unit_note = (
-                    f"（输入角度单位：{angle_unit}）" if angle_unit == "degrees" else ""
+                    f"(Input angle unit: {angle_unit})"
+                    if angle_unit == "degrees"
+                    else ""
                 )
             elif function == "cos":
                 result = math.cos(value)
                 unit_note = (
-                    f"（输入角度单位：{angle_unit}）" if angle_unit == "degrees" else ""
+                    f"(Input angle unit: {angle_unit})"
+                    if angle_unit == "degrees"
+                    else ""
                 )
             elif function == "tan":
                 result = math.tan(value)
                 unit_note = (
-                    f"（输入角度单位：{angle_unit}）" if angle_unit == "degrees" else ""
+                    f"(Input angle unit: {angle_unit})"
+                    if angle_unit == "degrees"
+                    else ""
                 )
 
-            # 反三角函数
+            # Inverse trigonometric functions
             elif function == "asin":
                 if not -1 <= value <= 1:
-                    return {"error": "asin的输入值必须在[-1, 1]范围内"}
+                    return {"error": "Input for asin must be in [-1, 1]"}
                 result = math.asin(value)
                 if angle_unit == "degrees":
                     result = math.degrees(result)
-                unit_note = f"（输出角度单位：{angle_unit}）"
+                unit_note = f"(Output angle unit: {angle_unit})"
             elif function == "acos":
                 if not -1 <= value <= 1:
-                    return {"error": "acos的输入值必须在[-1, 1]范围内"}
+                    return {"error": "Input for acos must be in [-1, 1]"}
                 result = math.acos(value)
                 if angle_unit == "degrees":
                     result = math.degrees(result)
-                unit_note = f"（输出角度单位：{angle_unit}）"
+                unit_note = f"(Output angle unit: {angle_unit})"
             elif function == "atan":
                 result = math.atan(value)
                 if angle_unit == "degrees":
                     result = math.degrees(result)
-                unit_note = f"（输出角度单位：{angle_unit}）"
+                unit_note = f"(Output angle unit: {angle_unit})"
 
-            # 双曲函数
+            # Hyperbolic functions
             elif function == "sinh":
                 result = math.sinh(value)
                 unit_note = ""
@@ -255,29 +263,31 @@ class BasicCalculator:
                 result = math.tanh(value)
                 unit_note = ""
 
-            # 对数函数
+            # Logarithmic functions
             elif function == "log":
                 if value <= 0:
-                    return {"error": "对数函数的输入值必须大于0"}
+                    return {"error": "Input for logarithm must be greater than 0"}
                 if base is None:
                     base = 10
                 result = math.log(value, base)
-                unit_note = f"（底数：{base}）"
+                unit_note = f"(Base: {base})"
             elif function == "log10":
                 if value <= 0:
-                    return {"error": "对数函数的输入值必须大于0"}
+                    return {"error": "Input for log10 must be greater than 0"}
                 result = math.log10(value)
-                unit_note = "（常用对数，底数：10）"
+                unit_note = "(Common logarithm, base: 10)"
             elif function == "ln":
                 if value <= 0:
-                    return {"error": "自然对数函数的输入值必须大于0"}
+                    return {
+                        "error": "Input for natural logarithm must be greater than 0"
+                    }
                 result = math.log(value)
-                unit_note = "（自然对数，底数：e）"
+                unit_note = "(Natural logarithm, base: e)"
 
-            # 根式和指数函数
+            # Root and exponentials
             elif function == "sqrt":
                 if value < 0:
-                    return {"error": "平方根函数的输入值不能为负数"}
+                    return {"error": "Input for square root cannot be negative"}
                 result = math.sqrt(value)
                 unit_note = ""
             elif function == "cbrt":
@@ -287,7 +297,7 @@ class BasicCalculator:
                 result = math.exp(value)
                 unit_note = ""
 
-            # 其他数学函数
+            # Other mathematical functions
             elif function == "abs":
                 result = abs(value)
                 unit_note = ""
@@ -303,27 +313,31 @@ class BasicCalculator:
                 else:
                     result = round(value)
                 unit_note = (
-                    f"（精度：{precision}位小数）" if precision is not None else ""
+                    f"(Precision: {precision} decimal places)"
+                    if precision is not None
+                    else ""
                 )
 
-            # 新增 factorial 函数
+            # Added factorial function
             elif function == "factorial":
                 if value < 0 or int(value) != value:
-                    return {"error": "factorial 函数需要非负整数输入"}
+                    return {
+                        "error": "Factorial function requires non-negative integer input"
+                    }
                 result = math.factorial(int(value))
                 unit_note = ""
 
-            # 新增 gamma 函数
+            # Added gamma function
             elif function == "gamma":
                 if value <= 0:
-                    return {"error": "gamma 函数输入必须大于0"}
+                    return {"error": "Gamma function input must be greater than 0"}
                 result = math.gamma(value)
                 unit_note = ""
 
             else:
-                return {"error": f"不支持的数学函数: {function}"}
+                return {"error": f"Unsupported mathematical function: {function}"}
 
-            # 格式化结果
+            # Format result
             if precision is not None and function not in ["ceil", "floor", "round"]:
                 result = round(result, precision)
 
@@ -335,7 +349,7 @@ class BasicCalculator:
             }
 
         except Exception as e:
-            return {"error": f"数学函数计算出错: {str(e)}"}
+            return {"error": f"Mathematical function error: {str(e)}"}
 
     def number_converter_tool(
         self,
@@ -346,36 +360,36 @@ class BasicCalculator:
         precision: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
-        数值进制转换和格式化工具
+        Number base conversion and formatting tool
 
         Args:
-            number: 输入数值
-            from_base: 源进制 (2-36)
-            to_base: 目标进制 (2-36)
-            operation: 操作类型 ('convert', 'format', 'scientific', 'fraction')
-            precision: 精度控制
+            number: Input number
+            from_base: Source base (2-36)
+            to_base: Target base (2-36)
+            operation: Operation type ('convert', 'format', 'scientific', 'fraction')
+            precision: Precision control
 
         Returns:
-            转换结果
+            Conversion result
         """
         try:
             if operation == "convert":
-                # 进制转换
+                # Base conversion
                 if from_base < 2 or from_base > 36 or to_base < 2 or to_base > 36:
-                    return {"error": "进制必须在2-36范围内"}
+                    return {"error": "Base must be in the range 2-36"}
 
-                # 转换为十进制
+                # Convert to decimal
                 if from_base != 10:
                     try:
                         decimal_value = int(str(number), from_base)
                     except ValueError:
                         return {
-                            "error": f"无法将'{number}'从{from_base}进制转换为十进制"
+                            "error": f"Failed to convert '{number}' from base {from_base} to decimal"
                         }
                 else:
                     decimal_value = int(float(number))
 
-                # 从十进制转换到目标进制
+                # Convert from decimal to target base
                 if to_base == 10:
                     result = str(decimal_value)
                 else:
@@ -400,7 +414,7 @@ class BasicCalculator:
                 }
 
             elif operation == "format":
-                # 数值格式化
+                # Number formatting
                 num_value = float(number)
                 formats = {
                     "standard": f"{num_value:,}",
@@ -414,11 +428,11 @@ class BasicCalculator:
                 return {
                     "result": formats,
                     "original": number,
-                    "operation": "格式化",
+                    "operation": "format",
                 }
 
             elif operation == "scientific":
-                # 科学记数法
+                # Scientific notation
                 num_value = float(number)
                 mantissa = num_value
                 exponent = 0
@@ -443,7 +457,7 @@ class BasicCalculator:
                 }
 
             elif operation == "fraction":
-                # 转换为分数
+                # Convert to fraction
                 from fractions import Fraction
 
                 try:
@@ -456,13 +470,13 @@ class BasicCalculator:
                         "original": number,
                     }
                 except Exception:
-                    return {"error": "无法转换为分数形式"}
+                    return {"error": "Unable to convert to fractional form"}
 
             else:
-                return {"error": f"不支持的操作类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
         except Exception as e:
-            return {"error": f"数值转换出错: {str(e)}"}
+            return {"error": f"Number conversion error: {str(e)}"}
 
     def unit_converter_tool(
         self,
@@ -472,21 +486,21 @@ class BasicCalculator:
         unit_type: str,
     ) -> Dict[str, Any]:
         """
-        单位转换工具
+        Unit conversion tool
 
         Args:
-            value: 输入值
-            from_unit: 源单位
-            to_unit: 目标单位
-            unit_type: 单位类型 ('length', 'weight', 'temperature', 'area', 'volume', 'time', 'speed', 'energy')
+            value: Input value
+            from_unit: Source unit
+            to_unit: Target unit
+            unit_type: Unit type ('length', 'weight', 'temperature', 'area', 'volume', 'time', 'speed', 'energy')
 
         Returns:
-            转换结果
+            Conversion result
         """
         try:
-            # 定义转换因子（全部转换为基础单位）
+            # Conversion factors (all converted to base unit)
             conversions = {
-                "length": {  # 基础单位：米(m)
+                "length": {  # Base unit: meter (m)
                     "mm": 0.001,
                     "cm": 0.01,
                     "m": 1,
@@ -496,7 +510,7 @@ class BasicCalculator:
                     "yd": 0.9144,
                     "mi": 1609.34,
                 },
-                "weight": {  # 基础单位：千克(kg)
+                "weight": {  # Base unit: kilogram (kg)
                     "mg": 0.000001,
                     "g": 0.001,
                     "kg": 1,
@@ -505,12 +519,12 @@ class BasicCalculator:
                     "lb": 0.453592,
                     "st": 6.35029,
                 },
-                "temperature": {  # 特殊处理
+                "temperature": {  # Special handling
                     "celsius": "celsius",
                     "fahrenheit": "fahrenheit",
                     "kelvin": "kelvin",
                 },
-                "area": {  # 基础单位：平方米(m²)
+                "area": {  # Base unit: square meter (m²)
                     "mm2": 0.000001,
                     "cm2": 0.0001,
                     "m2": 1,
@@ -519,7 +533,7 @@ class BasicCalculator:
                     "ft2": 0.092903,
                     "yd2": 0.836127,
                 },
-                "volume": {  # 基础单位：升(L)
+                "volume": {  # Base unit: liter (L)
                     "ml": 0.001,
                     "l": 1,
                     "m3": 1000,
@@ -530,7 +544,7 @@ class BasicCalculator:
                     "qt": 0.946353,
                     "gal": 3.78541,
                 },
-                "time": {  # 基础单位：秒(s)
+                "time": {  # Base unit: second (s)
                     "ms": 0.001,
                     "s": 1,
                     "min": 60,
@@ -540,13 +554,13 @@ class BasicCalculator:
                     "month": 2629746,
                     "year": 31556952,
                 },
-                "speed": {  # 基础单位：米/秒(m/s)
+                "speed": {  # Base unit: meter/second (m/s)
                     "m/s": 1,
                     "km/h": 0.277778,
                     "mph": 0.44704,
                     "knot": 0.514444,
                 },
-                "energy": {  # 基础单位：焦耳(J)
+                "energy": {  # Base unit: joule (J)
                     "j": 1,
                     "kj": 1000,
                     "cal": 4.184,
@@ -556,20 +570,20 @@ class BasicCalculator:
             }
 
             if unit_type not in conversions:
-                return {"error": f"不支持的单位类型: {unit_type}"}
+                return {"error": f"Unsupported unit type: {unit_type}"}
 
             unit_map = conversions[unit_type]
 
-            # 温度转换特殊处理
+            # Special case for temperature conversion
             if unit_type == "temperature":
                 result = self._convert_temperature(value, from_unit, to_unit)
                 if isinstance(result, dict) and "error" in result:
                     return result
             else:
                 if from_unit not in unit_map or to_unit not in unit_map:
-                    return {"error": f"不支持的单位: {from_unit} 或 {to_unit}"}
+                    return {"error": f"Unsupported unit: {from_unit} or {to_unit}"}
 
-                # 转换为基础单位，然后转换为目标单位
+                # Convert to base unit, then to target unit
                 base_value = value * unit_map[from_unit]
                 result = base_value / unit_map[to_unit]
 
@@ -583,18 +597,17 @@ class BasicCalculator:
             }
 
         except Exception as e:
-            return {"error": f"单位转换出错: {str(e)}"}
+            return {"error": f"Unit conversion error: {str(e)}"}
 
     def _convert_temperature(
         self, value: float, from_unit: str, to_unit: str
     ) -> Union[float, Dict[str, str]]:
-        """温度转换辅助函数"""
+        """Helper for temperature conversion"""
         try:
-            # 统一单位名称
             from_unit = from_unit.lower()
             to_unit = to_unit.lower()
 
-            # 首先转换为摄氏度
+            # Convert to Celsius first
             if from_unit == "celsius":
                 celsius = value
             elif from_unit == "fahrenheit":
@@ -602,9 +615,9 @@ class BasicCalculator:
             elif from_unit == "kelvin":
                 celsius = value - 273.15
             else:
-                return {"error": f"不支持的温度单位: {from_unit}"}
+                return {"error": f"Unsupported temperature unit: {from_unit}"}
 
-            # 从摄氏度转换为目标单位
+            # Convert from Celsius to target unit
             if to_unit == "celsius":
                 result = celsius
             elif to_unit == "fahrenheit":
@@ -612,12 +625,12 @@ class BasicCalculator:
             elif to_unit == "kelvin":
                 result = celsius + 273.15
             else:
-                return {"error": f"不支持的温度单位: {to_unit}"}
+                return {"error": f"Unsupported temperature unit: {to_unit}"}
 
             return result
 
         except Exception as e:
-            return {"error": f"温度转换出错: {str(e)}"}
+            return {"error": f"Temperature conversion error: {str(e)}"}
 
     def precision_calculator_tool(
         self,
@@ -627,20 +640,20 @@ class BasicCalculator:
         rounding_mode: str = "round_half_up",
     ) -> Dict[str, Any]:
         """
-        高精度计算工具
+        High-precision calculation tool
 
         Args:
-            numbers: 数值列表
-            operation: 运算类型 ('add', 'subtract', 'multiply', 'divide', 'power', 'sqrt')
-            precision_digits: 精度位数
-            rounding_mode: 舍入模式
+            numbers: List of numbers
+            operation: Operation type ('add', 'subtract', 'multiply', 'divide', 'power', 'sqrt')
+            precision_digits: Precision digits
+            rounding_mode: Rounding mode
 
         Returns:
-            高精度计算结果
+            High-precision calculation result
         """
         try:
-            # 设置精度和舍入模式
-            getcontext().prec = precision_digits + 10  # 额外精度避免舍入误差
+            # Set precision and rounding mode
+            getcontext().prec = precision_digits + 10
 
             rounding_modes = {
                 "round_half_up": decimal.ROUND_HALF_UP,
@@ -655,14 +668,13 @@ class BasicCalculator:
             if rounding_mode in rounding_modes:
                 getcontext().rounding = rounding_modes[rounding_mode]
 
-            # 转换为高精度小数
             decimal_numbers = [Decimal(str(n)) for n in numbers]
 
             if operation == "add":
                 result = sum(decimal_numbers)
             elif operation == "subtract":
                 if len(decimal_numbers) < 2:
-                    return {"error": "减法需要至少两个数值"}
+                    return {"error": "Subtraction requires at least two numbers"}
                 result = decimal_numbers[0]
                 for n in decimal_numbers[1:]:
                     result -= n
@@ -672,26 +684,27 @@ class BasicCalculator:
                     result *= n
             elif operation == "divide":
                 if len(decimal_numbers) < 2:
-                    return {"error": "除法需要至少两个数值"}
+                    return {"error": "Division requires at least two numbers"}
                 result = decimal_numbers[0]
                 for n in decimal_numbers[1:]:
                     if n == 0:
-                        return {"error": "除数不能为零"}
+                        return {"error": "Divisor cannot be zero"}
                     result /= n
             elif operation == "power":
                 if len(decimal_numbers) != 2:
-                    return {"error": "幂运算需要恰好两个数值"}
+                    return {"error": "Power operation requires exactly two numbers"}
                 result = decimal_numbers[0] ** decimal_numbers[1]
             elif operation == "sqrt":
                 if len(decimal_numbers) != 1:
-                    return {"error": "平方根运算需要恰好一个数值"}
+                    return {
+                        "error": "Square root operation requires exactly one number"
+                    }
                 if decimal_numbers[0] < 0:
-                    return {"error": "平方根的输入值不能为负数"}
+                    return {"error": "Input for square root cannot be negative"}
                 result = decimal_numbers[0].sqrt()
             else:
-                return {"error": f"不支持的运算类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
 
-            # 格式化结果
             quantized_result = result.quantize(Decimal("0." + "0" * precision_digits))
 
             return {
@@ -704,7 +717,7 @@ class BasicCalculator:
             }
 
         except Exception as e:
-            return {"error": f"高精度计算出错: {str(e)}"}
+            return {"error": f"High-precision calculation error: {str(e)}"}
 
     def number_properties_tool(
         self,
@@ -712,18 +725,18 @@ class BasicCalculator:
         analysis_type: str = "comprehensive",
     ) -> Dict[str, Any]:
         """
-        数值属性分析工具
+        Number properties analysis tool
 
         Args:
-            number: 输入数值
-            analysis_type: 分析类型 ('comprehensive', 'prime', 'divisors', 'properties')
+            number: Input number
+            analysis_type: Analysis type ('comprehensive', 'prime', 'divisors', 'properties')
 
         Returns:
-            数值属性分析结果
+            Analysis results of number properties
         """
         try:
             if isinstance(number, float) and not number.is_integer():
-                return {"error": "某些分析功能仅支持整数"}
+                return {"error": "Some analytical features only support integers"}
 
             n = (
                 int(number)
@@ -733,7 +746,7 @@ class BasicCalculator:
             result = {"number": n}
 
             if analysis_type in ["comprehensive", "properties"]:
-                # 基本属性
+                # Basic properties
                 result.update(
                     {
                         "is_integer": isinstance(n, int),
@@ -763,11 +776,11 @@ class BasicCalculator:
                 and isinstance(n, int)
                 and n > 1
             ):
-                # 质数检验
+                # Prime check
                 result["is_prime"] = self._is_prime(n)
 
-                # 质因数分解
-                if n <= 10000:  # 限制较大数的分解以避免超时
+                # Prime factorization
+                if n <= 10000:
                     result["prime_factors"] = self._prime_factorization(n)
 
             if (
@@ -775,32 +788,30 @@ class BasicCalculator:
                 and isinstance(n, int)
                 and 0 < n <= 1000
             ):
-                # 因数分析
+                # Divisors analysis
                 divisors = self._get_divisors(n)
                 result.update(
                     {
                         "divisors": divisors,
                         "divisor_count": len(divisors),
                         "sum_of_divisors": sum(divisors),
-                        "is_perfect_number": sum(divisors[:-1])
-                        == n,  # 除自身外的因数和等于自身
+                        "is_perfect_number": sum(divisors[:-1]) == n,
                     }
                 )
 
             if analysis_type == "comprehensive" and isinstance(n, int):
-                # 数字根
+                # Digital root
                 result["digital_root"] = self._digital_root(abs(n))
-
-                # 各位数字和
+                # Digit sum
                 result["digit_sum"] = sum(int(digit) for digit in str(abs(n)))
 
             return result
 
         except Exception as e:
-            return {"error": f"数值属性分析出错: {str(e)}"}
+            return {"error": f"Number properties analysis error: {str(e)}"}
 
     def _is_prime(self, n: int) -> bool:
-        """判断是否为质数"""
+        """Check if number is prime"""
         if n < 2:
             return False
         if n == 2:
@@ -813,7 +824,7 @@ class BasicCalculator:
         return True
 
     def _prime_factorization(self, n: int) -> List[int]:
-        """质因数分解"""
+        """Prime factorization"""
         factors = []
         d = 2
         while d * d <= n:
@@ -826,7 +837,7 @@ class BasicCalculator:
         return factors
 
     def _get_divisors(self, n: int) -> List[int]:
-        """获取所有因数"""
+        """Get all divisors"""
         divisors = []
         for i in range(1, int(n**0.5) + 1):
             if n % i == 0:
@@ -836,7 +847,7 @@ class BasicCalculator:
         return sorted(divisors)
 
     def _digital_root(self, n: int) -> int:
-        """计算数字根"""
+        """Calculate digital root"""
         while n >= 10:
             n = sum(int(digit) for digit in str(n))
         return n

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-数论计算模块
-提供高级数论计算功能
+Number Theory Computation Module
+Provides advanced number theory computation features
 """
 
 import math
@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional, Tuple
 
 
 class NumberTheoryCalculator:
-    """数论计算器类"""
+    """Number theory calculator class"""
 
     def __init__(self):
         pass
@@ -27,19 +27,19 @@ class NumberTheoryCalculator:
         precision: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
-        数论计算工具
+        Number theory computation tool
 
         Args:
-            operation: 操作类型
-            number: 单个数字
-            numbers: 数字列表
-            modulus: 模数
-            base: 底数
-            exponent: 指数
-            limit: 限制值
-            precision: 计算精度
+            operation: Type of operation
+            number: Single integer
+            numbers: List of integers
+            modulus: Modulus value
+            base: Base value
+            exponent: Exponent value
+            limit: Limit value
+            precision: Calculation precision
         """
-        # 参数验证
+        # Parameter validation
         validation_result = self._validate_parameters(
             operation, number, numbers, modulus, base, exponent, limit
         )
@@ -54,7 +54,7 @@ class NumberTheoryCalculator:
             elif operation == "generate_primes":
                 return self._generate_primes(limit)
             elif operation == "modular_arithmetic":
-                op_type = "add"  # 默认加法，可以通过扩展参数指定
+                op_type = "add"  # Default is addition, can be adjusted with extra args
                 return self._modular_arithmetic(numbers, modulus, op_type)
             elif operation == "modular_exponentiation":
                 return self._modular_exponentiation(base, exponent, modulus)
@@ -92,10 +92,10 @@ class NumberTheoryCalculator:
             elif operation == "continued_fraction":
                 return self._continued_fraction(number, precision or 10)
             else:
-                return {"error": f"不支持的操作: {operation}"}
+                return {"error": f"Unsupported operation: {operation}"}
 
         except Exception as e:
-            return {"error": f"数论计算错误: {str(e)}"}
+            return {"error": f"Number theory computation error: {str(e)}"}
 
     def _validate_parameters(
         self,
@@ -107,7 +107,7 @@ class NumberTheoryCalculator:
         exponent: Optional[int],
         limit: Optional[int],
     ) -> Optional[Dict[str, Any]]:
-        """参数验证"""
+        """Parameter validation"""
         valid_operations = [
             "prime_factorization",
             "prime_test",
@@ -130,10 +130,10 @@ class NumberTheoryCalculator:
 
         if operation not in valid_operations:
             return {
-                "error": f"无效的操作类型: {operation}，支持的操作: {valid_operations}"
+                "error": f"Invalid operation type: {operation}, supported operations: {valid_operations}"
             }
 
-        # 检查必需参数
+        # Check required parameters
         if operation in [
             "prime_factorization",
             "prime_test",
@@ -146,54 +146,58 @@ class NumberTheoryCalculator:
             "continued_fraction",
         ]:
             if number is None:
-                return {"error": f"操作 {operation} 需要提供 number 参数"}
+                return {"error": f"Operation {operation} requires parameter 'number'"}
             if not isinstance(number, int) or number <= 0:
-                return {"error": "number 必须是正整数"}
+                return {"error": "'number' must be a positive integer"}
 
         if operation in ["generate_primes", "fibonacci"]:
             if limit is None:
-                return {"error": f"操作 {operation} 需要提供 limit 参数"}
+                return {"error": f"Operation {operation} requires parameter 'limit'"}
             if not isinstance(limit, int) or limit <= 0:
-                return {"error": "limit 必须是正整数"}
+                return {"error": "'limit' must be a positive integer"}
 
         if operation == "modular_exponentiation":
             if base is None or exponent is None or modulus is None:
-                return {"error": "模幂运算需要提供 base, exponent, modulus 参数"}
+                return {
+                    "error": "Modular exponentiation requires 'base', 'exponent', 'modulus' parameters"
+                }
             if not all(isinstance(x, int) for x in [base, exponent, modulus]):
-                return {"error": "base, exponent, modulus 必须是整数"}
+                return {"error": "'base', 'exponent', 'modulus' must be integers"}
             if modulus <= 0:
-                return {"error": "modulus 必须是正整数"}
+                return {"error": "'modulus' must be a positive integer"}
             if exponent < 0:
-                return {"error": "exponent 必须是非负整数"}
+                return {"error": "'exponent' must be a non-negative integer"}
 
         if operation in ["extended_gcd", "jacobi_symbol"]:
             if numbers is None or len(numbers) < 2:
-                return {"error": f"操作 {operation} 需要提供至少2个数字"}
+                return {"error": f"Operation {operation} requires at least 2 numbers"}
             if not all(isinstance(x, int) for x in numbers):
-                return {"error": "numbers 中的所有元素必须是整数"}
+                return {"error": "All elements in 'numbers' must be integers"}
 
         if operation == "quadratic_residue":
             if number is None or modulus is None:
-                return {"error": "二次剩余检查需要提供 number 和 modulus 参数"}
+                return {
+                    "error": "Quadratic residue check requires 'number' and 'modulus'"
+                }
             if not isinstance(modulus, int) or modulus <= 0:
-                return {"error": "modulus 必须是正整数"}
+                return {"error": "'modulus' must be a positive integer"}
 
         return None
 
     def _prime_factorization(self, n: int) -> Dict[str, Any]:
-        """素因数分解"""
+        """Prime factorization"""
         if n <= 1:
-            return {"error": "数字必须大于1"}
+            return {"error": "Number must be greater than 1"}
 
         factors = []
         original_n = n
 
-        # 处理2的因子
+        # Handle factor 2
         while n % 2 == 0:
             factors.append(2)
             n //= 2
 
-        # 处理奇数因子
+        # Handle odd factors
         i = 3
         while i * i <= n:
             while n % i == 0:
@@ -201,11 +205,11 @@ class NumberTheoryCalculator:
                 n //= i
             i += 2
 
-        # 如果n是大于2的素数
+        # If n is a prime > 2
         if n > 2:
             factors.append(n)
 
-        # 统计因子频次
+        # Count factor occurrences
         factor_counts = {}
         for factor in factors:
             factor_counts[factor] = factor_counts.get(factor, 0) + 1
@@ -225,64 +229,61 @@ class NumberTheoryCalculator:
         }
 
     def _prime_test(self, n: int) -> Dict[str, Any]:
-        """素数检测（Miller-Rabin算法）"""
+        """Primality test (Miller-Rabin)"""
         if n < 2:
             return {
                 "number": n,
                 "is_prime": False,
-                "reason": "小于2",
-                "certainty": "确定",
+                "reason": "less than 2",
+                "certainty": "definite",
             }
         if n == 2:
             return {
                 "number": n,
                 "is_prime": True,
-                "reason": "2是素数",
-                "certainty": "确定",
+                "reason": "2 is prime",
+                "certainty": "definite",
             }
         if n % 2 == 0:
             return {
                 "number": n,
                 "is_prime": False,
-                "reason": "偶数",
-                "certainty": "确定",
+                "reason": "even number",
+                "certainty": "definite",
             }
 
-        # 小素数试除
+        # Trial division for small primes
         small_primes = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
         for p in small_primes:
             if n == p:
                 return {
                     "number": n,
                     "is_prime": True,
-                    "reason": f"{p}是已知素数",
-                    "certainty": "确定",
+                    "reason": f"{p} is a known prime",
+                    "certainty": "definite",
                 }
             if n % p == 0:
                 return {
                     "number": n,
                     "is_prime": False,
-                    "reason": f"被{p}整除",
-                    "certainty": "确定",
+                    "reason": f"divisible by {p}",
+                    "certainty": "definite",
                 }
 
-        # Miller-Rabin素性测试
+        # Miller-Rabin primality test
         def __miller_rabin(n, k=10):
-            # 写n-1为d*2^r的形式
+            # write n-1 as d*2^r
             r = 0
             d = n - 1
             while d % 2 == 0:
                 r += 1
                 d //= 2
 
-            # 进行k轮测试
             for _ in range(k):
                 a = random.randrange(2, n - 1)
                 x = pow(a, d, n)
-
                 if x == 1 or x == n - 1:
                     continue
-
                 for _ in range(r - 1):
                     x = pow(x, 2, n)
                     if x == n - 1:
@@ -298,12 +299,12 @@ class NumberTheoryCalculator:
             "number": n,
             "is_prime": is_prime,
             "method": "Miller-Rabin",
-            "certainty": "高概率正确" if is_prime else "确定合数",
+            "certainty": "high probability" if is_prime else "definitely composite",
             "test_rounds": 10,
         }
 
     def _generate_primes(self, limit: int) -> Dict[str, Any]:
-        """生成素数（埃拉托斯特尼筛法）"""
+        """Generate primes (Sieve of Eratosthenes)"""
         if limit < 2:
             return {"limit": limit, "primes": [], "count": 0}
 
@@ -317,7 +318,7 @@ class NumberTheoryCalculator:
 
         primes = [i for i in range(2, limit + 1) if sieve[i]]
 
-        # 计算素数密度
+        # Prime density
         density = len(primes) / limit if limit > 0 else 0
 
         return {
@@ -337,9 +338,9 @@ class NumberTheoryCalculator:
     def _modular_arithmetic(
         self, numbers: List[int], modulus: int, operation: str = "add"
     ) -> Dict[str, Any]:
-        """模运算"""
+        """Modular arithmetic"""
         if not numbers or modulus <= 0:
-            return {"error": "无效参数"}
+            return {"error": "Invalid parameters"}
 
         result = numbers[0] % modulus
 
@@ -365,9 +366,9 @@ class NumberTheoryCalculator:
     def _modular_exponentiation(
         self, base: int, exponent: int, modulus: int
     ) -> Dict[str, Any]:
-        """模幂运算"""
+        """Modular exponentiation"""
         if modulus <= 0:
-            return {"error": "模数必须为正数"}
+            return {"error": "Modulus must be positive"}
 
         result = pow(base, exponent, modulus)
 
@@ -381,7 +382,7 @@ class NumberTheoryCalculator:
         }
 
     def _extended_gcd(self, a: int, b: int) -> Dict[str, Any]:
-        """扩展欧几里得算法"""
+        """Extended Euclidean Algorithm"""
         original_a, original_b = a, b
         old_r, r = a, b
         old_s, s = 1, 0
@@ -413,20 +414,22 @@ class NumberTheoryCalculator:
     def _chinese_remainder_theorem(
         self, remainders: List[int], moduli: List[int]
     ) -> Dict[str, Any]:
-        """中国剩余定理"""
+        """Chinese Remainder Theorem"""
         if len(remainders) != len(moduli):
-            return {"error": "余数和模数的数量必须相等"}
+            return {"error": "The number of remainders and moduli must be equal"}
 
         if len(remainders) == 0:
-            return {"error": "需要至少一个方程"}
+            return {"error": "At least one equation is required"}
 
-        # 检查模数是否两两互质
+        # Check if moduli are pairwise coprime
         for i in range(len(moduli)):
             for j in range(i + 1, len(moduli)):
                 if math.gcd(moduli[i], moduli[j]) != 1:
-                    return {"error": f"模数{moduli[i]}和{moduli[j]}不互质"}
+                    return {
+                        "error": f"Moduli {moduli[i]} and {moduli[j]} are not coprime"
+                    }
 
-        # 中国剩余定理求解
+        # CRT solution
         total = 0
         prod = 1
         for m in moduli:
@@ -452,14 +455,14 @@ class NumberTheoryCalculator:
         }
 
     def _mod_inverse(self, a: int, m: int) -> int:
-        """模逆元"""
+        """Modular inverse"""
         gcd, x, _ = self._extended_gcd_internal(a, m)
         if gcd != 1:
-            raise ValueError("模逆元不存在")
+            raise ValueError("Modular inverse does not exist")
         return (x % m + m) % m
 
     def _extended_gcd_internal(self, a: int, b: int) -> Tuple[int, int, int]:
-        """内部扩展欧几里得算法"""
+        """Internal extended Euclidean algorithm"""
         if a == 0:
             return b, 0, 1
         gcd, x1, y1 = self._extended_gcd_internal(b % a, a)
@@ -468,14 +471,14 @@ class NumberTheoryCalculator:
         return gcd, x, y
 
     def _euler_totient(self, n: int) -> Dict[str, Any]:
-        """欧拉函数"""
+        """Euler's totient function"""
         if n <= 0:
-            return {"error": "数字必须为正数"}
+            return {"error": "Number must be positive"}
 
         result = n
         original_n = n
 
-        # 获取素因数
+        # Find prime factors
         factors = set()
         temp = n
 
@@ -488,7 +491,7 @@ class NumberTheoryCalculator:
         if temp > 1:
             factors.add(temp)
 
-        # 计算欧拉函数值
+        # Compute Euler's totient value
         for p in factors:
             result = result * (p - 1) // p
 
@@ -502,14 +505,14 @@ class NumberTheoryCalculator:
         }
 
     def _carmichael_function(self, n: int) -> Dict[str, Any]:
-        """卡迈克尔函数"""
+        """Carmichael function"""
         if n <= 0:
-            return {"error": "数字必须为正数"}
+            return {"error": "Number must be positive"}
 
         if n == 1:
             return {"number": 1, "carmichael": 1}
 
-        # 质因数分解
+        # Prime factorization
         factors = self._prime_factorization(n)
         if "error" in factors:
             return factors
@@ -528,7 +531,7 @@ class NumberTheoryCalculator:
             else:
                 lambda_values.append((p - 1) * (p ** (k - 1)))
 
-        # 计算最小公倍数
+        # Calculate lcm
         result = lambda_values[0]
         for val in lambda_values[1:]:
             result = result * val // math.gcd(result, val)
@@ -542,9 +545,9 @@ class NumberTheoryCalculator:
         }
 
     def _jacobi_symbol(self, a: int, n: int) -> Dict[str, Any]:
-        """雅可比符号"""
+        """Jacobi symbol"""
         if n <= 0 or n % 2 == 0:
-            return {"error": "n必须是正奇数"}
+            return {"error": "n must be a positive odd integer"}
 
         original_a, original_n = a, n
         result = 1
@@ -575,16 +578,16 @@ class NumberTheoryCalculator:
             "n": original_n,
             "jacobi_symbol": jacobi_result,
             "interpretation": {
-                1: "a是模n的二次剩余（或n=1）",
-                -1: "a是模n的二次非剩余",
-                0: "gcd(a,n) > 1",
+                1: "a is a quadratic residue modulo n (or n = 1)",
+                -1: "a is a quadratic non-residue modulo n",
+                0: "gcd(a, n) > 1",
             }[jacobi_result],
         }
 
     def _quadratic_residue(self, a: int, p: int) -> Dict[str, Any]:
-        """二次剩余检查"""
+        """Quadratic residue check"""
         if not self._is_prime_simple(p):
-            return {"error": "p必须是素数"}
+            return {"error": "p must be a prime"}
 
         a = a % p
 
@@ -597,7 +600,7 @@ class NumberTheoryCalculator:
 
         is_residue = legendre == 1
 
-        # 如果是二次剩余，尝试找到平方根
+        # If quadratic residue, try to find roots
         roots = []
         if is_residue:
             for x in range(p):
@@ -614,17 +617,17 @@ class NumberTheoryCalculator:
         }
 
     def _primitive_root(self, n: int) -> Dict[str, Any]:
-        """寻找原根"""
+        """Find primitive roots"""
         if n <= 0:
-            return {"error": "数字必须为正数"}
+            return {"error": "Number must be positive"}
 
-        # 检查n是否有原根
+        # Check if n has primitive root
         if not self._has_primitive_root(n):
-            return {"error": f"{n}没有原根"}
+            return {"error": f"{n} has no primitive root"}
 
         phi_n = self._euler_totient(n)["euler_totient"]
 
-        # 找到φ(n)的所有素因数
+        # Get all prime factors of phi(n)
         factors = set()
         temp = phi_n
         for i in range(2, int(math.sqrt(temp)) + 1):
@@ -635,9 +638,9 @@ class NumberTheoryCalculator:
         if temp > 1:
             factors.add(temp)
 
-        # 寻找原根
+        # Find primitive roots
         primitive_roots = []
-        for g in range(1, min(n, 100)):  # 限制搜索范围
+        for g in range(1, min(n, 100)):
             if math.gcd(g, n) == 1:
                 is_primitive = True
                 for p in factors:
@@ -651,15 +654,15 @@ class NumberTheoryCalculator:
             "operation": "primitive_root",
             "number": n,
             "euler_phi": phi_n,
-            "primitive_roots": primitive_roots[:10],  # 只返回前10个
+            "primitive_roots": primitive_roots[:10],
             "count_primitive_roots": len(primitive_roots),
             "has_primitive_root": len(primitive_roots) > 0,
         }
 
     def _continued_fraction(self, number: float, max_terms: int = 10) -> Dict[str, Any]:
-        """连分数表示"""
+        """Continued fraction expansion"""
         if max_terms <= 0:
-            return {"error": "项数必须为正数"}
+            return {"error": "Number of terms must be positive"}
 
         original_number = number
         terms = []
@@ -669,12 +672,12 @@ class NumberTheoryCalculator:
             terms.append(integer_part)
 
             fractional_part = number - integer_part
-            if abs(fractional_part) < 1e-10:  # 接近0
+            if abs(fractional_part) < 1e-10:
                 break
 
             number = 1 / fractional_part
 
-        # 计算连分数的收敛值
+        # Compute convergents for the continued fraction
         convergents = []
         for i in range(len(terms)):
             if i == 0:
@@ -702,15 +705,15 @@ class NumberTheoryCalculator:
         }
 
     def _has_primitive_root(self, n: int) -> bool:
-        """检查n是否有原根"""
+        """Check if n has a primitive root"""
         if n == 1 or n == 2 or n == 4:
             return True
 
-        # n = p^k 或 n = 2*p^k，其中p是奇素数
+        # n = p^k or n = 2*p^k, where p is odd prime
         if n % 2 == 0:
             n //= 2
 
-        # 检查是否为素数的幂
+        # Check if n is a power of a prime
         for p in range(3, int(n**0.5) + 1, 2):
             if n % p == 0:
                 temp = n
@@ -721,7 +724,7 @@ class NumberTheoryCalculator:
         return self._is_prime_simple(n)
 
     def _is_prime_simple(self, n: int) -> bool:
-        """简单素数检测"""
+        """Simple primality test"""
         if n < 2:
             return False
         if n == 2:
@@ -734,9 +737,9 @@ class NumberTheoryCalculator:
         return True
 
     def _find_divisors(self, n: int) -> Dict[str, Any]:
-        """找出所有因数"""
+        """Find all divisors"""
         if n <= 0:
-            return {"error": "数字必须为正数"}
+            return {"error": "Number must be positive"}
 
         divisors = []
         for i in range(1, int(math.sqrt(n)) + 1):
@@ -747,7 +750,7 @@ class NumberTheoryCalculator:
 
         divisors.sort()
 
-        # 计算因数的一些统计信息
+        # Calculate some statistics on divisors
         sum_divisors = sum(divisors)
         proper_divisors = [d for d in divisors if d != n]
         sum_proper = sum(proper_divisors)
@@ -767,7 +770,7 @@ class NumberTheoryCalculator:
         }
 
     def _perfect_number_check(self, n: int) -> Dict[str, Any]:
-        """完数检查"""
+        """Perfect number check"""
         divisors_result = self._find_divisors(n)
         if "error" in divisors_result:
             return divisors_result
@@ -782,13 +785,15 @@ class NumberTheoryCalculator:
             "proper_divisors": divisors_result["proper_divisors"],
             "sum_of_proper_divisors": sum_proper,
             "classification": (
-                "完数" if is_perfect else ("盈数" if sum_proper > n else "亏数")
+                "perfect"
+                if is_perfect
+                else ("abundant" if sum_proper > n else "deficient")
             ),
             "abundance": sum_proper - n,
         }
 
     def _fibonacci_sequence(self, n: int) -> Dict[str, Any]:
-        """斐波那契数列"""
+        """Fibonacci sequence"""
         if n <= 0:
             return {"limit": n, "sequence": [], "count": 0}
 
@@ -799,7 +804,7 @@ class NumberTheoryCalculator:
             sequence.append(a)
             a, b = b, a + b
 
-        # 计算黄金比例近似值
+        # Golden ratio approximation
         golden_ratio = None
         if len(sequence) > 1:
             golden_ratio = sequence[-1] / sequence[-2] if sequence[-2] != 0 else None
@@ -814,9 +819,9 @@ class NumberTheoryCalculator:
         }
 
     def _collatz_sequence(self, n: int) -> Dict[str, Any]:
-        """考拉兹猜想序列"""
+        """Collatz conjecture sequence"""
         if n <= 0:
-            return {"error": "数字必须为正数"}
+            return {"error": "Number must be positive"}
 
         sequence = [n]
         steps = 0
@@ -831,9 +836,9 @@ class NumberTheoryCalculator:
             steps += 1
             max_value = max(max_value, n)
 
-            # 防止无限循环
+            # Prevent infinite loop
             if steps > 10000:
-                return {"error": "序列过长，可能存在问题"}
+                return {"error": "The sequence is too long, possible issue"}
 
         return {
             "operation": "collatz",

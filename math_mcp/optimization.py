@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-优化计算模块
-提供完整丰富的优化算法功能
+Optimization Calculation Module
+Provides comprehensive and rich optimization algorithm functionality
 """
 
 import numpy as np
@@ -11,10 +11,10 @@ from typing import List, Dict, Any, Optional, Union, Tuple
 
 
 class OptimizationCalculator:
-    """优化计算器类，提供完整的优化算法功能"""
+    """Optimization calculator class, providing comprehensive optimization algorithm functionality"""
 
     def __init__(self):
-        """初始化优化计算器"""
+        """Initialize optimization calculator"""
         pass
 
     def optimization_suite_tool(
@@ -35,29 +35,29 @@ class OptimizationCalculator:
         lp_b_eq: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         """
-        综合优化计算工具
+        Comprehensive optimization calculation tool
 
         Args:
-            objective_function: 目标函数表达式
-            variables: 变量列表
-            operation: 操作类型 ('minimize', 'maximize', 'root_finding', 'linear_programming', 'least_squares', 'constrained', 'global')
-            method: 计算方法
-            initial_guess: 初始猜测值
-            bounds: 变量边界
-            constraints: 约束条件
-            equation: 方程（用于求根）
-            root_method: 求根方法
-            lp_c: 线性规划目标函数系数
-            lp_A_ub: 线性规划不等式约束矩阵
-            lp_b_ub: 线性规划不等式约束向量
-            lp_A_eq: 线性规划等式约束矩阵
-            lp_b_eq: 线性规划等式约束向量
+            objective_function: Objective function expression
+            variables: Variable list
+            operation: Operation type ('minimize', 'maximize', 'root_finding', 'linear_programming', 'least_squares', 'constrained', 'global')
+            method: Calculation method
+            initial_guess: Initial guess values
+            bounds: Variable bounds
+            constraints: Constraint conditions
+            equation: Equation (used for root finding)
+            root_method: Root finding method
+            lp_c: Linear programming objective function coefficients
+            lp_A_ub: Linear programming inequality constraint matrix
+            lp_b_ub: Linear programming inequality constraint vector
+            lp_A_eq: Linear programming equality constraint matrix
+            lp_b_eq: Linear programming equality constraint vector
 
         Returns:
-            优化计算结果
+            Optimization calculation results
         """
         try:
-            # 自动选择合适的方法
+            # Automatically select appropriate method
             if method == "auto":
                 if operation == "constrained":
                     method = "SLSQP"
@@ -81,7 +81,7 @@ class OptimizationCalculator:
                     )
                 else:
                     if not initial_guess:
-                        # 为数值优化提供默认初始猜测值
+                        # Provide default initial guess values for numerical optimization
                         initial_guess = [0.0] * len(variables)
                     return self._numerical_optimization(
                         objective_function, variables, initial_guess, method, bounds
@@ -89,7 +89,9 @@ class OptimizationCalculator:
             elif operation == "root_finding":
                 equation_expr = equation or objective_function
                 if len(variables) != 1:
-                    return {"error": "求根操作只支持单变量"}
+                    return {
+                        "error": "Root finding operation only supports single variable"
+                    }
                 return self._root_finding(
                     equation_expr,
                     variables[0],
@@ -98,7 +100,9 @@ class OptimizationCalculator:
                 )
             elif operation == "linear_programming":
                 if not lp_c:
-                    return {"error": "线性规划需要目标函数系数"}
+                    return {
+                        "error": "Linear programming requires objective function coefficients"
+                    }
                 return self._linear_programming(
                     lp_c, lp_A_ub, lp_b_ub, lp_A_eq, lp_b_eq, bounds
                 )
@@ -108,9 +112,11 @@ class OptimizationCalculator:
                 return self._least_squares(objective_function, variables, initial_guess)
             elif operation == "constrained":
                 if not constraints:
-                    return {"error": "约束优化需要约束条件"}
+                    return {
+                        "error": "Constrained optimization requires constraint conditions"
+                    }
                 if not initial_guess:
-                    # 提供默认初始猜测值
+                    # Provide default initial guess values
                     initial_guess = [0.0] * len(variables)
                 return self._constrained_optimization(
                     objective_function,
@@ -121,14 +127,14 @@ class OptimizationCalculator:
                 )
             elif operation == "global":
                 if not bounds:
-                    return {"error": "全局优化需要变量边界"}
+                    return {"error": "Global optimization requires variable bounds"}
                 return self._global_optimization(
                     objective_function, variables, bounds, method
                 )
             else:
-                return {"error": f"不支持的操作类型: {operation}"}
+                return {"error": f"Unsupported operation type: {operation}"}
         except Exception as e:
-            return {"error": f"优化计算出错: {str(e)}"}
+            return {"error": f"Optimization calculation error: {str(e)}"}
 
     def _symbolic_optimization(
         self,
@@ -139,33 +145,33 @@ class OptimizationCalculator:
         initial_guess: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         """
-        符号优化求解
+        Symbolic optimization solving
 
         Args:
-            objective_function: 目标函数表达式
-            variables: 变量列表
-            constraints: 约束条件列表
-            method: 优化方法 ('minimize', 'maximize')
-            initial_guess: 初始猜测值
+            objective_function: Objective function expression
+            variables: Variable list
+            constraints: Constraint condition list
+            method: Optimization method ('minimize', 'maximize')
+            initial_guess: Initial guess values
 
         Returns:
-            优化结果
+            Optimization results
         """
         try:
             vars_symbols = [sp.Symbol(var) for var in variables]
             obj_expr = sp.sympify(objective_function)
 
-            # 如果是最大化问题，转换为最小化
+            # Convert maximization problem to minimization
             if method == "maximize":
                 obj_expr = -obj_expr
 
-            # 计算梯度
+            # Calculate gradient
             gradient = [sp.diff(obj_expr, var) for var in vars_symbols]
 
-            # 求解临界点（梯度为零的点）
+            # Solve critical points (points where gradient equals zero)
             critical_points = sp.solve(gradient, vars_symbols)
 
-            # 计算Hessian矩阵
+            # Calculate Hessian matrix
             hessian = []
             for i, var1 in enumerate(vars_symbols):
                 hessian_row = []
@@ -182,7 +188,7 @@ class OptimizationCalculator:
                 "hessian": [[str(h) for h in row] for row in hessian],
             }
 
-            # 分析临界点
+            # Analyze critical points
             if critical_points:
                 if isinstance(critical_points, dict):
                     critical_points = [critical_points]
@@ -198,18 +204,18 @@ class OptimizationCalculator:
                         substitutions = dict(zip(vars_symbols, point))
                         point_values = [float(v) for v in point]
                     else:
-                        # 单变量情况
+                        # Single variable case
                         substitutions = {vars_symbols[0]: point}
                         point_values = [float(point)]
 
-                    # 计算该点的函数值
+                    # Calculate function value at this point
                     func_value = float(obj_expr.subs(substitutions))
 
-                    # 如果是最大化问题，恢复原始函数值
+                    # Restore original function value for maximization problem
                     if method == "maximize":
                         func_value = -func_value
 
-                    # 计算Hessian矩阵的数值
+                    # Calculate numerical Hessian matrix
                     hessian_numerical = []
                     for row in hessian:
                         hessian_row = []
@@ -217,7 +223,7 @@ class OptimizationCalculator:
                             hessian_row.append(float(elem.subs(substitutions)))
                         hessian_numerical.append(hessian_row)
 
-                    # 判断点的性质（通过Hessian矩阵的特征值）
+                    # Determine point nature (through eigenvalues of Hessian matrix)
                     hessian_matrix = np.array(hessian_numerical)
                     eigenvalues = np.linalg.eigvals(hessian_matrix)
 
@@ -246,7 +252,7 @@ class OptimizationCalculator:
             return result
 
         except Exception as e:
-            return {"error": f"符号优化出错: {str(e)}"}
+            return {"error": f"Symbolic optimization error: {str(e)}"}
 
     def _numerical_optimization(
         self,
@@ -258,27 +264,27 @@ class OptimizationCalculator:
         constraints: Optional[List[Dict]] = None,
     ) -> Dict[str, Any]:
         """
-        数值优化求解
+        Numerical optimization solving
 
         Args:
-            objective_function: 目标函数表达式
-            variables: 变量列表
-            initial_guess: 初始猜测值
-            method: 优化方法 ('BFGS', 'L-BFGS-B', 'SLSQP', 'Nelder-Mead')
-            bounds: 变量边界
-            constraints: 约束条件
+            objective_function: Objective function expression
+            variables: Variable list
+            initial_guess: Initial guess values
+            method: Optimization method ('BFGS', 'L-BFGS-B', 'SLSQP', 'Nelder-Mead')
+            bounds: Variable bounds
+            constraints: Constraint conditions
 
         Returns:
-            优化结果
+            Optimization results
         """
         try:
             vars_symbols = [sp.Symbol(var) for var in variables]
             obj_expr = sp.sympify(objective_function)
 
-            # 创建数值函数
+            # Create numerical function
             obj_func = sp.lambdify(vars_symbols, obj_expr, "numpy")
 
-            # 计算梯度函数
+            # Calculate gradient function
             gradient_exprs = [sp.diff(obj_expr, var) for var in vars_symbols]
             gradient_func = sp.lambdify(vars_symbols, gradient_exprs, "numpy")
 
@@ -291,7 +297,7 @@ class OptimizationCalculator:
                     return np.array([grad])
                 return np.array(grad)
 
-            # 执行优化
+            # Execute optimization
             if method in ["L-BFGS-B", "SLSQP"]:
                 result = optimize.minimize(
                     objective,
@@ -319,7 +325,7 @@ class OptimizationCalculator:
             }
 
         except Exception as e:
-            return {"error": f"数值优化出错: {str(e)}"}
+            return {"error": f"Numerical optimization error: {str(e)}"}
 
     def _linear_programming(
         self,
@@ -332,19 +338,19 @@ class OptimizationCalculator:
         method: str = "highs",
     ) -> Dict[str, Any]:
         """
-        线性规划求解
+        Linear programming solving
 
         Args:
-            c: 目标函数系数
-            A_ub: 不等式约束矩阵
-            b_ub: 不等式约束右端
-            A_eq: 等式约束矩阵
-            b_eq: 等式约束右端
-            bounds: 变量边界
-            method: 求解方法
+            c: Objective function coefficients
+            A_ub: Inequality constraint matrix
+            b_ub: Inequality constraint right-hand side
+            A_eq: Equality constraint matrix
+            b_eq: Equality constraint right-hand side
+            bounds: Variable bounds
+            method: Solving method
 
         Returns:
-            线性规划结果
+            Linear programming results
         """
         try:
             result = optimize.linprog(
@@ -371,7 +377,7 @@ class OptimizationCalculator:
             }
 
         except Exception as e:
-            return {"error": f"线性规划求解出错: {str(e)}"}
+            return {"error": f"Linear programming solving error: {str(e)}"}
 
     def _root_finding(
         self,
@@ -381,16 +387,16 @@ class OptimizationCalculator:
         method: str = "fsolve",
     ) -> Dict[str, Any]:
         """
-        方程求根
+        Equation root finding
 
         Args:
-            function_expr: 函数表达式
-            variable: 变量名
-            initial_guess: 初始猜测值
-            method: 求根方法 ('fsolve', 'newton', 'bisect')
+            function_expr: Function expression
+            variable: Variable name
+            initial_guess: Initial guess value
+            method: Root finding method ('fsolve', 'newton', 'bisect')
 
         Returns:
-            求根结果
+            Root finding results
         """
         try:
             var = sp.Symbol(variable)
@@ -411,7 +417,7 @@ class OptimizationCalculator:
                 }
 
             elif method == "newton":
-                # 计算导数
+                # Calculate derivative
                 derivative = sp.diff(expr, var)
                 dfunc = sp.lambdify(var, derivative, "numpy")
 
@@ -425,15 +431,15 @@ class OptimizationCalculator:
                 }
 
             elif method == "bisect":
-                # 对于二分法，需要提供区间
-                # 这里使用初始猜测值附近的区间
+                # For bisection method, need to provide interval
+                # Here use interval around initial guess value
                 a = initial_guess - 1
                 b = initial_guess + 1
 
-                # 确保f(a)和f(b)异号
+                # Ensure f(a) and f(b) have opposite signs
                 fa, fb = func(a), func(b)
                 if fa * fb > 0:
-                    # 扩展搜索区间
+                    # Expand search interval
                     for i in range(10):
                         a -= 1
                         b += 1
@@ -442,7 +448,9 @@ class OptimizationCalculator:
                             break
 
                 if fa * fb > 0:
-                    return {"error": "无法找到合适的区间进行二分法求根"}
+                    return {
+                        "error": "Cannot find suitable interval for bisection method root finding"
+                    }
 
                 root = optimize.bisect(func, a, b)
 
@@ -454,10 +462,10 @@ class OptimizationCalculator:
                 }
 
             else:
-                return {"error": f"不支持的求根方法: {method}"}
+                return {"error": f"Unsupported root finding method: {method}"}
 
         except Exception as e:
-            return {"error": f"求根计算出错: {str(e)}"}
+            return {"error": f"Root finding calculation error: {str(e)}"}
 
     def _least_squares(
         self,
@@ -468,25 +476,25 @@ class OptimizationCalculator:
         y_data: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         """
-        最小二乘拟合
+        Least squares fitting
 
         Args:
-            residual_function: 残差函数表达式
-            variables: 变量列表
-            initial_guess: 初始猜测值
-            x_data: x数据点
-            y_data: y数据点
+            residual_function: Residual function expression
+            variables: Variable list
+            initial_guess: Initial guess values
+            x_data: x data points
+            y_data: y data points
 
         Returns:
-            最小二乘结果
+            Least squares results
         """
         try:
             vars_symbols = [sp.Symbol(var) for var in variables]
 
-            # 如果提供了数据点，构建残差函数
+            # If data points are provided, construct residual function
             if x_data is not None and y_data is not None:
                 x_symbol = sp.Symbol("x")
-                # 假设residual_function是关于x的函数，包含待拟合参数
+                # Assume residual_function is a function of x containing parameters to be fitted
                 expr = sp.sympify(residual_function)
 
                 def residual(params):
@@ -499,14 +507,14 @@ class OptimizationCalculator:
                     return np.array(residuals)
 
             else:
-                # 直接使用提供的残差函数
+                # Directly use provided residual function
                 expr = sp.sympify(residual_function)
                 residual_func = sp.lambdify(vars_symbols, expr, "numpy")
 
                 def residual(params):
                     return residual_func(*params)
 
-            # 执行最小二乘优化
+            # Execute least squares optimization
             result = optimize.least_squares(residual, initial_guess)
 
             return {
@@ -521,7 +529,7 @@ class OptimizationCalculator:
             }
 
         except Exception as e:
-            return {"error": f"最小二乘拟合出错: {str(e)}"}
+            return {"error": f"Least squares fitting error: {str(e)}"}
 
     def _constrained_optimization(
         self,
@@ -532,20 +540,20 @@ class OptimizationCalculator:
         method: str = "SLSQP",
     ) -> Dict[str, Any]:
         """
-        带约束的数值优化
+        Constrained numerical optimization
 
         Args:
-            objective_function: 目标函数表达式
-            variables: 变量列表
-            constraints: 约束条件列表，格式为[{'type': 'eq'/'ineq', 'fun': 'expression'}]
-            initial_guess: 初始猜测值
-            method: 优化方法
+            objective_function: Objective function expression
+            variables: Variable list
+            constraints: Constraint condition list, format: [{'type': 'eq'/'ineq', 'fun': 'expression'}]
+            initial_guess: Initial guess values
+            method: Optimization method
 
         Returns:
-            优化结果
+            Optimization results
         """
         try:
-            # 转换目标函数
+            # Convert objective function
             vars_symbols = [sp.Symbol(var) for var in variables]
             obj_expr = sp.sympify(objective_function)
 
@@ -553,7 +561,7 @@ class OptimizationCalculator:
                 substitutions = dict(zip(vars_symbols, x))
                 return float(obj_expr.subs(substitutions))
 
-            # 转换约束
+            # Convert constraints
             constraint_funcs = []
             for constr in constraints:
                 constr_expr = sp.sympify(constr["fun"])
@@ -566,7 +574,7 @@ class OptimizationCalculator:
                     {"type": constr["type"], "fun": constraint_func}
                 )
 
-            # 执行优化
+            # Execute optimization
             result = optimize.minimize(
                 objective,
                 initial_guess,
@@ -582,7 +590,7 @@ class OptimizationCalculator:
             }
 
         except Exception as e:
-            return {"error": f"约束优化出错: {str(e)}"}
+            return {"error": f"Constrained optimization error: {str(e)}"}
 
     def _global_optimization(
         self,
@@ -592,16 +600,16 @@ class OptimizationCalculator:
         method: str = "differential_evolution",
     ) -> Dict[str, Any]:
         """
-        全局优化
+        Global optimization
 
         Args:
-            objective_function: 目标函数表达式
-            variables: 变量列表
-            bounds: 变量边界
-            method: 全局优化方法 ('differential_evolution', 'basinhopping')
+            objective_function: Objective function expression
+            variables: Variable list
+            bounds: Variable bounds
+            method: Global optimization method ('differential_evolution', 'basinhopping')
 
         Returns:
-            全局优化结果
+            Global optimization results
         """
         try:
             vars_symbols = [sp.Symbol(var) for var in variables]
@@ -614,11 +622,11 @@ class OptimizationCalculator:
             if method == "differential_evolution":
                 result = optimize.differential_evolution(objective, bounds)
             elif method == "basinhopping":
-                # 对于basinhopping，需要一个初始点
+                # For basinhopping, need an initial point
                 initial_guess = [(b[0] + b[1]) / 2 for b in bounds]
                 result = optimize.basinhopping(objective, initial_guess)
             else:
-                return {"error": f"不支持的全局优化方法: {method}"}
+                return {"error": f"Unsupported global optimization method: {method}"}
 
             return {
                 "objective_function": objective_function,
@@ -633,4 +641,4 @@ class OptimizationCalculator:
             }
 
         except Exception as e:
-            return {"error": f"全局优化出错: {str(e)}"}
+            return {"error": f"Global optimization error: {str(e)}"}
