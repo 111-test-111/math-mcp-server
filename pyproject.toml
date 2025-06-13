@@ -4,14 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "math-mcp"
-version = "1.2.0"
-description = "Math calculation MCP server, providing basic arithmetic, mathematical functions, matrix calculation, statistical analysis, calculus, optimization, regression analysis and data visualization."
+version = "1.3.0"
+description = "Comprehensive Math calculation MCP server, providing basic arithmetic, matrix calculation, statistical analysis, calculus, optimization, regression, geometry, number theory, signal processing, financial mathematics, and probability calculations with data visualization."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [
-    { name = "jcy", email = "jcy646416062@outlook.com" },
-]
+authors = [{ name = "jcy", email = "jcy646416062@outlook.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -24,7 +22,18 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-keywords = ["mcp", "mathematics", "calculation", "statistics", "linear-algebra"]
+keywords = [
+    "mcp",
+    "mathematics",
+    "calculation",
+    "statistics",
+    "linear-algebra",
+    "geometry",
+    "number-theory",
+    "signal-processing",
+    "financial-math",
+    "probability",
+]
 dependencies = [
     "fastmcp>=2.7.1",
     "mcp>=1.9.3",
@@ -36,6 +45,10 @@ dependencies = [
     "matplotlib>=3.5.0",
     "seaborn>=0.11.0",
     "psutil>=5.8.0",
+    "networkx>=3.4.2",
+    "community>=1.0.0b1",
+    "louvain>=0.8.2",
+    "python-louvain>=0.16",
 ]
 
 [project.urls]
@@ -50,8 +63,4 @@ math-mcp = "math_mcp.math_mcp_server:main"
 packages = ["math_mcp"]
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "/math_mcp",
-    "/README.md",
-    "/pyproject.toml",
-]
+include = ["/math_mcp", "/README.md", "/pyproject.toml"]

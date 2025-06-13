@@ -1,9 +1,19 @@
 {
     "mcpServers": {
-        "math-calculator": {
+        "math-calculator-local": {
             "command": "path/to/python_interpreter",
             "args": [
                 "path/to/math_mcp_server.py"
+            ],
+            "env": {
+                "OUTPUT_PATH": "path/to/output",
+                "FONT_PATH": "path/to/font"
+            }
+        },
+        "math_mcp": {
+            "command": "uvx",
+            "args": [
+                "math-mcp"
             ],
             "env": {
                 "OUTPUT_PATH": "path/to/output",

@@ -6,9 +6,6 @@
 
 import numpy as np
 from typing import List, Dict, Any, Optional, Union, Tuple
-import warnings
-
-warnings.filterwarnings("ignore")
 
 
 class MatrixCalculator:
@@ -45,36 +42,36 @@ class MatrixCalculator:
         """
         try:
             if operation == "basic" and method:
-                return self.basic_operations(method, matrix_a, matrix_b)
+                return self._basic_operations(method, matrix_a, matrix_b)
             elif operation == "eigenvalues":
-                return self.eigenvalues_eigenvectors(matrix_a)
+                return self._eigenvalues_eigenvectors(matrix_a)
             elif operation == "svd":
-                return self.singular_value_decomposition(matrix_a)
+                return self._singular_value_decomposition(matrix_a)
             elif operation == "decomposition" and method:
                 if method == "qr":
-                    return self.qr_decomposition(matrix_a)
+                    return self._qr_decomposition(matrix_a)
                 elif method == "lu":
-                    return self.lu_decomposition(matrix_a)
+                    return self._lu_decomposition(matrix_a)
                 else:
                     return {"error": f"不支持的分解方法: {method}"}
             elif operation == "properties":
                 prop_type = method or property_type or "rank"
                 if prop_type == "rank":
-                    return self.matrix_rank(matrix_a)
+                    return self._matrix_rank(matrix_a)
                 elif prop_type == "trace":
-                    return self.matrix_trace(matrix_a)
+                    return self._matrix_trace(matrix_a)
                 elif prop_type == "condition_number":
-                    return self.matrix_condition_number(matrix_a)
+                    return self._matrix_condition_number(matrix_a)
                 elif prop_type == "norm":
                     # 如果property_type未提供，则默认为'frobenius'
                     norm_selection = property_type or "frobenius"
-                    return self.matrix_norm(matrix_a, norm_type=norm_selection)
+                    return self._matrix_norm(matrix_a, norm_type=norm_selection)
                 else:
                     return {"error": f"不支持的属性类型: {prop_type}"}
             elif operation == "power" and power is not None:
-                return self.matrix_power(matrix_a, power)
+                return self._matrix_power(matrix_a, power)
             elif operation == "exponential":
-                return self.matrix_exponential(matrix_a)
+                return self._matrix_exponential(matrix_a)
             elif operation == "solve" and matrix_b:
                 # matrix_b在这里作为常数向量
                 constants = (
@@ -82,13 +79,13 @@ class MatrixCalculator:
                     if isinstance(matrix_b[0], list)
                     else matrix_b
                 )
-                return self.solve_linear_system(matrix_a, constants)
+                return self._solve_linear_system(matrix_a, constants)
             else:
                 return {"error": f"不支持的操作或缺少必要参数: {operation}"}
         except Exception as e:
             return {"error": f"矩阵计算出错: {str(e)}"}
 
-    def basic_operations(
+    def _basic_operations(
         self,
         operation: str,
         matrix_a: List[List[float]],
@@ -166,7 +163,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算出错: {str(e)}"}
 
-    def eigenvalues_eigenvectors(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _eigenvalues_eigenvectors(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         计算矩阵的特征值和特征向量
 
@@ -189,7 +186,9 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"特征值计算出错: {str(e)}"}
 
-    def singular_value_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _singular_value_decomposition(
+        self, matrix: List[List[float]]
+    ) -> Dict[str, Any]:
         """
         奇异值分解
 
@@ -206,7 +205,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"SVD分解出错: {str(e)}"}
 
-    def qr_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _qr_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         QR分解
 
@@ -223,7 +222,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"QR分解出错: {str(e)}"}
 
-    def lu_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _lu_decomposition(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         LU分解
 
@@ -242,7 +241,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"LU分解出错: {str(e)}"}
 
-    def matrix_rank(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _matrix_rank(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         计算矩阵的秩
 
@@ -259,7 +258,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算矩阵秩出错: {str(e)}"}
 
-    def matrix_norm(
+    def _matrix_norm(
         self, matrix: List[List[float]], norm_type: Union[str, int] = "frobenius"
     ) -> Dict[str, Any]:
         """
@@ -290,7 +289,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算矩阵范数出错: {str(e)}"}
 
-    def matrix_trace(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _matrix_trace(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         计算矩阵的迹
 
@@ -310,7 +309,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算矩阵迹出错: {str(e)}"}
 
-    def matrix_condition_number(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _matrix_condition_number(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         计算矩阵的条件数
 
@@ -327,7 +326,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算条件数出错: {str(e)}"}
 
-    def matrix_power(self, matrix: List[List[float]], power: int) -> Dict[str, Any]:
+    def _matrix_power(self, matrix: List[List[float]], power: int) -> Dict[str, Any]:
         """
         计算矩阵的幂
 
@@ -348,7 +347,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算矩阵幂出错: {str(e)}"}
 
-    def matrix_exponential(self, matrix: List[List[float]]) -> Dict[str, Any]:
+    def _matrix_exponential(self, matrix: List[List[float]]) -> Dict[str, Any]:
         """
         计算矩阵指数
 
@@ -370,7 +369,7 @@ class MatrixCalculator:
         except Exception as e:
             return {"error": f"计算矩阵指数出错: {str(e)}"}
 
-    def solve_linear_system(
+    def _solve_linear_system(
         self, coefficients: List[List[float]], constants: List[float]
     ) -> Dict[str, Any]:
         """

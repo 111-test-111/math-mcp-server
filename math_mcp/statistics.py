@@ -8,9 +8,6 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from typing import List, Dict, Any, Optional, Union, Tuple
-import warnings
-
-warnings.filterwarnings("ignore")
 
 
 class StatisticsCalculator:
@@ -35,7 +32,7 @@ class StatisticsCalculator:
 
         Args:
             data1: 第一组数据
-            analysis_type: 分析类型 ('descriptive', 'tests', 'distribution', 'confidence_interval')
+            analysis_type: 分析类型 ('descriptive', 'tests', 'distribution', 'confidence_interval', 'distribution_fit', 'outlier_detection')
             data2: 第二组数据（某些分析需要）
             test_type: 检验类型（'normality', 'hypothesis', 'correlation'）或分布分析类型（'fitting', 'percentiles', 'outliers'）
             hypothesis_test_type: 假设检验的具体类型 (e.g., 'one_sample_t', 'two_sample_t', 'paired_t')
@@ -46,39 +43,48 @@ class StatisticsCalculator:
             统计分析结果
         """
         try:
+            # # 向后兼容旧的调用方式
+            # if analysis_type == "distribution_fit":
+            #     return self.distribution_fitting(data1)
+            # elif analysis_type == "outlier_detection":
+            #     return self.outlier_detection(data1)
+
             if analysis_type == "descriptive":
-                return self.descriptive_statistics(data1)
+                return self._descriptive_statistics(data1)
             elif analysis_type == "tests" and test_type:
                 if test_type == "normality":
-                    return self.normality_tests(data1)
+                    return self._normality_tests(data1)
                 elif test_type == "hypothesis":
                     ht_type = hypothesis_test_type or (
                         "two_sample_t" if data2 is not None else "one_sample_t"
                     )
-                    return self.hypothesis_testing(data1, data2, ht_type)
+                    return self._hypothesis_testing(data1, data2, ht_type)
                 elif test_type == "correlation":
                     if data2 is None:
                         return {"error": "相关性分析需要两组数据"}
-                    return self.correlation_analysis(data1, data2)
+                    return self._correlation_analysis(data1, data2)
                 else:
                     return {"error": f"不支持的检验类型: {test_type}"}
             elif analysis_type == "distribution":
                 if test_type == "fitting":
-                    return self.distribution_fitting(data1)
+                    dist_type = distribution_type or "all"
+                    return self._distribution_fitting(
+                        data1, distributions=[dist_type] if dist_type != "all" else None
+                    )
                 elif test_type == "percentiles":
-                    return self.percentiles(data1)
+                    return self._percentiles(data1)
                 elif test_type == "outliers":
-                    return self.outlier_detection(data1)
+                    return self._outlier_detection(data1)
                 else:
                     return {"error": f"不支持的分布分析类型: {test_type}"}
             elif analysis_type == "confidence_interval":
-                return self.confidence_interval(data1, confidence)
+                return self._confidence_interval(data1, confidence)
             else:
                 return {"error": f"不支持的分析类型: {analysis_type}"}
         except Exception as e:
             return {"error": f"统计分析出错: {str(e)}"}
 
-    def descriptive_statistics(self, data: List[float]) -> Dict[str, Any]:
+    def _descriptive_statistics(self, data: List[float]) -> Dict[str, Any]:
         """
         描述性统计分析
 
@@ -121,7 +127,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"描述性统计计算出错: {str(e)}"}
 
-    def normality_tests(self, data: List[float]) -> Dict[str, Any]:
+    def _normality_tests(self, data: List[float]) -> Dict[str, Any]:
         """
         正态性检验
 
@@ -173,7 +179,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"正态性检验出错: {str(e)}"}
 
-    def distribution_fitting(self, data: List[float]) -> Dict[str, Any]:
+    def _distribution_fitting(self, data: List[float]) -> Dict[str, Any]:
         """
         分布拟合
 
@@ -226,7 +232,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"分布拟合出错: {str(e)}"}
 
-    def hypothesis_testing(
+    def _hypothesis_testing(
         self,
         data1: List[float],
         data2: Optional[List[float]] = None,
@@ -313,7 +319,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"假设检验出错: {str(e)}"}
 
-    def correlation_analysis(
+    def _correlation_analysis(
         self, data1: List[float], data2: List[float], method: str = "pearson"
     ) -> Dict[str, Any]:
         """
@@ -352,7 +358,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"相关性分析出错: {str(e)}"}
 
-    def anova_analysis(
+    def _anova_analysis(
         self, groups: List[List[float]], test_type: str = "one_way"
     ) -> Dict[str, Any]:
         """
@@ -392,7 +398,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"ANOVA分析出错: {str(e)}"}
 
-    def percentiles(
+    def _percentiles(
         self, data: List[float], percentiles: List[float] = None
     ) -> Dict[str, Any]:
         """
@@ -418,7 +424,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"分位数计算出错: {str(e)}"}
 
-    def outlier_detection(
+    def _outlier_detection(
         self, data: List[float], method: str = "iqr"
     ) -> Dict[str, Any]:
         """
@@ -480,7 +486,7 @@ class StatisticsCalculator:
         except Exception as e:
             return {"error": f"异常值检测出错: {str(e)}"}
 
-    def confidence_interval(
+    def _confidence_interval(
         self, data: List[float], confidence: float = 0.95
     ) -> Dict[str, Any]:
         """

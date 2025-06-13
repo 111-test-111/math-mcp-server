@@ -27,9 +27,9 @@ class DescriptionLoader:
             self.config_module = config_module
 
         self.descriptions = {}
-        self._load_descriptions()
+        self.load_descriptions()
 
-    def _load_descriptions(self):
+    def load_descriptions(self):
         """加载描述配置模块"""
         try:
             # 尝试直接导入模块
@@ -137,7 +137,7 @@ class DescriptionLoader:
 
     def reload_descriptions(self):
         """重新加载描述配置模块"""
-        self._load_descriptions()
+        self.load_descriptions()
 
     def export_descriptions_to_file(self, output_file: str, format: str = "json"):
         """

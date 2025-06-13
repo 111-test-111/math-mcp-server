@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-数学计算MCP服务器包
-提供强大的数学计算工具，包括基础数值计算、矩阵计算、统计分析、微积分等
+Math MCP Server Package
+Provides powerful math calculation tools, including basic numerical calculation, matrix calculation, statistical analysis, calculus, etc.
 """
 
 __version__ = "1.2.0"
 __author__ = "111-test-111"
 
-# 导出主要模块
-from .basic_calculator import BasicCalculator
-from .matrix_calculator import MatrixCalculator
-from .statistics_calculator import StatisticsCalculator
-from .calculus_calculator import CalculusCalculator
-from .optimization_calculator import OptimizationCalculator
-from .regression_calculator import RegressionCalculator
-from .plotting_calculator import PlottingCalculator
+# Export main modules
+from .basic import BasicCalculator
+from .matrix import MatrixCalculator
+from .statistics import StatisticsCalculator
+from .calculus import CalculusCalculator
+from .optimization import OptimizationCalculator
+from .regression import RegressionCalculator
+from .plotting import PlottingCalculator
+from .geometry import GeometryCalculator
+from .number_theory import NumberTheoryCalculator
+from .signal_processing import SignalProcessingCalculator
+from .financial import FinancialCalculator
+from .probability import ProbabilityCalculator
+from .complex_analysis import ComplexAnalysisCalculator
+from .graph_theory import GraphTheoryCalculator
 
 __all__ = [
     "BasicCalculator",
@@ -24,4 +31,11 @@ __all__ = [
     "OptimizationCalculator",
     "RegressionCalculator",
     "PlottingCalculator",
+    "GeometryCalculator",
+    "NumberTheoryCalculator",
+    "SignalProcessingCalculator",
+    "FinancialCalculator",
+    "ProbabilityCalculator",
+    "ComplexAnalysisCalculator",
+    "GraphTheoryCalculator",
 ]

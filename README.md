@@ -1,52 +1,74 @@
 ## Math MCP Server
 
-这是一个数学计算MCP（Model Context Protocol）服务器，提供了一些数学计算工具集和绘图工具
+A Python-based mathematical computation MCP server, providing a suite of mathematical computation tools and plotting utilities.
 
-### 功能特性
+### Run mcp server
+```Python
+uvx math-mcp # using uvx
 
-- **矩阵计算**: 基本运算、矩阵分解、特征值、SVD等
-- **统计分析**: 描述性统计、假设检验、分布分析等
-- **微积分**: 导数、积分、极限、泰勒级数等
-- **优化算法**: 函数优化、线性规划、约束优化等
-- **回归分析**: 线性回归、多项式回归、正则化回归等
-- **数据可视化**: 统计图表、函数绘图等
-
-### 使用uvx运行
-
-```bash
-uvx math-mcp
+# Or run the .py file directly (dependencies must be installed manually)
+python math_mcp/math_mcp_server.py
 ```
 
-### 项目结构
-
+### Project Structure
 ```
 math_mcp/
-├── __init__.py                    # 包初始化文件
-├── __main__.py                    # CLI入口点
-├── math_mcp_server.py             # 主服务器文件（MCP工具注册）
-├── matrix_calculator.py           # 矩阵计算模块
-├── statistics_calculator.py       # 统计分析模块
-├── calculus_calculator.py         # 微积分计算模块
-├── optimization_calculator.py     # 优化算法模块
-├── regression_calculator.py       # 回归分析模块
-└── plotting_calculator.py         # 统计绘图模块
+├── __init__.py                      # Package initialization
+├── __main__.py                      # CLI entry point
+├── math_mcp_server.py               # Main server file (MCP tool registration)
+├── description_loader.py            # Tool description loader
+├── tool_descriptions.py             # Tool description configuration
+├── file_utils.py                    # File path utilities
+# Core computation modules
+├── basic.py                         # Basic math computation
+├── matrix.py                        # Matrix computations
+├── statistics.py                    # Statistical analysis
+├── calculus.py                      # Calculus
+├── optimization.py                  # Optimization algorithms
+├── regression.py                    # Regression analysis
+├── plotting.py                      # Data visualization
+├── geometry.py                      # Geometric computations
+├── number_theory.py                 # Number theory
+├── complex_analysis.py              # Complex analysis
+├── probability.py                   # Probability and statistics
+# Extended specialized modules
+├── signal_processing.py             # Signal processing
+├── financial.py                     # Financial mathematics
+└── graph_theory.py                  # Graph theory analysis
 ```
 
-### 在Claude Desktop中配置
+### Configuration in Claude Desktop
 
-将以下配置添加到Claude Desktop配置文件中：
-
+Add the following configuration to your Claude Desktop config file:
 ```json
 {
-  "mcpServers": {
-    "math-calculator": {
-      "command": "uvx",
-      "args": ["math-mcp"],
-      "env": {
-        "OUTPUT_PATH": "path/to/plot_output",
-        "FONT_PATH": "path/to/font"
-      }
+    "mcpServers": {
+        "math-calculator": {
+            "command": "uvx",
+            "args": ["math-mcp"],
+            "env": {
+                "OUTPUT_PATH": "path/to/plot_output",
+                "FONT_PATH": "path/to/font"
+            }
+        },
     }
-  }
+}
+```
+
+Or start the server directly:
+```json
+{
+    "mcpServers": {
+        "math-calculator-local": {
+            "command": "path/to/python_interpreter",
+            "args": [
+                "path/to/math_mcp_server.py"
+            ],
+            "env": {
+                "OUTPUT_PATH": "path/to/output",
+                "FONT_PATH": "path/to/font"
+            }
+        },
+    }
 }
 ```

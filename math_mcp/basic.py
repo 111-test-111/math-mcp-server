@@ -5,7 +5,6 @@
 """
 
 import math
-import numpy as np
 from typing import List, Dict, Any, Optional, Union
 import decimal
 from decimal import Decimal, getcontext
@@ -30,7 +29,7 @@ class BasicCalculator:
         基础算术运算工具
 
         Args:
-            operation: 运算类型 ('add', 'subtract', 'multiply', 'divide', 'power', 'modulo', 'factorial', 'gcd', 'lcm')
+            operation: 运算类型 ('add', 'subtract', 'multiply', 'divide', 'power', 'modulo', 'modulus', 'factorial', 'gcd', 'lcm', 'sum', 'product', 'average')
             numbers: 数值列表
             precision: 计算精度（小数位数）
             use_decimal: 是否使用高精度小数计算
@@ -47,7 +46,7 @@ class BasicCalculator:
                     getcontext().prec = precision + 10  # 额外精度避免舍入误差
                 numbers = [Decimal(str(n)) for n in numbers]
 
-            if operation == "add":
+            if operation in ["add", "sum"]:
                 result = sum(numbers)
                 return {
                     "result": float(result) if not use_decimal else str(result),
@@ -59,23 +58,7 @@ class BasicCalculator:
                     ),
                 }
 
-            elif operation == "subtract":
-                if len(numbers) < 2:
-                    return {"error": "减法需要至少两个数值"}
-                result = numbers[0]
-                for n in numbers[1:]:
-                    result -= n
-                return {
-                    "result": float(result) if not use_decimal else str(result),
-                    "operation": "减法",
-                    "inputs": (
-                        [float(n) for n in numbers]
-                        if not use_decimal
-                        else [str(n) for n in numbers]
-                    ),
-                }
-
-            elif operation == "multiply":
+            elif operation in ["multiply", "product"]:
                 result = numbers[0]
                 for n in numbers[1:]:
                     result *= n
@@ -89,40 +72,7 @@ class BasicCalculator:
                     ),
                 }
 
-            elif operation == "divide":
-                if len(numbers) < 2:
-                    return {"error": "除法需要至少两个数值"}
-                result = numbers[0]
-                for n in numbers[1:]:
-                    if n == 0:
-                        return {"error": "除数不能为零"}
-                    result /= n
-                return {
-                    "result": float(result) if not use_decimal else str(result),
-                    "operation": "除法",
-                    "inputs": (
-                        [float(n) for n in numbers]
-                        if not use_decimal
-                        else [str(n) for n in numbers]
-                    ),
-                }
-
-            elif operation == "power":
-                if len(numbers) != 2:
-                    return {"error": "幂运算需要恰好两个数值（底数和指数）"}
-                base, exponent = numbers
-                if use_decimal:
-                    result = base**exponent
-                else:
-                    result = math.pow(float(base), float(exponent))
-                return {
-                    "result": float(result) if not use_decimal else str(result),
-                    "operation": "幂运算",
-                    "base": float(base) if not use_decimal else str(base),
-                    "exponent": float(exponent) if not use_decimal else str(exponent),
-                }
-
-            elif operation == "modulo":
+            elif operation in ["modulo", "modulus"]:
                 if len(numbers) != 2:
                     return {"error": "取模运算需要恰好两个数值"}
                 dividend, divisor = numbers
@@ -134,6 +84,18 @@ class BasicCalculator:
                     "operation": "取模",
                     "dividend": float(dividend) if not use_decimal else str(dividend),
                     "divisor": float(divisor) if not use_decimal else str(divisor),
+                }
+
+            elif operation == "average":
+                result = sum(numbers) / len(numbers)
+                return {
+                    "result": float(result) if not use_decimal else str(result),
+                    "operation": "平均值",
+                    "inputs": (
+                        [float(n) for n in numbers]
+                        if not use_decimal
+                        else [str(n) for n in numbers]
+                    ),
                 }
 
             elif operation == "factorial":
@@ -230,7 +192,7 @@ class BasicCalculator:
 
         Args:
             function: 函数类型 ('sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
-                               'log', 'log10', 'ln', 'sqrt', 'cbrt', 'exp', 'abs', 'ceil', 'floor', 'round')
+                               'log', 'log10', 'ln', 'sqrt', 'cbrt', 'exp', 'abs', 'ceil', 'floor', 'round', 'factorial', 'gamma')
             value: 输入值
             base: 对数的底数（可选）
             precision: 结果精度
@@ -343,6 +305,20 @@ class BasicCalculator:
                 unit_note = (
                     f"（精度：{precision}位小数）" if precision is not None else ""
                 )
+
+            # 新增 factorial 函数
+            elif function == "factorial":
+                if value < 0 or int(value) != value:
+                    return {"error": "factorial 函数需要非负整数输入"}
+                result = math.factorial(int(value))
+                unit_note = ""
+
+            # 新增 gamma 函数
+            elif function == "gamma":
+                if value <= 0:
+                    return {"error": "gamma 函数输入必须大于0"}
+                result = math.gamma(value)
+                unit_note = ""
 
             else:
                 return {"error": f"不支持的数学函数: {function}"}
