@@ -9,8 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
-# Tests
+# Tests and backups
 test/
+bakdir/
 
 # Sensitive information
 uv_publish.ps1

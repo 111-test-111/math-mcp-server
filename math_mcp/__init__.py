@@ -10,7 +10,7 @@ __author__ = "111-test-111"
 # Export main modules
 from .basic import BasicCalculator
 from .matrix import MatrixCalculator
-from .statistics import StatisticsCalculator
+from .mstatistics import StatisticsCalculator
 from .calculus import CalculusCalculator
 from .optimization import OptimizationCalculator
 from .regression import RegressionCalculator

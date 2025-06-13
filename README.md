@@ -22,7 +22,7 @@ math_mcp/
 # Core computation modules
 ├── basic.py                         # Basic math computation
 ├── matrix.py                        # Matrix computations
-├── statistics.py                    # Statistical analysis
+├── mstatistics.py                   # Statistical analysis (avoid conflicts)
 ├── calculus.py                      # Calculus
 ├── optimization.py                  # Optimization algorithms
 ├── regression.py                    # Regression analysis
@@ -50,7 +50,7 @@ Add the following configuration to your Claude Desktop config file:
                 "OUTPUT_PATH": "path/to/plot_output",
                 "FONT_PATH": "path/to/font"
             }
-        },
+        }
     }
 }
 ```
@@ -68,7 +68,7 @@ Or start the server directly:
                 "OUTPUT_PATH": "path/to/output",
                 "FONT_PATH": "path/to/font"
             }
-        },
+        }
     }
 }
 ```

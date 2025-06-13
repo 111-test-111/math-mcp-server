@@ -15,7 +15,7 @@ import sympy as sp
 try:
     from .description_loader import apply_description
     from .matrix import MatrixCalculator
-    from .statistics import StatisticsCalculator
+    from .mstatistics import StatisticsCalculator
     from .calculus import CalculusCalculator
     from .optimization import OptimizationCalculator
     from .regression import RegressionCalculator
@@ -33,7 +33,7 @@ try:
 except ImportError:
     from math_mcp.description_loader import apply_description
     from math_mcp.matrix import MatrixCalculator
-    from math_mcp.statistics import StatisticsCalculator
+    from math_mcp.mstatistics import StatisticsCalculator
     from math_mcp.calculus import CalculusCalculator
     from math_mcp.optimization import OptimizationCalculator
     from math_mcp.regression import RegressionCalculator

@@ -187,6 +187,13 @@ class ProbabilityCalculator:
                 return {"error": "b必须大于a"}
             x = a + p * (b - a)
 
+        elif distribution == "normal":
+            mu = parameters.get("mean", parameters.get("mu", 0))
+            sigma = parameters.get("std", parameters.get("sigma", 1))
+            if sigma <= 0:
+                return {"error": "标准差必须为正数"}
+            x = mu + sigma * self._erf_inverse(2 * p - 1)
+
         else:
             return {"error": f"不支持的分布逆CDF计算: {distribution}"}
 

@@ -143,7 +143,10 @@ class GraphTheoryCalculator:
                 return self.compare_graphs(graph_data, directed)
 
             elif operation == "graph_generation":
-                return self._generate_special_graphs(algorithm, k_value, threshold)
+                n_nodes = len(node_list) if node_list else None
+                return self._generate_special_graphs(
+                    algorithm, n_nodes, threshold, k_value
+                )
 
             else:
                 return {"error": f"不支持的操作类型: {operation}"}
@@ -1112,7 +1115,11 @@ class GraphTheoryCalculator:
             return {"error": f"社区检测出错: {str(e)}"}
 
     def _generate_special_graphs(
-        self, graph_type: str, n: Optional[int] = None, p: Optional[float] = None
+        self,
+        graph_type: str,
+        n: Optional[int] = None,
+        p: Optional[float] = None,
+        k_value: Optional[int] = None,
     ) -> Dict[str, Any]:
         """生成特殊图"""
         try:
@@ -1140,11 +1147,19 @@ class GraphTheoryCalculator:
                 G = nx.erdos_renyi_graph(n, p)
                 description = f"随机图 G({n}, {p})"
             elif graph_type == "barabasi_albert":
-                m = min(3, n - 1) if n > 3 else 1
+                # ``k_value`` is interpreted as the ``m`` parameter in the BA model: the number
+                # of edges a new node attaches to existing nodes. Fall back to a reasonable
+                # default when it is not provided.
+                if n is None:
+                    n = 10  # sensible default when user does not specify a node count
+                m = k_value if k_value is not None else (min(3, n - 1) if n > 3 else 1)
                 G = nx.barabasi_albert_graph(n, m)
                 description = f"BA无标度网络 ({n}个节点)"
             elif graph_type == "watts_strogatz":
-                k = min(4, n - 1) if n > 4 else 2
+                # For the WS model, ``k_value`` specifies the nearest-neighbor degree ``k``.
+                if n is None:
+                    n = 10
+                k = k_value if k_value is not None else (min(4, n - 1) if n > 4 else 2)
                 p_ws = p if p else 0.3
                 G = nx.watts_strogatz_graph(n, k, p_ws)
                 description = f"WS小世界网络 ({n}个节点)"
